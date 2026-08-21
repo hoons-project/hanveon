@@ -1,0 +1,96 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { GAMES, LANGS, LANG_NAME } from '../data/games';
+import { UI } from '../data/ui';
+
+/* 페이지에 처음 박히는 글은 영어다. 검색엔진이 자바스크립트 없이도 읽는다.
+   나라말 바꾸기는 아래 script 가 한다. 단계 2에서 /en/ /ko/ 주소로 나눈다. */
+const base = 'en' as const;
+
+/* 화면에 쓰는 글만 넘긴다. 그림(art)은 이미 HTML 에 박혀 있으니 뺀다. */
+const gameText = GAMES.map((g) => ({ slug: g.slug, name: g.name, desc: g.desc }));
+---
+
+<BaseLayout>
+  <div class="cabinet">
+    <header>
+      <div class="ttl">
+        <h1>Han<span>veon</span></h1>
+        <div class="tag" id="tagline">{UI[base].tagline}</div>
+      </div>
+      <select id="lang" class="lang" aria-label="Language">
+        {LANGS.map((l) => <option value={l}>{LANG_NAME[l]}</option>)}
+      </select>
+    </header>
+
+    <div class="grid">
+      {
+        GAMES.map((g) => (
+          <a class="card" href={`/play/${g.slug}/`} data-slug={g.slug}>
+            <span class="art" set:html={g.art} />
+            <span class="meta">
+              <b>{g.name[base]}</b>
+              <span>{g.desc[base]}</span>
+            </span>
+            <span class="go">{UI[base].play}</span>
+          </a>
+        ))
+      }
+    </div>
+
+    <p class="help" id="footer">{UI[base].footer}</p>
+  </div>
+</BaseLayout>
+
+<script is:inline define:vars={{ LANGS, UI, gameText }}>
+  (() => {
+    function pickLang() {
+      const q = new URLSearchParams(location.search).get('lang');
+      if (q && LANGS.includes(q)) return q;
+      try {
+        const saved = localStorage.getItem('arcadeLang');
+        if (saved && LANGS.includes(saved)) return saved;
+      } catch (e) {}
+      const want = navigator.languages || [navigator.language || 'en'];
+      for (const raw of want) {
+        const s = String(raw).toLowerCase();
+        for (const l of LANGS) if (s.startsWith(l)) return l;
+      }
+      return 'en';
+    }
+
+    let lang = pickLang();
+    const sel = document.getElementById('lang');
+    const cards = [...document.querySelectorAll('a.card')];
+    const byslug = {};
+    for (const g of gameText) byslug[g.slug] = g;
+
+    function apply() {
+      document.documentElement.lang = lang;
+      sel.value = lang;
+      document.getElementById('tagline').textContent = UI[lang].tagline;
+      document.getElementById('footer').textContent = UI[lang].footer;
+
+      for (const a of cards) {
+        const g = byslug[a.dataset.slug];
+        if (!g) continue;
+        a.href = '/play/' + g.slug + '/?lang=' + lang;
+        a.querySelector('.meta b').textContent = g.name[lang];
+        a.querySelector('.meta span').textContent = g.desc[lang];
+        a.querySelector('.go').textContent = UI[lang].play;
+        a.setAttribute('aria-label', g.name[lang] + ' — ' + UI[lang].play);
+      }
+    }
+
+    sel.addEventListener('change', () => {
+      lang = sel.value;
+      try { localStorage.setItem('arcadeLang', lang); } catch (e) {}
+      const u = new URL(location.href);
+      u.searchParams.set('lang', lang);
+      history.replaceState(null, '', u);
+      apply();
+    });
+
+    apply();
+  })();
+</script>
