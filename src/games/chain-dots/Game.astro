@@ -1,0 +1,594 @@
+---
+/*
+  쭉쭉 구슬.
+
+  손이 바쁜 게임이 아니다. 시간 제한이 없고, 대신 「남은 수」가 25 번이다.
+  지운 판마다 한 번씩 줄어드니 판은 반드시 끝난다.
+*/
+import GameLayout from '../../layouts/GameLayout.astro';
+import { findGame } from '../../data/games';
+import type { Lang } from '../../i18n';
+import { STR } from './strings';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+
+const game = findGame('chain-dots')!;
+const T = STR[lang];
+---
+
+<GameLayout lang={lang} game={game} tag={T.tagline} help={T.help}>
+  <div class="hud">
+    <div><b>{T.score}</b><i id="hScore">0</i></div>
+    <div><b>{T.moves}</b><i id="hMoves">25</i></div>
+    <div><b>{T.best}</b><i id="hBest">0</i></div>
+  </div>
+
+  <div class="stage">
+    <canvas id="game"></canvas>
+
+    <div class="screen on" id="scReady">
+      <div class="card">
+        <h2>{T.readyTitle}</h2>
+        <p set:html={T.readyBody} />
+        <div class="legend">
+          <div>
+            <span class="chips">
+              <i class="chip" style="background:#7FD8C8"></i>
+              <i class="chip" style="background:#7FD8C8"></i>
+              <i class="chip" style="background:#7FD8C8"></i>
+            </span>
+            <span>{T.legend1}</span>
+          </div>
+          <div><i class="chip" style="background:#FFD23F">3</i><span>{T.legend2}</span></div>
+          <div>
+            <span class="chips">
+              <i class="chip" style="background:#C58BE8"></i>
+              <i class="chip" style="background:#C58BE8"></i>
+              <i class="chip" style="background:#C58BE8"></i>
+              <i class="chip" style="background:#C58BE8"></i>
+            </span>
+            <span>{T.legend3}</span>
+          </div>
+        </div>
+        <button id="btnStart">{T.start}</button>
+      </div>
+    </div>
+
+    <div class="screen" id="scOver">
+      <div class="card">
+        <h2>{T.overTitle}</h2>
+        <div class="result">
+          <div><span>{T.score}</span><strong id="rScore">0</strong></div>
+          <div><span>{T.cleared}</span><strong id="rCleared">0</strong></div>
+        </div>
+        <button id="btnRetry">{T.retry}</button>
+      </div>
+    </div>
+
+    <div class="screen" id="scPause">
+      <div class="card">
+        <h2>{T.paused}</h2>
+        <p>{T.pausedHint}</p>
+        <button id="btnResume">{T.resume}</button>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    /* 이 게임만 쓰는 것 — 캔버스 바탕 진남색. 나머지는 src/styles/game.css 에 있다. */
+    canvas{ background:#2F3B4A }
+  </style>
+
+  <script define:vars={{ T }}>
+(() => {
+  const W = 360, H = 620;
+  const cv = document.getElementById('game');
+  const ctx = cv.getContext('2d');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function fit(){
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    cv.width = W * dpr; cv.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  fit();
+  addEventListener('resize', fit);
+
+  const INK = '#2A3145';
+  const CREAM = '#FFF7EA';
+  const SOCKET = '#27313E';
+
+  // 구슬 다섯 색. 색만으로 가리지 않게 저마다 다른 무늬를 하나씩 넣는다.
+  const DOT = ['#FFD23F', '#FF7A6B', '#7FD8C8', '#7FB8FF', '#C58BE8'];
+  const KINDS = DOT.length;
+
+  const COLS = 6, ROWS = 7, CELL = 54, R = 21;
+  const BX = (W - COLS * CELL) / 2;   // 18
+  const BY = 132;
+  const MOVES = 25;
+  const MAXCHAIN = 80;
+
+  const cx = (c) => BX + c * CELL + CELL / 2;
+  const cy = (r) => BY + r * CELL + CELL / 2;
+
+  let grid = [];                 // grid[r][c] = { k, off } — off 는 제자리보다 위에 떠 있는 거리
+  let chain = [], chainKey = -1, looped = false, loopIndex = 0, dragging = false;
+  let score = 0, moves = MOVES, cleared = 0, best = 0;
+  let state = 'ready';
+  let pops = [], parts = [], floats = [];
+  let cur = { r: 3, c: 2 }, kbMode = false;
+
+  const rndK = () => Math.floor(Math.random() * KINDS);
+  const dotY = (r, c) => cy(r) - grid[r][c].off;
+
+  // ── 판 만들기 ───────────────────────────────────────
+  function reset(){
+    grid = [];
+    for (let r = 0; r < ROWS; r++) {
+      const row = [];
+      for (let c = 0; c < COLS; c++) row.push({ k: rndK(), off: ROWS * CELL + c * 18 });
+      grid.push(row);
+    }
+    ensureMove();
+    chain = []; chainKey = -1; looped = false; loopIndex = 0; dragging = false;
+    pops = []; parts = []; floats = [];
+    cur = { r: 3, c: 2 };
+  }
+
+  /** 이을 수 있는 구슬 세 개가 어딘가에 있는가. */
+  function hasMove(){
+    const seen = [];
+    for (let r = 0; r < ROWS; r++) seen.push(new Array(COLS).fill(false));
+    for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
+      if (seen[r][c]) continue;
+      const k = grid[r][c].k;
+      let n = 0;
+      const stack = [[r, c]];
+      seen[r][c] = true;
+      while (stack.length) {
+        const [sr, sc] = stack.pop();
+        n++;
+        const nb = [[sr-1,sc],[sr+1,sc],[sr,sc-1],[sr,sc+1]];
+        for (const [nr, nc] of nb) {
+          if (nr < 0 || nr >= ROWS || nc < 0 || nc >= COLS) continue;
+          if (seen[nr][nc] || grid[nr][nc].k !== k) continue;
+          seen[nr][nc] = true; stack.push([nr, nc]);
+        }
+      }
+      // 이어진 덩어리가 셋 이상이면 그 안에 길이 3짜리 길이 반드시 있다.
+      if (n >= 3) return true;
+    }
+    return false;
+  }
+
+  /** 손 쓸 데가 없는 판이면 다시 섞는다. 그래도 없으면 셋을 심는다. */
+  function ensureMove(){
+    let tries = 0;
+    while (!hasMove() && tries < 60) {
+      for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) grid[r][c].k = rndK();
+      tries++;
+    }
+    if (!hasMove()) {
+      const r = Math.floor(Math.random() * ROWS), k = rndK();
+      for (let i = 1; i <= 3; i++) grid[r][i].k = k;
+    }
+  }
+
+  /** 빈 칸 위의 구슬을 내리고, 위에서 새 구슬을 떨어뜨린다. */
+  function collapse(){
+    for (let c = 0; c < COLS; c++) {
+      let write = ROWS - 1;
+      for (let r = ROWS - 1; r >= 0; r--) {
+        const cell = grid[r][c];
+        if (!cell) continue;
+        if (write !== r) { grid[write][c] = cell; grid[r][c] = null; cell.off += (write - r) * CELL; }
+        write--;
+      }
+      const n = write + 1;
+      for (let r = write; r >= 0; r--) grid[r][c] = { k: rndK(), off: n * CELL };
+    }
+  }
+
+  // ── 이어 긋기 ───────────────────────────────────────
+  function beginAt(r, c){
+    chain = [{ r, c }];
+    chainKey = grid[r][c].k;
+    looped = false; loopIndex = 0;
+    dragging = true;
+  }
+
+  function tryEnter(r, c){
+    if (!chain.length) return;
+    const last = chain[chain.length - 1];
+    if (last.r === r && last.c === c) return;
+    if (Math.abs(last.r - r) + Math.abs(last.c - c) !== 1) return;   // 위아래 왼오른쪽만
+    if (grid[r][c].k !== chainKey) return;
+
+    // 바로 앞 구슬로 되돌아가면 한 칸 물리기
+    if (chain.length >= 2) {
+      const prev = chain[chain.length - 2];
+      if (prev.r === r && prev.c === c) {
+        chain.pop();
+        if (loopIndex && chain.length < loopIndex) { looped = false; loopIndex = 0; }
+        return;
+      }
+    }
+    if (chain.length >= MAXCHAIN) return;
+
+    let dup = -1;
+    for (let i = 0; i < chain.length; i++) if (chain[i].r === r && chain[i].c === c) { dup = i; break; }
+    chain.push({ r, c });
+    if (dup >= 0 && !looped) { looped = true; loopIndex = chain.length; }
+  }
+
+  function release(){
+    dragging = false;
+    if (!chain.length) return;
+
+    const uniq = new Map();
+    for (const p of chain) uniq.set(p.r * COLS + p.c, p);
+
+    let cells = null;
+    if (looped) {
+      cells = [];
+      for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++)
+        if (grid[r][c].k === chainKey) cells.push({ r, c });
+    } else if (uniq.size >= 3) {
+      cells = Array.from(uniq.values());
+    }
+
+    // 세 개가 안 되면 아무 일도 없다 — 「남은 수」도 안 줄어든다.
+    if (!cells) { chain = []; looped = false; loopIndex = 0; return; }
+
+    const n = cells.length;
+    score += n * n;
+    cleared += n;
+    moves--;
+
+    let mx = 0, my = 0;
+    for (const p of uniq.values()) { mx += cx(p.c); my += dotY(p.r, p.c); }
+    mx /= uniq.size; my /= uniq.size;
+    floats.push({ x: mx, y: my - 6, txt: T.gain.replace('{n}', String(n * n)), life: 1, max: 1 });
+
+    for (const p of cells) {
+      const k = grid[p.r][p.c].k;
+      pops.push({ x: cx(p.c), y: dotY(p.r, p.c), k, t: 0 });
+      if (!reduce) puff(cx(p.c), dotY(p.r, p.c), 5, DOT[k]);
+      grid[p.r][p.c] = null;
+    }
+
+    collapse();
+    ensureMove();
+    chain = []; chainKey = -1; looped = false; loopIndex = 0;
+    syncHud();
+    if (moves <= 0) over();
+  }
+
+  function puff(x, y, n, col){
+    for (let i = 0; i < n; i++)
+      parts.push({ x, y, vx: (Math.random()-.5)*180, vy: (Math.random()-.5)*180 - 30,
+                   r: 2.5 + Math.random()*5, life: .45 + Math.random()*.3, max: .75, c: col });
+  }
+
+  // ── 매 칸 갱신 ──────────────────────────────────────
+  function update(dt){
+    const k = Math.pow(0.001, dt / 0.18);          // 0.18초쯤에 제자리로
+    for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
+      const cell = grid[r][c];
+      if (!cell || !cell.off) continue;
+      cell.off *= k;
+      if (cell.off < 0.4) cell.off = 0;
+    }
+    for (let i = pops.length - 1; i >= 0; i--) {
+      pops[i].t += dt / 0.18;
+      if (pops[i].t >= 1) pops.splice(i, 1);
+    }
+    for (let i = parts.length - 1; i >= 0; i--) {
+      const p = parts[i];
+      p.life -= dt; p.x += p.vx*dt; p.y += p.vy*dt; p.vx *= .93; p.vy *= .93;
+      if (p.life <= 0) parts.splice(i, 1);
+    }
+    for (let i = floats.length - 1; i >= 0; i--) {
+      const f = floats[i];
+      f.life -= dt; f.y -= 34 * dt;
+      if (f.life <= 0) floats.splice(i, 1);
+    }
+  }
+
+  // ── 그리기 ──────────────────────────────────────────
+  function fs(fill, lw){
+    ctx.fillStyle = fill; ctx.fill();
+    ctx.lineWidth = lw || 3; ctx.strokeStyle = INK; ctx.stroke();
+  }
+  function rr(x, y, w, h, r){
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x+w, y, x+w, y+h, r);
+    ctx.arcTo(x+w, y+h, x, y+h, r);
+    ctx.arcTo(x, y+h, x, y, r);
+    ctx.arcTo(x, y, x+w, y, r);
+    ctx.closePath();
+  }
+
+  /** 색맹이어도 가리게 — 색마다 다른 작은 무늬. */
+  function mark(k, x, y, s){
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.beginPath();
+    if (k === 0) ctx.arc(0, 0, s*.6, 0, 6.284);
+    else if (k === 1) { ctx.moveTo(0, -s*.8); ctx.lineTo(s*.75, s*.6); ctx.lineTo(-s*.75, s*.6); ctx.closePath(); }
+    else if (k === 2) ctx.rect(-s*.62, -s*.62, s*1.24, s*1.24);
+    else if (k === 3) { ctx.moveTo(0, -s*.9); ctx.lineTo(s*.72, 0); ctx.lineTo(0, s*.9); ctx.lineTo(-s*.72, 0); ctx.closePath(); }
+    else {
+      for (let i = 0; i < 10; i++) {
+        const a = -Math.PI/2 + i*Math.PI/5, rad = i % 2 ? s*.42 : s*.98;
+        ctx.lineTo(Math.cos(a)*rad, Math.sin(a)*rad);
+      }
+      ctx.closePath();
+    }
+    ctx.globalAlpha = .78; ctx.fillStyle = INK; ctx.fill(); ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  function drawDot(x, y, k, sc, ring, alpha){
+    ctx.save();
+    ctx.globalAlpha = alpha == null ? 1 : alpha;
+    ctx.translate(x, y);
+    ctx.scale(sc, sc);
+
+    ctx.save();
+    ctx.globalAlpha = (alpha == null ? 1 : alpha) * .22;
+    ctx.fillStyle = '#1B2030';
+    ctx.beginPath(); ctx.arc(2.5, 4, R, 0, 6.284); ctx.fill();
+    ctx.restore();
+
+    ctx.beginPath(); ctx.arc(0, 0, R, 0, 6.284);
+    fs(DOT[k], 3);
+
+    // 윗쪽 반짝
+    ctx.save();
+    ctx.globalAlpha = (alpha == null ? 1 : alpha) * .45;
+    ctx.beginPath(); ctx.ellipse(-6, -9, 6.5, 4.2, -0.5, 0, 6.284);
+    ctx.fillStyle = '#FFFFFF'; ctx.fill();
+    ctx.restore();
+
+    mark(k, 0, -11, 6);
+
+    // 눈
+    ctx.fillStyle = INK;
+    for (const ex of [-6.5, 6.5]) { ctx.beginPath(); ctx.arc(ex, 1.5, 2.7, 0, 6.284); ctx.fill(); }
+    // 입
+    ctx.lineWidth = 2; ctx.strokeStyle = INK;
+    ctx.beginPath(); ctx.moveTo(-3, 8); ctx.quadraticCurveTo(0, 10.5, 3, 8); ctx.stroke();
+    // 볼
+    ctx.save();
+    ctx.globalAlpha = (alpha == null ? 1 : alpha) * .5;
+    ctx.fillStyle = '#FF9EA8';
+    ctx.beginPath(); ctx.arc(-12.5, 7, 3.2, 0, 6.284); ctx.fill();
+    ctx.beginPath(); ctx.arc(12.5, 7, 3.2, 0, 6.284); ctx.fill();
+    ctx.restore();
+
+    if (ring) {
+      ctx.globalAlpha = ring;
+      ctx.lineWidth = 3; ctx.strokeStyle = CREAM;
+      ctx.beginPath(); ctx.arc(0, 0, R + 5, 0, 6.284); ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function inChain(r, c){
+    for (const p of chain) if (p.r === r && p.c === c) return true;
+    return false;
+  }
+
+  function draw(){
+    ctx.clearRect(0, 0, W, H);
+    const now = performance.now();
+    const pulse = .5 + .5 * Math.sin(now / 170);
+
+    // 구슬 자리
+    ctx.fillStyle = SOCKET;
+    for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
+      ctx.beginPath(); ctx.arc(cx(c), cy(r), R - 1, 0, 6.284); ctx.fill();
+    }
+
+    // 이어 그은 줄 — 잉크로 한 번, 그 색으로 한 번
+    if (chain.length >= 2) {
+      const line = () => {
+        ctx.beginPath();
+        for (const p of chain) ctx.lineTo(cx(p.c), dotY(p.r, p.c));
+        ctx.stroke();
+      };
+      ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+      ctx.lineWidth = 15; ctx.strokeStyle = INK; line();
+      ctx.lineWidth = 9; ctx.strokeStyle = DOT[chainKey]; line();
+    }
+
+    // 구슬
+    for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
+      const cell = grid[r][c];
+      if (!cell) continue;
+      let sc = 1, ring = 0;
+      if (chain.length) {
+        if (inChain(r, c)) { sc = 1.08; ring = .9; }
+        else if (looped && cell.k === chainKey) { sc = 1 + .07 * pulse; ring = .3 + .45 * pulse; }
+      }
+      drawDot(cx(c), cy(r) - cell.off, cell.k, sc, ring);
+    }
+
+    // 터지는 구슬
+    for (const p of pops) drawDot(p.x, p.y, p.k, 1 + .3 * p.t, 0, 1 - p.t);
+
+    // 조각
+    for (const p of parts) {
+      const a = Math.max(0, p.life / p.max);
+      ctx.globalAlpha = a;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r * a, 0, 6.284);
+      ctx.fillStyle = p.c; ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+
+    // 고리를 만들었다는 알림
+    if (looped) {
+      ctx.globalAlpha = .7 + .3 * pulse;
+      ctx.font = '900 20px system-ui, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.lineWidth = 5; ctx.strokeStyle = INK;
+      ctx.strokeText(T.loopTag, W/2, 104);
+      ctx.fillStyle = DOT[chainKey]; ctx.fillText(T.loopTag, W/2, 104);
+      ctx.globalAlpha = 1;
+    }
+
+    // 뜬 점수
+    for (const f of floats) {
+      ctx.globalAlpha = Math.max(0, Math.min(1, f.life * 1.6));
+      ctx.font = '900 22px system-ui, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.lineWidth = 5; ctx.strokeStyle = INK;
+      ctx.strokeText(f.txt, f.x, f.y);
+      ctx.fillStyle = CREAM; ctx.fillText(f.txt, f.x, f.y);
+      ctx.globalAlpha = 1;
+    }
+
+    // 자판으로 하는 사람을 위한 자리표
+    if (kbMode && state === 'play') {
+      ctx.globalAlpha = .55 + .35 * pulse;
+      ctx.lineWidth = 3; ctx.strokeStyle = CREAM;
+      rr(cx(cur.c) - CELL/2 + 3, cy(cur.r) - CELL/2 + 3, CELL - 6, CELL - 6, 12);
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
+  }
+
+  let last = 0;
+  function frame(t){
+    const dt = Math.min((t - last)/1000, .04);
+    last = t;
+    update(dt); draw();
+    requestAnimationFrame(frame);
+  }
+
+  // ── 화면과 단추 ─────────────────────────────────────
+  const scReady = document.getElementById('scReady');
+  const scOver = document.getElementById('scOver');
+  const scPause = document.getElementById('scPause');
+  const hScore = document.getElementById('hScore');
+  const hMoves = document.getElementById('hMoves');
+  const hBest = document.getElementById('hBest');
+  const rScore = document.getElementById('rScore');
+  const rCleared = document.getElementById('rCleared');
+
+  function show(id){
+    for (const s of [scReady, scOver, scPause]) s.classList.toggle('on', s.id === id);
+  }
+  function syncHud(){
+    hScore.textContent = score;
+    hMoves.textContent = Math.max(0, moves);
+  }
+  function start(){
+    score = 0; moves = MOVES; cleared = 0;
+    reset();
+    syncHud();
+    state = 'play';
+    show('none');
+  }
+  function over(){
+    state = 'over';
+    chain = []; looped = false; loopIndex = 0; dragging = false;
+    if (score > best) { best = score; hBest.textContent = best; saveBest(best); }
+    rScore.textContent = score;
+    rCleared.textContent = cleared;
+    show('scOver');
+  }
+  function togglePause(){
+    if (state === 'play') {
+      state = 'pause';
+      chain = []; chainKey = -1; looped = false; loopIndex = 0; dragging = false;
+      show('scPause');
+    } else if (state === 'pause') {
+      state = 'play'; show('none');
+    }
+  }
+
+  document.getElementById('btnStart').onclick = start;
+  document.getElementById('btnRetry').onclick = start;
+  document.getElementById('btnResume').onclick = togglePause;
+
+  // ── 손가락·마우스 ───────────────────────────────────
+  function cellAt(e){
+    const b = cv.getBoundingClientRect();
+    const x = (e.clientX - b.left) * W / b.width;
+    const y = (e.clientY - b.top) * H / b.height;
+    const c = Math.floor((x - BX) / CELL);
+    const r = Math.floor((y - BY) / CELL);
+    if (r < 0 || r >= ROWS || c < 0 || c >= COLS) return null;
+    const dx = x - cx(c), dy = y - cy(r);
+    if (dx*dx + dy*dy > 26*26) return null;      // 칸 귀퉁이는 안 집힌다
+    return { r, c };
+  }
+
+  cv.addEventListener('pointerdown', (e) => {
+    if (state !== 'play') return;
+    const p = cellAt(e);
+    if (!p) return;
+    e.preventDefault();
+    kbMode = false;
+    try { cv.setPointerCapture(e.pointerId); } catch (err) {}
+    beginAt(p.r, p.c);
+  });
+  cv.addEventListener('pointermove', (e) => {
+    if (!dragging || state !== 'play') return;
+    const p = cellAt(e);
+    if (p) tryEnter(p.r, p.c);
+  });
+  for (const ev of ['pointerup', 'pointercancel'])
+    cv.addEventListener(ev, () => { if (dragging) release(); });
+
+  // ── 자판 ────────────────────────────────────────────
+  addEventListener('keydown', (e) => {
+    const k = e.key.toLowerCase();
+    if (['arrowleft','arrowright','arrowup','arrowdown',' '].includes(k)) e.preventDefault();
+
+    if (k === 'p') { togglePause(); return; }
+
+    if (state === 'ready' || state === 'over') {
+      if (k === ' ' || k === 'enter') start();
+      return;
+    }
+    if (state !== 'play') return;
+
+    if (k === 'arrowleft')  { kbMode = true; cur.c = Math.max(0, cur.c - 1); return; }
+    if (k === 'arrowright') { kbMode = true; cur.c = Math.min(COLS - 1, cur.c + 1); return; }
+    if (k === 'arrowup')    { kbMode = true; cur.r = Math.max(0, cur.r - 1); return; }
+    if (k === 'arrowdown')  { kbMode = true; cur.r = Math.min(ROWS - 1, cur.r + 1); return; }
+
+    if (k === ' ') {
+      kbMode = true;
+      if (!chain.length) { dragging = true; beginAt(cur.r, cur.c); }
+      else tryEnter(cur.r, cur.c);
+      return;
+    }
+    if (k === 'enter') { kbMode = true; release(); }
+  });
+
+  // ── 최고 기록 ───────────────────────────────────────
+  // 기기에만 남는다. 서버로 보내지 않는다.
+  const KEY = 'dotsBest';
+  async function saveBest(v){
+    try { await window.storage.set(KEY, String(v)); return; } catch (e) {}
+    try { localStorage.setItem(KEY, String(v)); } catch (e) {}
+  }
+  (async () => {
+    let raw = null;
+    try { const r = await window.storage.get(KEY); raw = r && r.value; } catch (e) {}
+    if (raw == null) { try { raw = localStorage.getItem(KEY); } catch (e) {} }
+    if (raw) { best = parseInt(raw, 10) || 0; hBest.textContent = best; }
+  })();
+
+  reset();
+  syncHud();
+  requestAnimationFrame(frame);
+})();
+  </script>
+</GameLayout>

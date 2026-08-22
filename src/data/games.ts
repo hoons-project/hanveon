@@ -151,6 +151,65 @@ export const GAMES: Game[] = [
       <path d="M30 24 q7 10 7 18 q-7 6 -14 0 q0 -8 7 -18 z" fill="#FFF7EA" stroke="#2A3145" stroke-width="2.6"/>
       <ellipse cx="30" cy="35" rx="3.2" ry="3.8" fill="#8FD3FF" stroke="#2A3145" stroke-width="2"/></svg>`,
   },
+  {
+    slug: 'pop-shot',
+    accent: '#5D5FEF',
+    pageBg: '#FFD9E4',
+    name: {
+      en: ['Pop', 'Shot'],
+      ko: ['탕탕', '사격'],
+      ja: ['パン', 'ショット'],
+      es: ['Tiro', 'Certero'],
+      fr: ['Tir', 'Précis'],
+      zh: ['砰砰', '射击'],
+    },
+    desc: {
+      en: 'They come from every side. Aim and hold to fire.',
+      ko: '사방에서 몰려와요. 겨누고 누르고 있으면 나가요.',
+      ja: '四方から来ます。ねらって押しっぱなしで撃つ。',
+      es: 'Vienen por todos lados. Apunta y mantén pulsado.',
+      fr: 'Ils arrivent de partout. Vise et maintiens pour tirer.',
+      zh: '四面八方都来。瞄准后按住就会开火。',
+    },
+    art: `<svg viewBox="0 0 60 60" aria-hidden="true"><rect width="60" height="60" fill="#FFF1DC"/>
+      <circle cx="30" cy="30" r="19" fill="none" stroke="#F0D9C0" stroke-width="2.4"/>
+      <circle cx="11" cy="13" r="6" fill="#5D5FEF" stroke="#2A3145" stroke-width="2.4"/>
+      <circle cx="49" cy="17" r="4.6" fill="#FF7A6B" stroke="#2A3145" stroke-width="2.2"/>
+      <circle cx="47" cy="47" r="5.2" fill="#7FD8C8" stroke="#2A3145" stroke-width="2.2"/>
+      <circle cx="30" cy="34" r="9" fill="#FFF7EA" stroke="#2A3145" stroke-width="2.8"/>
+      <rect x="27" y="17" width="6" height="10" rx="3" fill="#FFD23F" stroke="#2A3145" stroke-width="2.4"/>
+      <circle cx="27" cy="33" r="1.5" fill="#2A3145"/><circle cx="33" cy="33" r="1.5" fill="#2A3145"/></svg>`,
+  },
+  {
+    slug: 'chain-dots',
+    accent: '#3BAF8F',
+    pageBg: '#FFE9A8',
+    name: {
+      en: ['Chain', 'Dots'],
+      ko: ['쭉쭉', '구슬'],
+      ja: ['つなぐ', 'ビーズ'],
+      es: ['Enlaza', 'Bolitas'],
+      fr: ['Relie', 'les Perles'],
+      zh: ['连连', '珠子'],
+    },
+    desc: {
+      en: 'Drag across same-colour dots. Close a loop to clear the whole colour.',
+      ko: '같은 색 구슬을 이어 그어요. 고리를 만들면 그 색이 다 사라져요.',
+      ja: '同じ色のビーズをなぞる。輪を作るとその色が全部消える。',
+      es: 'Arrastra por bolitas del mismo color. Cierra un lazo y ese color desaparece.',
+      fr: 'Relie les perles de même couleur. Ferme une boucle et toute la couleur part.',
+      zh: '把同色珠子连起来。围成一圈，那个颜色全部消失。',
+    },
+    art: `<svg viewBox="0 0 60 60" aria-hidden="true"><rect width="60" height="60" fill="#2F3B4A"/>
+      <path d="M16 18 L44 18 L44 42 L16 42 Z" fill="none" stroke="#3BAF8F" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="16" cy="18" r="6" fill="#3BAF8F" stroke="#2A3145" stroke-width="2.4"/>
+      <circle cx="44" cy="18" r="6" fill="#3BAF8F" stroke="#2A3145" stroke-width="2.4"/>
+      <circle cx="44" cy="42" r="6" fill="#3BAF8F" stroke="#2A3145" stroke-width="2.4"/>
+      <circle cx="16" cy="42" r="6" fill="#3BAF8F" stroke="#2A3145" stroke-width="2.4"/>
+      <circle cx="30" cy="30" r="4.6" fill="#FFD23F" stroke="#2A3145" stroke-width="2.2"/>
+      <circle cx="9" cy="30" r="3.6" fill="#FF7A6B" stroke="#2A3145" stroke-width="2"/>
+      <circle cx="51" cy="30" r="3.6" fill="#C58BE8" stroke="#2A3145" stroke-width="2"/></svg>`,
+  },
 ];
 
 /** 주소 조각으로 게임을 찾는다. 없으면 undefined. */

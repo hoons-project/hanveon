@@ -1,0 +1,560 @@
+---
+/*
+  탕탕 사격.
+
+  슝슝 비행기와 겹치지 않게 만든 것 — 저쪽은 「피하기」가 알맹이고 총은 알아서 나간다.
+  이쪽은 **겨누는 것**이 알맹이다. 제자리에 서서 사방을 돌아본다.
+*/
+import GameLayout from '../../layouts/GameLayout.astro';
+import { findGame } from '../../data/games';
+import type { Lang } from '../../i18n';
+import { STR } from './strings';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+
+const game = findGame('pop-shot')!;
+const T = STR[lang];
+---
+
+<GameLayout lang={lang} game={game} tag={T.tagline} help={T.help}>
+  <div class="hud">
+    <div><b>{T.score}</b><i id="hScore">0</i></div>
+    <div><b>{T.life}</b><i id="hLife" class="word">♥♥♥</i></div>
+    <div><b>{T.best}</b><i id="hBest">0</i></div>
+  </div>
+
+  <div class="stage">
+    <canvas id="game"></canvas>
+
+    <div class="screen on" id="scReady">
+      <div class="card">
+        <h2>{T.readyTitle}</h2>
+        <p set:html={T.readyBody} />
+        <div class="legend">
+          <div><i class="chip" style="background:#5D5FEF"></i><span>{T.legend1}</span></div>
+          <div><i class="chip" style="background:#FF7A6B"></i><span>{T.legend2}</span></div>
+          <div><i class="chip" style="background:#7FD8C8"></i><span>{T.legend3}</span></div>
+          <div><i class="chip" style="background:#FFD23F"></i><span>{T.legend4}</span></div>
+        </div>
+        <button id="btnStart">{T.start}</button>
+      </div>
+    </div>
+
+    <div class="screen" id="scOver">
+      <div class="card">
+        <h2>{T.overTitle}</h2>
+        <div class="result">
+          <div><span>{T.score}</span><strong id="rScore">0</strong></div>
+          <div><span>{T.wave}</span><strong id="rWave">1</strong></div>
+        </div>
+        <button id="btnRetry">{T.retry}</button>
+      </div>
+    </div>
+
+    <div class="screen" id="scPause">
+      <div class="card">
+        <h2>{T.paused}</h2>
+        <p>{T.pausedHint}</p>
+        <button id="btnResume">{T.resume}</button>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    /* 이 게임만 쓰는 것 — 밝은 나무 바닥. 나머지는 src/styles/game.css 에 있다. */
+    canvas{ background:#FFF1DC; cursor:crosshair }
+  </style>
+
+  <script define:vars={{ T }}>
+(() => {
+  const W = 360, H = 620;
+  const cv = document.getElementById('game');
+  const ctx = cv.getContext('2d');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function fit(){
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    cv.width = W * dpr; cv.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  fit();
+  addEventListener('resize', fit);
+
+  const INK = '#2A3145';
+  const CREAM = '#FFF7EA';
+  const SUN = '#FFD23F';
+
+  // 한가운데 — 여기 서서 돌아본다
+  const CX = W / 2, CY = H / 2;
+  const HERO_R = 17;
+
+  /* 적 갈래.
+     r 몸 반지름 · sp 걸음 빠르기 · hp 맞는 횟수 · pt 점수 · c 색 */
+  const KIND = {
+    plain: { r: 12,   sp: 40, hp: 1, pt: 10, c: '#5D5FEF' },
+    quick: { r: 8.5,  sp: 82, hp: 1, pt: 15, c: '#FF7A6B' },
+    tough: { r: 16.5, sp: 26, hp: 3, pt: 30, c: '#7FD8C8' },
+    gold:  { r: 11,   sp: 58, hp: 1, pt: 20, c: SUN },
+  };
+
+  const BULLET_SP = 470;      // 총알 빠르기
+  const FIRE_GAP = 0.135;     // 이 간격으로 한 발씩
+  const TURN_SP = 3.4;        // 화살표로 돌리는 빠르기 (라디안/초)
+  const SAFE = 1.3;           // 맞고 나서 잠깐 못 맞는 시간
+
+  let state = 'ready';
+  let aim, firing, cool, turn;
+  let foes, shots, parts, rings;
+  let score, life, wave, waveT, spawnGap, spawnT, hurt, shake;
+  let best = 0;
+
+  function reset(){
+    aim = -Math.PI / 2;        // 처음엔 위를 본다
+    firing = false; cool = 0; turn = 0;
+    foes = []; shots = []; parts = []; rings = [];
+    score = 0; life = 3; wave = 1; waveT = 0;
+    spawnGap = 1.05; spawnT = 0.6;
+    hurt = 0; shake = 0;
+  }
+
+  // ── 적 내보내기 ─────────────────────────────────────
+  function pickKind(){
+    const r = Math.random();
+    if (r < 0.035 + Math.min(0.02, wave * 0.002)) return 'gold';
+    if (wave >= 3 && r < 0.30) return 'quick';
+    if (wave >= 5 && r < 0.44) return 'tough';
+    return 'plain';
+  }
+
+  function spawn(){
+    const kind = pickKind();
+    const k = KIND[kind];
+    // 화면 밖 둘레에서 나온다
+    const a = Math.random() * Math.PI * 2;
+    const d = 340;
+    const x = CX + Math.cos(a) * d;
+    const y = CY + Math.sin(a) * d;
+    foes.push({
+      x, y, kind, r: k.r, hp: k.hp, max: k.hp,
+      sp: k.sp * (1 + Math.min(0.7, wave * 0.045)) * (0.9 + Math.random() * 0.2),
+      wob: Math.random() * 6, blink: 2 + Math.random() * 4, flash: 0,
+    });
+  }
+
+  // ── 조각과 물결 ─────────────────────────────────────
+  function puff(x, y, n, c){
+    if (reduce) return;
+    for (let i = 0; i < n; i++)
+      parts.push({ x, y, vx:(Math.random()-.5)*230, vy:(Math.random()-.5)*230,
+                   r: 2.5 + Math.random()*6, life:.35 + Math.random()*.35, max:.7, c });
+  }
+  function popText(x, y, txt, c){
+    parts.push({ x, y, vx:0, vy:-64, txt, c: c || CREAM, life:.85, max:.85 });
+  }
+  function ring(x, y, c){
+    if (reduce) return;
+    rings.push({ x, y, r: 6, c, life: .42, max: .42 });
+  }
+
+  // ── 그리기 도구 ─────────────────────────────────────
+  function rr(x, y, w, h, r){
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x+w, y, x+w, y+h, r);
+    ctx.arcTo(x+w, y+h, x, y+h, r);
+    ctx.arcTo(x, y+h, x, y, r);
+    ctx.arcTo(x, y, x+w, y, r);
+    ctx.closePath();
+  }
+  function fs(fill, lw){
+    ctx.fillStyle = fill; ctx.fill();
+    ctx.lineWidth = lw || 3; ctx.strokeStyle = INK; ctx.stroke();
+  }
+  function face(r, look, open){
+    // 눈
+    const e = r * 0.34;
+    for (const s of [-1, 1]) {
+      ctx.beginPath();
+      if (open) ctx.arc(s * e + look, -r * 0.12, Math.max(1.6, r * 0.15), 0, 6.284);
+      else { ctx.ellipse(s * e + look, -r * 0.12, Math.max(1.8, r * 0.17), 0.9, 0, 0, 6.284); }
+      ctx.fillStyle = INK; ctx.fill();
+    }
+    // 볼
+    ctx.globalAlpha = .5; ctx.fillStyle = '#FF9EA8';
+    for (const s of [-1, 1]) {
+      ctx.beginPath(); ctx.arc(s * r * 0.62, r * 0.16, Math.max(1.6, r * 0.16), 0, 6.284); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function drawHero(){
+    // 겨누는 쪽을 알려주는 흐린 줄
+    ctx.save();
+    ctx.globalAlpha = .22;
+    ctx.strokeStyle = INK; ctx.lineWidth = 2; ctx.setLineDash([5, 7]);
+    ctx.beginPath();
+    ctx.moveTo(CX + Math.cos(aim) * (HERO_R + 16), CY + Math.sin(aim) * (HERO_R + 16));
+    ctx.lineTo(CX + Math.cos(aim) * 190, CY + Math.sin(aim) * 190);
+    ctx.stroke();
+    ctx.restore();
+
+    ctx.save();
+    ctx.translate(CX, CY);
+
+    ctx.globalAlpha = .15; ctx.fillStyle = '#1B2030';
+    ctx.beginPath(); ctx.ellipse(3, 6, HERO_R, HERO_R, 0, 0, 6.284); ctx.fill();
+    ctx.globalAlpha = 1;
+
+    // 총구 — 겨누는 쪽으로 돈다
+    ctx.save();
+    ctx.rotate(aim + Math.PI / 2);
+    const kick = cool > FIRE_GAP - 0.05 ? 3 : 0;
+    rr(-5.5, -HERO_R - 15 + kick, 11, 18, 5);
+    fs(SUN, 3);
+    ctx.restore();
+
+    // 몸 — 맞은 직후에는 깜빡인다
+    const blink = hurt > 0 && Math.floor(hurt * 12) % 2 === 0;
+    ctx.beginPath(); ctx.arc(0, 0, HERO_R, 0, 6.284);
+    fs(blink ? '#FFD9E4' : CREAM, 3.5);
+
+    ctx.save();
+    ctx.rotate(aim + Math.PI / 2);
+    face(HERO_R, 0, state === 'play');
+    ctx.restore();
+
+    ctx.restore();
+  }
+
+  function drawFoe(f){
+    const k = KIND[f.kind];
+    const bob = Math.sin(f.wob) * (f.r * 0.12);
+    ctx.save();
+    ctx.translate(f.x, f.y + bob);
+
+    ctx.globalAlpha = .15; ctx.fillStyle = '#1B2030';
+    ctx.beginPath(); ctx.ellipse(2.5, 5, f.r, f.r * .9, 0, 0, 6.284); ctx.fill();
+    ctx.globalAlpha = 1;
+
+    if (f.kind === 'quick') {
+      // 빠른 놈은 뒤에 자국을 남긴다
+      const a = Math.atan2(CY - f.y, CX - f.x);
+      ctx.globalAlpha = .3; ctx.strokeStyle = k.c; ctx.lineWidth = 4; ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(-Math.cos(a) * 6, -Math.sin(a) * 6);
+      ctx.lineTo(-Math.cos(a) * 18, -Math.sin(a) * 18);
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
+
+    ctx.beginPath(); ctx.arc(0, 0, f.r, 0, 6.284);
+    fs(f.flash > 0 ? '#FFFFFF' : k.c, 3);
+
+    if (f.kind === 'tough') {
+      // 남은 맞을 횟수를 모자 눈금으로
+      ctx.lineWidth = 3.5; ctx.strokeStyle = INK; ctx.lineCap = 'round';
+      for (let i = 0; i < f.hp; i++) {
+        const a = -Math.PI * 0.78 + i * 0.55;
+        ctx.beginPath();
+        ctx.moveTo(Math.cos(a) * (f.r - 5), Math.sin(a) * (f.r - 5));
+        ctx.lineTo(Math.cos(a) * (f.r + 4), Math.sin(a) * (f.r + 4));
+        ctx.stroke();
+      }
+    }
+    if (f.kind === 'gold') {
+      // 금색은 별을 얹어 눈에 띄게
+      ctx.save(); ctx.translate(0, -f.r - 7);
+      ctx.beginPath();
+      for (let i = 0; i < 10; i++) {
+        const a = -Math.PI/2 + i * Math.PI/5, r = i % 2 ? 2.6 : 6;
+        ctx.lineTo(Math.cos(a)*r, Math.sin(a)*r);
+      }
+      ctx.closePath(); fs(SUN, 2.4);
+      ctx.restore();
+    }
+
+    face(f.r, 0, f.blink > 0.14);
+    ctx.restore();
+  }
+
+  // ── 쏘기 ────────────────────────────────────────────
+  function fire(){
+    shots.push({
+      x: CX + Math.cos(aim) * (HERO_R + 12),
+      y: CY + Math.sin(aim) * (HERO_R + 12),
+      vx: Math.cos(aim) * BULLET_SP,
+      vy: Math.sin(aim) * BULLET_SP,
+    });
+    cool = FIRE_GAP;
+  }
+
+  function hurtHero(){
+    if (hurt > 0) return;
+    life--; hurt = SAFE; shake = 1;
+    hLife.textContent = '♥'.repeat(Math.max(0, life)) || '—';
+    popText(CX, CY - 40, T.ouch, '#FF7A6B');
+    puff(CX, CY, 12, '#FF7A6B');
+    // 가까이 온 것들을 한 번 밀어낸다 — 다시 맞고 또 맞는 것을 막는다
+    for (const f of foes) {
+      const dx = f.x - CX, dy = f.y - CY;
+      const d = Math.hypot(dx, dy) || 1;
+      if (d < 120) { f.x += dx / d * (130 - d); f.y += dy / d * (130 - d); }
+    }
+    if (life <= 0) over();
+  }
+
+  // ── 업데이트 ────────────────────────────────────────
+  function update(dt){
+    for (let i = parts.length - 1; i >= 0; i--) {
+      const p = parts[i];
+      p.life -= dt; p.x += p.vx*dt; p.y += p.vy*dt; p.vx *= .9; p.vy *= .9;
+      if (p.life <= 0) parts.splice(i, 1);
+    }
+    for (let i = rings.length - 1; i >= 0; i--) {
+      const g = rings[i];
+      g.life -= dt; g.r += 130 * dt;
+      if (g.life <= 0) rings.splice(i, 1);
+    }
+    shake = Math.max(0, shake - dt * 3.4);
+
+    if (state !== 'play') return;
+
+    if (hurt > 0) hurt = Math.max(0, hurt - dt);
+
+    // 겨누기 — 화살표로 돌릴 때만. 포인터는 바로 각도를 넣는다
+    if (turn) aim += turn * TURN_SP * dt;
+
+    // 총알 내보내기
+    cool -= dt;
+    if (firing && cool <= 0) fire();
+
+    // 물결 — 시간이 갈수록 자주, 많이 나온다
+    waveT += dt;
+    if (waveT > 18) {
+      waveT = 0; wave++;
+      spawnGap = Math.max(0.28, spawnGap * 0.84);
+      popText(CX, CY + 58, T.waveUp.replace('{n}', wave), SUN);
+    }
+    spawnT -= dt;
+    if (spawnT <= 0) { spawn(); spawnT = spawnGap * (0.75 + Math.random() * 0.5); }
+
+    // 총알
+    for (let i = shots.length - 1; i >= 0; i--) {
+      const s = shots[i];
+      s.x += s.vx * dt; s.y += s.vy * dt;
+      if (s.x < -20 || s.x > W + 20 || s.y < -20 || s.y > H + 20) { shots.splice(i, 1); continue; }
+
+      for (let j = foes.length - 1; j >= 0; j--) {
+        const f = foes[j];
+        if (Math.hypot(f.x - s.x, f.y - s.y) > f.r + 4) continue;
+
+        shots.splice(i, 1);
+        f.hp--; f.flash = 0.07;
+        puff(s.x, s.y, 4, KIND[f.kind].c);
+
+        if (f.hp <= 0) {
+          foes.splice(j, 1);
+          const k = KIND[f.kind];
+          score += k.pt;
+          hScore.textContent = score;
+          puff(f.x, f.y, 9, k.c);
+          ring(f.x, f.y, k.c);
+          if (f.kind === 'gold' && life < 3) {
+            life++;
+            hLife.textContent = '♥'.repeat(life);
+            popText(f.x, f.y - 12, T.lifeUp, SUN);
+          } else {
+            popText(f.x, f.y - 12, T.gain.replace('{n}', k.pt), CREAM);
+          }
+        }
+        break;
+      }
+    }
+
+    // 적
+    for (let i = foes.length - 1; i >= 0; i--) {
+      const f = foes[i];
+      f.wob += dt * 7;
+      f.blink -= dt;
+      if (f.blink < -0.14) f.blink = 2 + Math.random() * 4;
+      if (f.flash > 0) f.flash -= dt;
+
+      const dx = CX - f.x, dy = CY - f.y;
+      const d = Math.hypot(dx, dy) || 1;
+      f.x += dx / d * f.sp * dt;
+      f.y += dy / d * f.sp * dt;
+
+      if (d < HERO_R + f.r - 2) {
+        foes.splice(i, 1);
+        puff(f.x, f.y, 7, KIND[f.kind].c);
+        hurtHero();
+        if (state !== 'play') return;
+      }
+    }
+  }
+
+  function over(){
+    state = 'over';
+    if (score > best) { best = score; hBest.textContent = best; saveBest(best); }
+    rScore.textContent = score;
+    rWave.textContent = wave;
+    show('scOver');
+  }
+
+  // ── 화면 ────────────────────────────────────────────
+  function draw(){
+    ctx.save();
+    if (shake > 0) ctx.translate((Math.random()-.5) * shake * 7, (Math.random()-.5) * shake * 7);
+
+    ctx.fillStyle = '#FFF1DC';
+    ctx.fillRect(-12, -12, W + 24, H + 24);
+
+    // 바닥 무늬 — 가운데를 중심으로 한 동그라미들
+    ctx.strokeStyle = '#F0DCC2'; ctx.lineWidth = 2.5;
+    for (const r of [58, 106, 154, 202, 250]) {
+      ctx.beginPath(); ctx.arc(CX, CY, r, 0, 6.284); ctx.stroke();
+    }
+
+    // 물결 자국
+    for (const g of rings) {
+      ctx.globalAlpha = Math.max(0, g.life / g.max) * .55;
+      ctx.strokeStyle = g.c; ctx.lineWidth = 4;
+      ctx.beginPath(); ctx.arc(g.x, g.y, g.r, 0, 6.284); ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
+
+    for (const f of foes) drawFoe(f);
+
+    // 총알
+    for (const s of shots) {
+      ctx.beginPath(); ctx.arc(s.x, s.y, 4.5, 0, 6.284);
+      fs(SUN, 2.4);
+    }
+
+    drawHero();
+
+    for (const p of parts) {
+      const a = Math.max(0, p.life / p.max);
+      ctx.globalAlpha = a;
+      if (p.txt) {
+        ctx.font = '900 19px system-ui, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.lineWidth = 4.5; ctx.strokeStyle = INK;
+        ctx.strokeText(p.txt, p.x, p.y);
+        ctx.fillStyle = p.c; ctx.fillText(p.txt, p.x, p.y);
+      } else {
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.r * a, 0, 6.284);
+        ctx.fillStyle = p.c; ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+    }
+
+    ctx.restore();
+  }
+
+  let last = 0;
+  function frame(t){
+    const dt = Math.min((t - last)/1000, .04);
+    last = t;
+    update(dt); draw();
+    requestAnimationFrame(frame);
+  }
+
+  // ── 버튼과 키 ───────────────────────────────────────
+  const scReady = document.getElementById('scReady');
+  const scOver = document.getElementById('scOver');
+  const scPause = document.getElementById('scPause');
+  const hScore = document.getElementById('hScore');
+  const hLife = document.getElementById('hLife');
+  const hBest = document.getElementById('hBest');
+  const rScore = document.getElementById('rScore');
+  const rWave = document.getElementById('rWave');
+
+  function show(id){
+    for (const s of [scReady, scOver, scPause]) s.classList.toggle('on', s.id === id);
+  }
+  function start(){
+    reset();
+    hScore.textContent = '0';
+    hLife.textContent = '♥♥♥';
+    state = 'play';
+    show('none');
+  }
+  function togglePause(){
+    if (state === 'play') { state = 'pause'; firing = false; holdPointer = false; holdKey = false; turn = 0; show('scPause'); }
+    else if (state === 'pause') { state = 'play'; show('none'); }
+  }
+
+  document.getElementById('btnStart').onclick = start;
+  document.getElementById('btnRetry').onclick = start;
+  document.getElementById('btnResume').onclick = togglePause;
+
+  /* 누르고 있는 것이 둘이다 — 포인터와 스페이스.
+     둘 중 하나라도 눌려 있으면 총알이 나간다. 따로 기억해야 섞이지 않는다. */
+  let holdPointer = false, holdKey = false;
+  function setFiring(){ firing = state === 'play' && (holdPointer || holdKey); }
+
+  // ── 포인터 — 누른 곳을 겨누고, 누르고 있으면 나간다 ──
+  function aimAt(e){
+    const b = cv.getBoundingClientRect();
+    const x = (e.clientX - b.left) / b.width * W;
+    const y = (e.clientY - b.top) / b.height * H;
+    const dx = x - CX, dy = y - CY;
+    if (Math.hypot(dx, dy) > 6) aim = Math.atan2(dy, dx);
+  }
+  cv.addEventListener('pointerdown', e => {
+    e.preventDefault();
+    if (state === 'ready' || state === 'over') { start(); return; }
+    if (state !== 'play') return;
+    aimAt(e);
+    holdPointer = true; cool = 0; setFiring();
+    try { cv.setPointerCapture(e.pointerId); } catch (err) {}
+  });
+  cv.addEventListener('pointermove', e => {
+    if (state !== 'play') return;
+    // 마우스는 올려두기만 해도 겨눈다. 손가락은 대고 있을 때만 움직인다
+    if (holdPointer || e.pointerType === 'mouse') aimAt(e);
+  });
+  for (const ev of ['pointerup','pointercancel','pointerleave'])
+    cv.addEventListener(ev, () => { holdPointer = false; setFiring(); });
+
+  // ── 자판 ────────────────────────────────────────────
+  const keys = {};
+  addEventListener('keydown', e => {
+    const k = e.key.toLowerCase();
+    if (['arrowleft','arrowright','arrowup','arrowdown',' '].includes(k)) e.preventDefault();
+    if (keys[k]) return;
+    keys[k] = true;
+    if (k === 'p') togglePause();
+    if ((k === ' ' || k === 'enter') && (state === 'ready' || state === 'over')) { start(); return; }
+    sync();
+  });
+  addEventListener('keyup', e => { keys[e.key.toLowerCase()] = false; sync(); });
+  function sync(){
+    const l = keys['arrowleft'] || keys['a'];
+    const r = keys['arrowright'] || keys['d'];
+    turn = l && !r ? -1 : r && !l ? 1 : 0;
+    holdKey = !!(keys[' '] || keys['enter']);
+    setFiring();
+  }
+
+  // ── 최고 기록 ───────────────────────────────────────
+  // 기기에만 남는다. 서버로 보내지 않는다.
+  const KEY = 'popBest';
+  async function saveBest(v){
+    try { await window.storage.set(KEY, String(v)); return; } catch (e) {}
+    try { localStorage.setItem(KEY, String(v)); } catch (e) {}
+  }
+  (async () => {
+    let raw = null;
+    try { const r = await window.storage.get(KEY); raw = r && r.value; } catch (e) {}
+    if (raw == null) { try { raw = localStorage.getItem(KEY); } catch (e) {} }
+    if (raw) { best = parseInt(raw, 10) || 0; hBest.textContent = best; }
+  })();
+
+  reset();
+  requestAnimationFrame(frame);
+})();
+  </script>
+</GameLayout>
