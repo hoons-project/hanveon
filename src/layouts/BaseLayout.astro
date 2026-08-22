@@ -1,11 +1,11 @@
 ---
 import '../styles/global.css';
-import { altPaths, HREFLANG, homePath, type Lang } from '../i18n';
+import { altPaths, HREFLANG, ogPath, type Lang } from '../i18n';
 import { ui } from '../i18n/ui';
 
 interface Props {
   lang: Lang;
-  /** 이 페이지가 대문인지 게임인지. hreflang 을 만드는 데 쓴다. */
+  /** 이 페이지가 대문인지 게임인지. hreflang 과 대표 그림을 만드는 데 쓴다. */
   kind: 'home' | 'game';
   /** 게임일 때만. */
   slug?: string;
@@ -13,17 +13,20 @@ interface Props {
   description?: string;
   /** 몸통 배경색. 쪽마다 다르다 (design/README.md 참고). */
   pageBg?: string;
+  /** 검색엔진에 주는 구조화 자료. 그대로 JSON 으로 박힌다. */
+  jsonLd?: unknown;
 }
 
-const { lang, kind, slug, title, description, pageBg } = Astro.props;
+const { lang, kind, slug, title, description, pageBg, jsonLd } = Astro.props;
 const t = ui(lang);
 
-const docTitle = title ?? 'Hanveon';
+const docTitle = title ?? t.homeTitle;
 const desc = description ?? t.metaDesc;
 
 /* 크롤러와 SNS는 상대 주소를 못 푼다. astro.config.mjs 의 site 에서 절대 주소를 만든다. */
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const alts = altPaths(kind, slug);
+const ogImage = new URL(ogPath(kind, lang, slug), Astro.site);
 ---
 <!doctype html>
 <html lang={HREFLANG[lang]}>
@@ -49,9 +52,22 @@ const alts = altPaths(kind, slug);
     <meta property="og:description" content={desc} />
     <meta property="og:url" content={canonical} />
     <meta property="og:locale" content={lang} />
-    <meta name="twitter:card" content="summary" />
+    {alts.filter((a) => a.lang !== lang).map((a) => (
+      <meta property="og:locale:alternate" content={a.lang} />
+    ))}
+
+    {/* 카톡·트위터에 링크를 붙이면 나오는 그림 */}
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={docTitle} />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={docTitle} />
     <meta name="twitter:description" content={desc} />
+    <meta name="twitter:image" content={ogImage} />
+
+    {/* 구조화 자료 — 구글에 「이건 게임이다」라고 알려주는 표시 */}
+    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
 
     {pageBg && <style set:html={`body{--page-bg:${pageBg}}`} />}
   </head>

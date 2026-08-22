@@ -3,6 +3,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Hub from '../../components/Hub.astro';
 import { SUB_LANGS, type Lang } from '../../i18n';
+import { homeJsonLd } from '../../seo';
 
 export function getStaticPaths() {
   return SUB_LANGS.map((lang) => ({ params: { lang } }));
@@ -11,6 +12,6 @@ export function getStaticPaths() {
 const lang = Astro.params.lang as Lang;
 ---
 
-<BaseLayout lang={lang} kind="home" pageBg="#BFE8FF">
+<BaseLayout lang={lang} kind="home" pageBg="#BFE8FF" jsonLd={homeJsonLd(lang, Astro.site!)}>
   <Hub lang={lang} />
 </BaseLayout>

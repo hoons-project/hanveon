@@ -13,6 +13,7 @@ import '../styles/game.css';
 import { homePath, type Lang } from '../i18n';
 import { ui } from '../i18n/ui';
 import { fullName, nameSep, type Game } from '../data/games';
+import { gameJsonLd } from '../seo';
 
 interface Props {
   lang: Lang;
@@ -27,7 +28,10 @@ const { lang, game, tag, help } = Astro.props;
 const t = ui(lang);
 const [name1, name2] = game.name[lang];
 const sep = nameSep(lang);
-const title = fullName(game, lang);
+
+/* 창 제목과 설명은 검색 결과에 그대로 나온다. 틀은 src/i18n/ui.ts 에 있다. */
+const title = t.gameTitle.replace('{name}', fullName(game, lang));
+const description = `${game.desc[lang]} ${t.gameDescTail}`;
 ---
 
 <BaseLayout
@@ -35,8 +39,9 @@ const title = fullName(game, lang);
   kind="game"
   slug={game.slug}
   title={title}
-  description={game.desc[lang]}
+  description={description}
   pageBg={game.pageBg}
+  jsonLd={gameJsonLd(game, lang, Astro.site!)}
 >
   <div class="cabinet game" style={`--accent:${game.accent}`}>
     <header>

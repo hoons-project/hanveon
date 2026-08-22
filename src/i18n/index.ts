@@ -46,6 +46,14 @@ export function gamePath(lang: Lang, slug: string): string {
 }
 
 /**
+ * 대표 그림 주소. 카톡·트위터에 링크를 붙일 때 나오는 1200×630 그림이다.
+ * 그림은 `scripts/make-og.mjs` 가 `public/og/` 에 만들어 둔다.
+ */
+export function ogPath(kind: 'home' | 'game', lang: Lang, slug?: string): string {
+  return kind === 'home' ? `/og/home-${lang}.png` : `/og/${slug}-${lang}.png`;
+}
+
+/**
  * 같은 페이지의 여섯 나라말 주소를 다 만든다.
  * `hreflang` 을 넣을 때 쓴다. `kind` 가 'home' 이면 대문, 아니면 게임.
  */

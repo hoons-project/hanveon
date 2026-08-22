@@ -7,9 +7,10 @@
 */
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hub from '../components/Hub.astro';
+import { homeJsonLd } from '../seo';
 ---
 
-<BaseLayout lang="en" kind="home" pageBg="#BFE8FF">
+<BaseLayout lang="en" kind="home" pageBg="#BFE8FF" jsonLd={homeJsonLd('en', Astro.site!)}>
   <Hub lang="en" />
 </BaseLayout>
 
