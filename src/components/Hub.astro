@@ -1,0 +1,39 @@
+---
+/* 대문 알맹이. 나라말만 바꿔서 여섯 번 쓰인다. */
+import LangPicker from './LangPicker.astro';
+import { GAMES, fullName } from '../data/games';
+import { gamePath, type Lang } from '../i18n';
+import { ui } from '../i18n/ui';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = ui(lang);
+---
+
+<div class="cabinet">
+  <header>
+    <div class="ttl">
+      <h1>Han<span>veon</span></h1>
+      <div class="tag">{t.tagline}</div>
+    </div>
+    <LangPicker lang={lang} kind="home" />
+  </header>
+
+  <div class="grid">
+    {
+      GAMES.map((g) => (
+        <a class="card" href={gamePath(lang, g.slug)} aria-label={`${fullName(g, lang)} — ${t.play}`}>
+          <span class="art" set:html={g.art} />
+          <span class="meta">
+            <b>{fullName(g, lang)}</b>
+            <span>{g.desc[lang]}</span>
+          </span>
+          <span class="go">{t.play}</span>
+        </a>
+      ))
+    }
+  </div>
+
+  <p class="more">{t.more}</p>
+  <p class="help">{t.footer}</p>
+</div>

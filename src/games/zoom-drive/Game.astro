@@ -1,222 +1,29 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Zoom Drive</title>
-<meta name="description" content="Dodge the traffic and grab the coins in this tiny browser game. No install, just play.">
-<meta name="theme-color" content="#FFF7EA">
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<style>
-  :root{
-    --mint:#8FD9A8;
-    --mint-deep:#6BC48A;
-    --road:#59637A;
-    --road-dark:#4B5468;
-    --dash:#FFF1C1;
-    --cream:#FFF7EA;
-    --ink:#2A3145;
-    --sun:#FFD23F;
-    --coral:#FF7A6B;
-    --sky:#BFE8FF;
-  }
+---
+/*
+  붕붕 드라이브.
 
-  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  전에는 이 게임이 `public/play/zoom-drive/index.html` 한 통짜 파일이었고,
+  그 안에서 나라말 여섯 개를 자바스크립트로 갈아 끼웠다.
+  이제는 나라말마다 페이지가 따로 나오므로, 글은 처음부터 박혀서 나온다.
+  그래서 `LANGS` `pickLang()` `apply()` 같은 것이 여기 없다.
+*/
+import GameLayout from '../../layouts/GameLayout.astro';
+import { findGame } from '../../data/games';
+import type { Lang } from '../../i18n';
+import { STR } from './strings';
 
-  body{
-    margin:0;
-    min-height:100vh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:16px;
-    background:
-      radial-gradient(circle at 12% 8%, #FFFFFF 0 3px, transparent 3px) 0 0/26px 26px,
-      var(--mint);
-    font-family:"Pretendard","Apple SD Gothic Neo","Noto Sans KR","Segoe UI",system-ui,sans-serif;
-    color:var(--ink);
-  }
+interface Props { lang: Lang }
+const { lang } = Astro.props;
 
-  .cabinet{
-    width:100%;
-    max-width:392px;
-    background:var(--cream);
-    border:4px solid var(--ink);
-    border-radius:28px;
-    box-shadow:8px 8px 0 var(--ink);
-    padding:14px;
-  }
+const game = findGame('zoom-drive')!;
+const T = STR[lang];
+---
 
-  header{
-    display:flex;
-    align-items:flex-start;
-    justify-content:space-between;
-    gap:10px;
-    padding:2px 4px 14px;
-  }
-  .ttl{min-width:0}
-  h1{margin:0 0 3px;font-size:22px;font-weight:900;letter-spacing:-0.03em;word-break:keep-all}
-  h1 span{color:var(--coral)}
-  .tag{font-size:12px;font-weight:700;color:#7A8296;letter-spacing:-0.01em;line-height:1.45}
-
-  .lang{
-    flex:none;
-    font-family:inherit;font-size:12px;font-weight:800;
-    color:var(--ink);background:#fff;
-    border:3px solid var(--ink);border-radius:12px;
-    padding:7px 8px;cursor:pointer;
-    box-shadow:0 3px 0 var(--ink);
-  }
-  .lang:focus-visible{outline:3px solid var(--coral);outline-offset:3px}
-
-  .hud{
-    display:grid;
-    grid-template-columns:1fr 1fr 1fr;
-    gap:8px;
-    margin-bottom:12px;
-  }
-  .hud div{
-    background:#fff;
-    border:3px solid var(--ink);
-    border-radius:14px;
-    padding:6px 8px 7px;
-    text-align:center;
-  }
-  .hud b{
-    display:block;
-    font-size:11px;
-    font-weight:800;
-    color:#7A8296;
-    letter-spacing:0.02em;
-  }
-  .hud i{
-    display:block;
-    font-style:normal;
-    font-size:19px;
-    font-weight:900;
-    font-variant-numeric:tabular-nums;
-    letter-spacing:-0.02em;
-  }
-
-  .stage{position:relative}
-  canvas{
-    display:block;
-    width:100%;
-    aspect-ratio:360/620;
-    border:4px solid var(--ink);
-    border-radius:20px;
-    background:var(--mint-deep);
-    touch-action:none;
-    cursor:pointer;
-  }
-
-  .screen{
-    position:absolute;
-    inset:0;
-    display:none;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    gap:10px;
-    padding:24px;
-    text-align:center;
-    border-radius:20px;
-    background:rgba(42,49,69,.62);
-    backdrop-filter:blur(2px);
-  }
-  .screen.on{display:flex}
-  .card{
-    width:100%;
-    max-width:250px;
-    background:var(--cream);
-    border:4px solid var(--ink);
-    border-radius:22px;
-    box-shadow:6px 6px 0 rgba(0,0,0,.28);
-    padding:20px 18px;
-  }
-  .card h2{
-    margin:0 0 6px;
-    font-size:26px;
-    font-weight:900;
-    letter-spacing:-0.04em;
-  }
-  .card p{
-    margin:0 0 14px;
-    font-size:13px;
-    line-height:1.55;
-    color:#5C6479;
-    font-weight:600;
-  }
-  .result{
-    display:flex;
-    justify-content:center;
-    gap:18px;
-    margin:2px 0 14px;
-  }
-  .result span{font-size:12px;font-weight:800;color:#7A8296;display:block}
-  .result strong{font-size:24px;font-weight:900;font-variant-numeric:tabular-nums}
-
-  button{
-    font-family:inherit;
-    font-weight:900;
-    font-size:16px;
-    letter-spacing:-0.02em;
-    color:var(--ink);
-    background:var(--sun);
-    border:3px solid var(--ink);
-    border-radius:14px;
-    padding:11px 22px;
-    cursor:pointer;
-    box-shadow:0 4px 0 var(--ink);
-    transition:transform .06s, box-shadow .06s;
-  }
-  button:active{transform:translateY(4px);box-shadow:0 0 0 var(--ink)}
-  button:focus-visible{outline:3px solid var(--coral);outline-offset:3px}
-
-  .pad{
-    display:flex;
-    gap:10px;
-    margin-top:12px;
-  }
-  .pad button{
-    flex:1;
-    background:#fff;
-    font-size:22px;
-    padding:12px 0;
-  }
-  .help{
-    margin:10px 2px 0;
-    font-size:12px;
-    line-height:1.6;
-    font-weight:600;
-    color:#7A8296;
-    text-align:center;
-  }
-
-  .backwrap{margin:12px 0 0;text-align:center}
-  .back{font-size:12px;font-weight:800;color:#7A8296;text-decoration:none}
-  .back:hover{color:var(--ink)}
-
-  @media (hover:hover){
-    .pad{display:none}
-  }
-</style>
-</head>
-<body>
-
-<div class="cabinet">
-  <header>
-    <div class="ttl">
-      <h1 id="gameName">Zoom <span>Drive</span></h1>
-      <div class="tag" data-i18n="tagline">Dodge cars, grab coins.</div>
-    </div>
-    <select id="lang" aria-label="Language" class="lang"></select>
-  </header>
-
+<GameLayout lang={lang} game={game} tag={T.tagline} help={T.help}>
   <div class="hud">
-    <div><b data-i18n="dist">Dist</b><i id="hDist">0</i></div>
-    <div><b data-i18n="coin">Coins</b><i id="hCoin">0</i></div>
-    <div><b data-i18n="best">Best</b><i id="hBest">0</i></div>
+    <div><b>{T.dist}</b><i id="hDist">0</i></div>
+    <div><b>{T.coin}</b><i id="hCoin">0</i></div>
+    <div><b>{T.best}</b><i id="hBest">0</i></div>
   </div>
 
   <div class="stage">
@@ -224,220 +31,44 @@
 
     <div class="screen on" id="scReady">
       <div class="card">
-        <h2 data-i18n="readyTitle">Ready?</h2>
-        <p data-i18n-html="readyBody">Dodge the oncoming cars<br>and grab coins to score points.</p>
-        <button id="btnStart" data-i18n="start">Start</button>
+        <h2>{T.readyTitle}</h2>
+        <p set:html={T.readyBody} />
+        <button id="btnStart">{T.start}</button>
       </div>
     </div>
 
     <div class="screen" id="scOver">
       <div class="card">
-        <h2 data-i18n="overTitle">Crash!</h2>
+        <h2>{T.overTitle}</h2>
         <div class="result">
-          <div><span data-i18n="dist">Dist</span><strong id="rDist">0</strong></div>
-          <div><span data-i18n="coin">Coins</span><strong id="rCoin">0</strong></div>
+          <div><span>{T.dist}</span><strong id="rDist">0</strong></div>
+          <div><span>{T.coin}</span><strong id="rCoin">0</strong></div>
         </div>
-        <button id="btnRetry" data-i18n="retry">Play Again</button>
+        <button id="btnRetry">{T.retry}</button>
       </div>
     </div>
 
     <div class="screen" id="scPause">
       <div class="card">
-        <h2 data-i18n="paused">Paused</h2>
-        <p data-i18n="pausedHint">Press P again to keep going.</p>
-        <button id="btnResume" data-i18n="resume">Resume</button>
+        <h2>{T.paused}</h2>
+        <p>{T.pausedHint}</p>
+        <button id="btnResume">{T.resume}</button>
       </div>
     </div>
   </div>
 
   <div class="pad">
-    <button id="padL" aria-label="Left">◀</button>
-    <button id="padR" aria-label="Right">▶</button>
+    <button id="padL" aria-label={T.padLeft}>◀</button>
+    <button id="padR" aria-label={T.padRight}>▶</button>
   </div>
 
-  <p class="help" data-i18n="help">Hold ← → · Tap left or right on screen · P to pause</p>
+  <style>
+    /* 이 게임만 쓰는 것 — 캔버스 바탕 풀색. 나머지는 src/styles/game.css 에 있다. */
+    canvas{ background:#6BC48A }
+  </style>
 
-  <p class="backwrap"><a class="back" id="back" href="/">‹ <span data-i18n="allGames">All games</span></a></p>
-</div>
-
-<script>
+  <script define:vars={{ T }}>
 (() => {
-  // ── 언어 ────────────────────────────────────────────
-  const LANGS = ['en','ko','ja','es','fr','zh'];
-  const LANG_NAME = {
-    en:'English', ko:'한국어', ja:'日本語',
-    es:'Español', fr:'Français', zh:'中文'
-  };
-
-  const STR = {
-    en: {
-      name1:'Zoom', name2:'Drive',
-      tagline:'Dodge cars, grab coins.',
-      dist:'Dist', coin:'Coins', best:'Best',
-      readyTitle:'Ready?',
-      readyBody:'Dodge the oncoming cars<br>and grab coins to score points.',
-      start:'Start',
-      overTitle:'Crash!',
-      retry:'Play Again',
-      paused:'Paused',
-      pausedHint:'Press P again to keep going.',
-      resume:'Resume',
-      padLeft:'Left', padRight:'Right',
-      help:'Hold ← → · Tap left or right on screen · P to pause',
-      allGames:'All games',
-      coinPop:'+{n}'
-    },
-    ko: {
-      name1:'붕붕', name2:'드라이브',
-      tagline:'차 피하고 동전 줍기',
-      dist:'거리', coin:'동전', best:'최고',
-      readyTitle:'준비됐나요?',
-      readyBody:'마주 오는 차를 피하고<br>동전을 주우면 점수가 올라가요.',
-      start:'시작',
-      overTitle:'쿵!',
-      retry:'다시 하기',
-      paused:'잠깐 멈춤',
-      pausedHint:'P 키를 다시 누르면 이어서 해요.',
-      resume:'이어 하기',
-      padLeft:'왼쪽으로', padRight:'오른쪽으로',
-      help:'← → 키 · 화면 왼쪽 오른쪽 누르기 · P 키로 멈춤',
-      allGames:'게임 목록',
-      coinPop:'+{n}'
-    },
-    ja: {
-      name1:'ブンブン', name2:'ドライブ',
-      tagline:'車をよけてコインを拾おう',
-      dist:'距離', coin:'コイン', best:'ベスト',
-      readyTitle:'準備はいい？',
-      readyBody:'対向車をよけながら<br>コインを拾うとスコアが上がるよ。',
-      start:'スタート',
-      overTitle:'ガシャン！',
-      retry:'もう一度',
-      paused:'一時停止',
-      pausedHint:'Pキーをもう一度押すと続きます。',
-      resume:'つづける',
-      padLeft:'左へ', padRight:'右へ',
-      help:'← → キーを押す · 画面の左右をタップ · Pで一時停止',
-      allGames:'ゲーム一覧',
-      coinPop:'+{n}'
-    },
-    es: {
-      name1:'Carrera', name2:'Vroom',
-      tagline:'Esquiva coches y junta monedas.',
-      dist:'Dist.', coin:'Monedas', best:'Récord',
-      readyTitle:'¿Listo?',
-      readyBody:'Esquiva los coches que vienen<br>y junta monedas para sumar puntos.',
-      start:'Empezar',
-      overTitle:'¡Choque!',
-      retry:'Otra vez',
-      paused:'En pausa',
-      pausedHint:'Pulsa P otra vez para seguir.',
-      resume:'Continuar',
-      padLeft:'Izquierda', padRight:'Derecha',
-      help:'Mantén ← → · Toca a los lados de la pantalla · P para pausar',
-      allGames:'Todos los juegos',
-      coinPop:'+{n}'
-    },
-    fr: {
-      name1:'Balade', name2:'Vroum',
-      tagline:'Évite les voitures et ramasse les pièces.',
-      dist:'Dist.', coin:'Pièces', best:'Record',
-      readyTitle:'Prêt ?',
-      readyBody:'Évite les voitures en face<br>et ramasse des pièces pour marquer des points.',
-      start:'Commencer',
-      overTitle:'Crash !',
-      retry:'Rejouer',
-      paused:'En pause',
-      pausedHint:'Appuie encore sur P pour continuer.',
-      resume:'Reprendre',
-      padLeft:'Gauche', padRight:'Droite',
-      help:"Maintiens ← → · Touche l'écran à gauche ou à droite · P pour pause",
-      allGames:'Tous les jeux',
-      coinPop:'+{n}'
-    },
-    zh: {
-      name1:'嗡嗡', name2:'兜风',
-      tagline:'躲避汽车，收集金币',
-      dist:'距离', coin:'金币', best:'最高',
-      readyTitle:'准备好了吗？',
-      readyBody:'躲开迎面而来的车<br>捡金币可以加分。',
-      start:'开始',
-      overTitle:'撞车了！',
-      retry:'再玩一次',
-      paused:'暂停',
-      pausedHint:'再按一次 P 继续。',
-      resume:'继续',
-      padLeft:'向左', padRight:'向右',
-      help:'按 ← → 键 · 点屏幕左右两边 · 按 P 暂停',
-      allGames:'全部游戏',
-      coinPop:'+{n}'
-    }
-  };
-
-  function pickLang(){
-    const q = new URLSearchParams(location.search).get('lang');
-    if (q && LANGS.includes(q)) return q;
-    try {
-      const saved = localStorage.getItem('arcadeLang');
-      if (saved && LANGS.includes(saved)) return saved;
-    } catch (e) {}
-    const want = navigator.languages || [navigator.language || 'en'];
-    for (const raw of want) {
-      const s = String(raw).toLowerCase();
-      for (const l of LANGS) if (s.startsWith(l)) return l;
-    }
-    return 'en';
-  }
-
-  let lang = pickLang();
-  function t(k){ return (STR[lang] && STR[lang][k]) || STR.en[k] || k; }
-
-  const sel = document.getElementById('lang');
-  for (const l of LANGS) {
-    const o = document.createElement('option');
-    o.value = l; o.textContent = LANG_NAME[l];
-    sel.appendChild(o);
-  }
-
-  const back = document.getElementById('back');
-  const padL = document.getElementById('padL');
-  const padR = document.getElementById('padR');
-
-  function esc(s){
-    return String(s).replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
-  }
-
-  function apply(){
-    document.documentElement.lang = lang;
-    sel.value = lang;
-
-    document.getElementById('gameName').innerHTML =
-      esc(t('name1')) + ' <span>' + esc(t('name2')) + '</span>';
-    document.title = t('name1') + ' ' + t('name2');
-
-    for (const el of document.querySelectorAll('[data-i18n]'))
-      el.textContent = t(el.dataset.i18n);
-    for (const el of document.querySelectorAll('[data-i18n-html]'))
-      el.innerHTML = t(el.dataset.i18nHtml);
-
-    padL.setAttribute('aria-label', t('padLeft'));
-    padR.setAttribute('aria-label', t('padRight'));
-
-    back.href = '/?lang=' + lang;
-  }
-
-  sel.addEventListener('change', () => {
-    lang = sel.value;
-    try { localStorage.setItem('arcadeLang', lang); } catch (e) {}
-    const u = new URL(location.href);
-    u.searchParams.set('lang', lang);
-    history.replaceState(null, '', u);
-    apply();
-  });
-
-  apply();
-
-  // ── 게임 ────────────────────────────────────────────
   const W = 360, H = 620;
   const cv = document.getElementById('game');
   const ctx = cv.getContext('2d');
@@ -491,17 +122,6 @@
     }
   }
   reset();
-
-  // ── 최고 기록 (저장 안 되면 이번 판만 기억) ──────────
-  (async () => {
-    try {
-      const r = await window.storage.get('best');
-      if (r && r.value) { best = parseInt(r.value, 10) || 0; hBest.textContent = best; }
-    } catch (e) { /* 저장소 없음 — 그냥 넘어감 */ }
-  })();
-  async function saveBest(v){
-    try { await window.storage.set('best', String(v)); } catch (e) {}
-  }
 
   // ── 그리기 도구 ────────────────────────────────────
   function rr(x, y, w, h, r){
@@ -715,7 +335,7 @@
         gems.splice(i, 1);
         coins++;
         puff(g.x, g.y, 5, C.sun);
-        popText(g.x, g.y - 6, t('coinPop').replace('{n}', 10));
+        popText(g.x, g.y - 6, T.coinPop.replace('{n}', 10));
       }
     }
 
@@ -847,7 +467,20 @@
     const r = cv.getBoundingClientRect();
     move(e.clientX - r.left < r.width / 2 ? -1 : 1);
   });
+
+  // ── 최고 기록 ───────────────────────────────────────
+  // 기기에만 남는다. 서버로 보내지 않는다.
+  const KEY = 'best';
+  async function saveBest(v){
+    try { await window.storage.set(KEY, String(v)); return; } catch (e) {}
+    try { localStorage.setItem(KEY, String(v)); } catch (e) {}
+  }
+  (async () => {
+    let raw = null;
+    try { const r = await window.storage.get(KEY); raw = r && r.value; } catch (e) {}
+    if (raw == null) { try { raw = localStorage.getItem(KEY); } catch (e) {} }
+    if (raw) { best = parseInt(raw, 10) || 0; hBest.textContent = best; }
+  })();
 })();
-</script>
-</body>
-</html>
+  </script>
+</GameLayout>

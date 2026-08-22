@@ -1,0 +1,43 @@
+---
+/*
+  나라말 고르는 칸.
+
+  전과 달라진 것 — 이제 **주소를 바꾼다.** 화면 글자만 갈아 끼우지 않는다.
+  그래야 구글이 나라말마다 다른 페이지로 본다.
+*/
+import { LANGS, LANG_NAME, homePath, gamePath, type Lang } from '../i18n';
+import { ui } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  kind: 'home' | 'game';
+  slug?: string;
+}
+const { lang, kind, slug } = Astro.props;
+const t = ui(lang);
+
+/* 고르면 갈 주소를 미리 다 만들어 둔다. */
+const options = LANGS.map((l) => ({
+  value: l,
+  name: LANG_NAME[l],
+  href: kind === 'home' ? homePath(l) : gamePath(l, slug!),
+}));
+---
+
+<select id="lang" class="lang" aria-label={t.langLabel}>
+  {options.map((o) => (
+    <option value={o.href} data-lang={o.value} selected={o.value === lang}>{o.name}</option>
+  ))}
+</select>
+
+<script>
+  const sel = document.getElementById('lang') as HTMLSelectElement | null;
+  if (sel) {
+    sel.addEventListener('change', () => {
+      const picked = sel.options[sel.selectedIndex];
+      /* 고른 나라말을 기억해 둔다. 다음에 `/` 로 들어오면 그쪽으로 보내준다. */
+      try { localStorage.setItem('hanveonLang', picked?.dataset.lang ?? 'en'); } catch (e) {}
+      location.href = sel.value;
+    });
+  }
+</script>

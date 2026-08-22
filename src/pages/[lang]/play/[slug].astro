@@ -1,0 +1,14 @@
+---
+/* 영어가 아닌 나라말 게임 쪽. 주소는 `/ko/play/<slug>/` 처럼 생겼다. */
+import { GAME_COMPONENTS, GAME_SLUGS } from '../../../games/registry';
+import { SUB_LANGS, type Lang } from '../../../i18n';
+
+export function getStaticPaths() {
+  return SUB_LANGS.flatMap((lang) => GAME_SLUGS.map((slug) => ({ params: { lang, slug } })));
+}
+
+const { lang, slug } = Astro.params;
+const Game = GAME_COMPONENTS[slug!];
+---
+
+<Game lang={lang as Lang} />

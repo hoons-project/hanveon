@@ -25,21 +25,32 @@ npm run build
 ## 어디에 뭐가 있나
 
 ```
-src/data/games.ts      게임 목록 — 여기만 고치면 대문과 사이트맵이 따라온다
-src/data/ui.ts         대문에 쓰는 글
-src/pages/index.astro  대문
-src/layouts/           겉틀 (제목·설명·canonical·OG)
-src/styles/global.css  캐비닛 생김새
-public/play/<이름>/     게임. 지금은 통짜 HTML (단계 3에서 Astro 부품으로 옮긴다)
-design/                생김새 기준과 새 게임 넣는 차례
-CLAUDE.md              이 저장소의 규칙
+src/i18n/index.ts        나라말 목록과 주소 만드는 함수
+src/i18n/ui.ts           사이트 전체에 쓰는 글
+src/data/games.ts        게임 목록 — 이름·설명·색·목록 그림
+src/games/<이름>/         게임 하나 (Game.astro + strings.ts)
+src/games/registry.ts    게임 폴더를 찾아 주소에 붙여 주는 명부
+src/pages/               주소 — 대문과 게임, 나라말별
+src/layouts/             겉틀 (BaseLayout = 머리말·hreflang, GameLayout = 캐비닛)
+src/components/          Hub(대문 알맹이), LangPicker(나라말 고르는 칸)
+src/styles/global.css    캐비닛 생김새
+src/styles/game.css      게임 쪽 공통 생김새
+design/                  생김새 기준과 새 게임 넣는 차례
+CLAUDE.md                이 저장소의 규칙
 ```
+
+## 주소
+
+| 주소 | 무엇 |
+|---|---|
+| `/` · `/play/<이름>/` | 영어 (주소에 나라말이 안 붙는다) |
+| `/ko/` · `/ko/play/<이름>/` | 한국말. `ja` `es` `fr` `zh` 도 같은 꼴 |
 
 ## 규칙 몇 가지
 
 - 로그인·서버·데이터베이스 없음. 최고 기록은 기기에만 남는다
-- 게임 하나는 파일 하나. 그 파일만 열어도 돌아가야 한다
 - 브랜드 이름 `Hanveon` 은 나라말마다 번역하지 않는다. 설명글만 번역한다
 - 영어가 기본 언어
+- 같은 것을 두 곳에 적지 않는다 (게임 이름은 `games.ts` 에만)
 
 자세한 것은 `CLAUDE.md` 와 `design/README.md`.

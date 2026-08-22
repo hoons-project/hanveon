@@ -1,42 +1,59 @@
 ---
 import '../styles/global.css';
-import { SITE_DESCRIPTION } from '../data/ui';
+import { altPaths, HREFLANG, homePath, type Lang } from '../i18n';
+import { ui } from '../i18n/ui';
 
 interface Props {
+  lang: Lang;
+  /** 이 페이지가 대문인지 게임인지. hreflang 을 만드는 데 쓴다. */
+  kind: 'home' | 'game';
+  /** 게임일 때만. */
+  slug?: string;
   title?: string;
   description?: string;
-  noindex?: boolean;
+  /** 몸통 배경색. 쪽마다 다르다 (design/README.md 참고). */
+  pageBg?: string;
 }
 
-const {
-  title = 'Hanveon',
-  description = SITE_DESCRIPTION,
-  noindex = false,
-} = Astro.props;
+const { lang, kind, slug, title, description, pageBg } = Astro.props;
+const t = ui(lang);
+
+const docTitle = title ?? 'Hanveon';
+const desc = description ?? t.metaDesc;
 
 /* 크롤러와 SNS는 상대 주소를 못 푼다. astro.config.mjs 의 site 에서 절대 주소를 만든다. */
 const canonical = new URL(Astro.url.pathname, Astro.site);
+const alts = altPaths(kind, slug);
 ---
 <!doctype html>
-<html lang="en">
+<html lang={HREFLANG[lang]}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="description" content={description} />
-    <title>{title}</title>
+    <meta name="description" content={desc} />
+    <title>{docTitle}</title>
     <link rel="canonical" href={canonical} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    {noindex && <meta name="robots" content="noindex, follow" />}
+
+    {/* 같은 페이지의 다른 나라말이 어디 있는지 검색엔진에 알려준다.
+        x-default 는 「어느 것도 안 맞으면 여기로」라는 뜻. 영어를 쓴다. */}
+    {alts.map((a) => (
+      <link rel="alternate" hreflang={HREFLANG[a.lang]} href={new URL(a.path, Astro.site)} />
+    ))}
+    <link rel="alternate" hreflang="x-default" href={new URL(alts[0]!.path, Astro.site)} />
 
     <meta name="theme-color" content="#FFF7EA" />
     <meta property="og:site_name" content="Hanveon" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
+    <meta property="og:title" content={docTitle} />
+    <meta property="og:description" content={desc} />
     <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content={lang} />
     <meta name="twitter:card" content="summary" />
-    <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
+    <meta name="twitter:title" content={docTitle} />
+    <meta name="twitter:description" content={desc} />
+
+    {pageBg && <style set:html={`body{--page-bg:${pageBg}}`} />}
   </head>
   <body>
     <slot />

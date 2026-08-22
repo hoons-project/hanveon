@@ -1,0 +1,18 @@
+---
+/*
+  영어 게임 쪽. 주소는 `/play/<slug>/` 다.
+
+  영어만 나라말이 주소에 안 붙는다. 이미 인터넷에 나가 있는 주소라
+  `/en/play/...` 로 옮기면 그동안 쌓인 것이 끊긴다.
+*/
+import { GAME_COMPONENTS, GAME_SLUGS } from '../../games/registry';
+
+export function getStaticPaths() {
+  return GAME_SLUGS.map((slug) => ({ params: { slug } }));
+}
+
+const { slug } = Astro.params;
+const Game = GAME_COMPONENTS[slug!];
+---
+
+<Game lang="en" />

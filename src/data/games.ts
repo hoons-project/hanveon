@@ -1,41 +1,54 @@
 // ─────────────────────────────────────────────────────────────
-//  게임 목록 — 여기 한 곳만 고치면 대문·사이트맵이 따라온다.
+//  게임 목록 — 여기 한 곳만 고치면 대문·게임 쪽·사이트맵이 따라온다.
 //  새 게임 넣는 차례는 design/new-game-checklist.md 를 따른다.
+//
+//  게임 안에서 쓰는 글(시작 화면·끝 화면·조작 안내)은 여기 없다.
+//  그건 `src/games/<slug>/strings.ts` 에 있다.
 // ─────────────────────────────────────────────────────────────
 
-export const LANGS = ['en', 'ko', 'ja', 'es', 'fr', 'zh'] as const;
-export type Lang = (typeof LANGS)[number];
+import type { Lang } from '../i18n';
 
-export const LANG_NAME: Record<Lang, string> = {
-  en: 'English',
-  ko: '한국어',
-  ja: '日本語',
-  es: 'Español',
-  fr: 'Français',
-  zh: '中文',
-};
+/** 이름 두 조각 사이를 띄우는 나라말. 일본말·중국말은 붙여 쓴다. */
+const SPACED: readonly Lang[] = ['en', 'ko', 'es', 'fr'];
 
 export type Game = {
   /** 주소에 쓰는 이름. 게임은 /play/<slug>/ 에 놓인다. */
   slug: string;
-  /** 나라말별 게임 이름. 두 낱말이면 띄어쓰기로 붙여 쓴다. */
-  name: Record<Lang, string>;
+  /** 나라말별 게임 이름 두 조각. 뒤 조각에 색이 들어간다. */
+  name: Record<Lang, [string, string]>;
   /** 목록에 보이는 한 줄 설명. */
   desc: Record<Lang, string>;
+  /** 이름 뒤 조각과 초점 테두리에 쓰는 색. */
+  accent: string;
+  /** 게임 쪽 몸통 배경색. */
+  pageBg: string;
   /** 목록 그림. 66×66 안에 들어가는 SVG. */
   art: string;
 };
 
+/** 이름 두 조각 사이에 들어가는 것. 띄어쓰기 아니면 아무것도 아니다. */
+export function nameSep(lang: Lang): string {
+  return SPACED.includes(lang) ? ' ' : '';
+}
+
+/** 두 조각을 이어 붙인 게임 이름. 대문 목록과 페이지 제목에 쓴다. */
+export function fullName(g: Game, lang: Lang): string {
+  const [a, b] = g.name[lang];
+  return a + nameSep(lang) + b;
+}
+
 export const GAMES: Game[] = [
   {
     slug: 'hoppy-jump',
+    accent: '#7FD8C8',
+    pageBg: '#BFE8FF',
     name: {
-      en: 'Hoppy Jump',
-      ko: '폴짝 점프',
-      ja: 'ぴょんジャンプ',
-      es: 'Salto Saltarín',
-      fr: 'Saut Sautillant',
-      zh: '蹦蹦跳跳',
+      en: ['Hoppy', 'Jump'],
+      ko: ['폴짝', '점프'],
+      ja: ['ぴょん', 'ジャンプ'],
+      es: ['Salto', 'Saltarín'],
+      fr: ['Saut', 'Sautillant'],
+      zh: ['蹦蹦', '跳跳'],
     },
     desc: {
       en: 'Bounce up the platforms. Just steer left and right.',
@@ -56,13 +69,15 @@ export const GAMES: Game[] = [
   },
   {
     slug: 'zoom-drive',
+    accent: '#FF7A6B',
+    pageBg: '#8FD9A8',
     name: {
-      en: 'Zoom Drive',
-      ko: '붕붕 드라이브',
-      ja: 'ブンブンドライブ',
-      es: 'Carrera Vroom',
-      fr: 'Balade Vroum',
-      zh: '嗡嗡兜风',
+      en: ['Zoom', 'Drive'],
+      ko: ['붕붕', '드라이브'],
+      ja: ['ブンブン', 'ドライブ'],
+      es: ['Carrera', 'Vroom'],
+      fr: ['Balade', 'Vroum'],
+      zh: ['嗡嗡', '兜风'],
     },
     desc: {
       en: 'Dodge the traffic and grab the coins.',
@@ -83,13 +98,15 @@ export const GAMES: Game[] = [
   },
   {
     slug: 'merge-fruit',
+    accent: '#FF7A6B',
+    pageBg: '#FFD9B8',
     name: {
-      en: 'Merge Fruit',
-      ko: '몽글 과일',
-      ja: 'もぐもぐフルーツ',
-      es: 'Fusión Frutal',
-      fr: 'Fusion Fruitée',
-      zh: '圆滚水果',
+      en: ['Merge', 'Fruit'],
+      ko: ['몽글', '과일'],
+      ja: ['もぐもぐ', 'フルーツ'],
+      es: ['Fusión', 'Frutal'],
+      fr: ['Fusion', 'Fruitée'],
+      zh: ['圆滚', '水果'],
     },
     desc: {
       en: 'Drop fruit. Two of a kind become one bigger one.',
@@ -108,13 +125,15 @@ export const GAMES: Game[] = [
   },
   {
     slug: 'zippy-plane',
+    accent: '#7FB8FF',
+    pageBg: '#C9C4F2',
     name: {
-      en: 'Zippy Plane',
-      ko: '슝슝 비행기',
-      ja: 'シュンひこうき',
-      es: 'Avión Veloz',
-      fr: 'Avion Filant',
-      zh: '咻咻飞机',
+      en: ['Zippy', 'Plane'],
+      ko: ['슝슝', '비행기'],
+      ja: ['シュン', 'ひこうき'],
+      es: ['Avión', 'Veloz'],
+      fr: ['Avion', 'Filant'],
+      zh: ['咻咻', '飞机'],
     },
     desc: {
       en: 'It fires by itself. All you do is dodge.',
@@ -133,3 +152,8 @@ export const GAMES: Game[] = [
       <ellipse cx="30" cy="35" rx="3.2" ry="3.8" fill="#8FD3FF" stroke="#2A3145" stroke-width="2"/></svg>`,
   },
 ];
+
+/** 주소 조각으로 게임을 찾는다. 없으면 undefined. */
+export function findGame(slug: string): Game | undefined {
+  return GAMES.find((g) => g.slug === slug);
+}

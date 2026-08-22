@@ -1,0 +1,232 @@
+// 슝슝 비행기 안에서 쓰는 글.
+// 게임 이름은 여기 없다 — `src/data/games.ts` 에 있다.
+
+import type { Lang } from '../../i18n';
+
+/** 총 종류 넷. */
+type Gun = 'basic' | 'spread' | 'laser' | 'homing';
+
+export type S = {
+  tagline: string;
+  score: string;
+  life: string;
+  best: string;
+  readyTitle: string;
+  readyBody: string;
+  legend1: string;
+  legend2: string;
+  legend3: string;
+  legend4: string;
+  start: string;
+  overTitle: string;
+  timeLabel: string;
+  secs: string;
+  retry: string;
+  paused: string;
+  pausedHint: string;
+  resume: string;
+  padBomb: string;
+  help: string;
+  /** 총 이름 — 주울 때 뜨는 글과 화면 아래 표시에 쓴다. */
+  gunName: Record<Gun, string>;
+  /** 알 위에 찍히는 한 글자. */
+  gunMark: Record<Gun, string>;
+  bombMark: string;
+  gunLevel: string;
+  bombs: string;
+  bombsNone: string;
+  bombBang: string;
+  bossPop: string;
+  levelUp: string;
+  lifePop: string;
+  bombPickup: string;
+};
+
+export const STR: Record<Lang, S> = {
+  en: {
+    tagline: 'Fires by itself. Just dodge.',
+    score: 'Score', life: 'Life', best: 'Best',
+    readyTitle: 'Take Off!',
+    readyBody: 'It shoots by itself.<br>Just dodge and blast enemies.',
+    legend1: 'Powers up your gun',
+    legend2: 'Changes your weapon',
+    legend3: 'One extra life',
+    legend4: 'A bomb — clears the screen',
+    start: 'Start',
+    overTitle: 'Shot Down!',
+    timeLabel: 'Time',
+    secs: '{n}s',
+    retry: 'Play Again',
+    paused: 'Paused',
+    pausedHint: 'Press P again to keep going.',
+    resume: 'Resume',
+    padBomb: 'Use Bomb',
+    help: 'Drag to move · Gun fires by itself<br>← → ↑ ↓ also move · Space bomb · P pause',
+    gunName: { basic: 'Basic', spread: 'Spread', laser: 'Laser', homing: 'Homing' },
+    gunMark: { basic: 'B', spread: 'S', laser: 'L', homing: 'H' },
+    bombMark: 'B',
+    gunLevel: '{gun} lv.{n}',
+    bombs: 'Bombs {dots}',
+    bombsNone: 'No bombs',
+    bombBang: 'Boom!',
+    bossPop: 'Boss!',
+    levelUp: 'Lv.{n}',
+    lifePop: 'Life +1',
+    bombPickup: 'Bomb +1',
+  },
+  ko: {
+    tagline: '알아서 쏴요. 피하기만 하면 돼요',
+    score: '점수', life: '목숨', best: '최고',
+    readyTitle: '하늘 위로',
+    readyBody: '총은 알아서 나가요.<br>피하면서 적을 없애면 돼요.',
+    legend1: '총이 한 단계 세져요',
+    legend2: '총 종류가 바뀌어요',
+    legend3: '목숨 하나',
+    legend4: '폭탄 하나 — 화면을 싹 쓸어요',
+    start: '시작',
+    overTitle: '격추당했다!',
+    timeLabel: '버틴 시간',
+    secs: '{n}초',
+    retry: '다시 하기',
+    paused: '잠깐 멈춤',
+    pausedHint: 'P 키를 다시 누르면 이어서 해요.',
+    resume: '이어 하기',
+    padBomb: '폭탄 터뜨리기',
+    help: '화면을 끌어서 움직여요 · 총은 알아서 나가요<br>← → ↑ ↓ 로도 움직여요 · 스페이스 폭탄 · P 멈춤',
+    gunName: { basic: '기본총', spread: '퍼지는총', laser: '레이저', homing: '유도탄' },
+    gunMark: { basic: '기', spread: '퍼', laser: '레', homing: '유' },
+    bombMark: '폭',
+    gunLevel: '{gun} {n}단계',
+    bombs: '폭탄 {dots}',
+    bombsNone: '폭탄 없음',
+    bombBang: '펑!',
+    bossPop: '대장이다!',
+    levelUp: '{n}단계',
+    lifePop: '목숨 +1',
+    bombPickup: '폭탄 +1',
+  },
+  ja: {
+    tagline: '弾は自動発射。よけるだけ。',
+    score: 'スコア', life: 'ライフ', best: 'ベスト',
+    readyTitle: '大空へ！',
+    readyBody: '弾は自動で出ます。<br>よけながら敵を倒そう。',
+    legend1: '弾が強くなる',
+    legend2: '武器が変わる',
+    legend3: 'ライフが1つ増える',
+    legend4: '爆弾——画面を一掃',
+    start: 'スタート',
+    overTitle: '撃墜された！',
+    timeLabel: '生存時間',
+    secs: '{n}秒',
+    retry: 'もう一度',
+    paused: '一時停止',
+    pausedHint: 'Pキーをもう一度押すと続きます。',
+    resume: 'つづける',
+    padBomb: '爆弾を使う',
+    help: '画面をドラッグして移動・弾は自動発射<br>← → ↑ ↓ でも移動・スペースで爆弾・Pで一時停止',
+    gunName: { basic: 'ノーマル', spread: '拡散', laser: 'レーザー', homing: '誘導' },
+    gunMark: { basic: 'ノ', spread: '拡', laser: 'レ', homing: '誘' },
+    bombMark: '爆',
+    gunLevel: '{gun} Lv.{n}',
+    bombs: '爆弾 {dots}',
+    bombsNone: '爆弾なし',
+    bombBang: 'ドン！',
+    bossPop: 'ボス登場！',
+    levelUp: 'Lv.{n}',
+    lifePop: 'ライフ+1',
+    bombPickup: '爆弾+1',
+  },
+  es: {
+    tagline: 'Dispara sola. Solo esquiva.',
+    score: 'Puntos', life: 'Vida', best: 'Récord',
+    readyTitle: '¡Al aire!',
+    readyBody: 'Dispara solo.<br>Esquiva y derriba enemigos.',
+    legend1: 'Mejora tu arma',
+    legend2: 'Cambia de arma',
+    legend3: 'Una vida extra',
+    legend4: 'Una bomba: limpia la pantalla',
+    start: 'Empezar',
+    overTitle: '¡Te derribaron!',
+    timeLabel: 'Tiempo',
+    secs: '{n} s',
+    retry: 'Otra vez',
+    paused: 'En pausa',
+    pausedHint: 'Pulsa P otra vez para seguir.',
+    resume: 'Continuar',
+    padBomb: 'Usar bomba',
+    help: 'Arrastra para moverte · El arma dispara sola<br>← → ↑ ↓ también mueven · Espacio bomba · P pausa',
+    gunName: { basic: 'Básica', spread: 'Dispersión', laser: 'Láser', homing: 'Guiado' },
+    gunMark: { basic: 'B', spread: 'D', laser: 'L', homing: 'G' },
+    bombMark: 'B',
+    gunLevel: '{gun} niv.{n}',
+    bombs: 'Bombas {dots}',
+    bombsNone: 'Sin bombas',
+    bombBang: '¡Bum!',
+    bossPop: '¡Jefe!',
+    levelUp: 'Niv.{n}',
+    lifePop: 'Vida +1',
+    bombPickup: 'Bomba +1',
+  },
+  fr: {
+    tagline: 'Il tire tout seul. Esquive.',
+    score: 'Score', life: 'Vie', best: 'Record',
+    readyTitle: 'Envol !',
+    readyBody: 'Il tire tout seul.<br>Esquive et abats les ennemis.',
+    legend1: 'Améliore ton arme',
+    legend2: "Change d'arme",
+    legend3: 'Une vie de plus',
+    legend4: "Une bombe : nettoie l'écran",
+    start: 'Commencer',
+    overTitle: 'Abattu !',
+    timeLabel: 'Temps',
+    secs: '{n} s',
+    retry: 'Rejouer',
+    paused: 'En pause',
+    pausedHint: 'Appuie encore sur P pour continuer.',
+    resume: 'Reprendre',
+    padBomb: 'Utiliser bombe',
+    help: 'Glisse pour te déplacer · Le tir est automatique<br>← → ↑ ↓ déplacent aussi · Espace bombe · P pause',
+    gunName: { basic: 'Basique', spread: 'Dispersion', laser: 'Laser', homing: 'Guidé' },
+    gunMark: { basic: 'B', spread: 'D', laser: 'L', homing: 'G' },
+    bombMark: 'B',
+    gunLevel: '{gun} niv.{n}',
+    bombs: 'Bombes {dots}',
+    bombsNone: 'Pas de bombes',
+    bombBang: 'Boum !',
+    bossPop: 'Boss !',
+    levelUp: 'Niv.{n}',
+    lifePop: 'Vie +1',
+    bombPickup: 'Bombe +1',
+  },
+  zh: {
+    tagline: '自动开火，只要躲避就好。',
+    score: '分数', life: '生命', best: '最高',
+    readyTitle: '起飞吧!',
+    readyBody: '子弹会自动发射。<br>躲避的同时消灭敌人。',
+    legend1: '武器升级',
+    legend2: '更换武器',
+    legend3: '多一条命',
+    legend4: '一颗炸弹——清空画面',
+    start: '开始',
+    overTitle: '被击落了!',
+    timeLabel: '存活时间',
+    secs: '{n}秒',
+    retry: '再玩一次',
+    paused: '暂停',
+    pausedHint: '再按一次 P 继续。',
+    resume: '继续',
+    padBomb: '使用炸弹',
+    help: '拖动屏幕移动·子弹自动发射<br>← → ↑ ↓ 也能移动·空格键炸弹·P 暂停',
+    gunName: { basic: '普通', spread: '散射', laser: '激光', homing: '追踪' },
+    gunMark: { basic: '普', spread: '散', laser: '激', homing: '追' },
+    bombMark: '炸',
+    gunLevel: '{gun} {n}级',
+    bombs: '炸弹 {dots}',
+    bombsNone: '没有炸弹',
+    bombBang: '砰！',
+    bossPop: '老大来了!',
+    levelUp: '{n}级',
+    lifePop: '生命+1',
+    bombPickup: '炸弹+1',
+  },
+};

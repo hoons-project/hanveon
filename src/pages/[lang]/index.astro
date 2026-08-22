@@ -1,0 +1,16 @@
+---
+/* 영어가 아닌 나라말 대문. 주소는 `/ko/` 처럼 나라말이 앞에 붙는다. */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hub from '../../components/Hub.astro';
+import { SUB_LANGS, type Lang } from '../../i18n';
+
+export function getStaticPaths() {
+  return SUB_LANGS.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Lang;
+---
+
+<BaseLayout lang={lang} kind="home" pageBg="#BFE8FF">
+  <Hub lang={lang} />
+</BaseLayout>

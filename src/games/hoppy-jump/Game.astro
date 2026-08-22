@@ -1,0 +1,544 @@
+---
+/*
+  폴짝 점프.
+
+  전에는 이 게임이 `public/play/hoppy-jump/index.html` 한 통짜 파일이었고,
+  그 안에서 나라말 여섯 개를 자바스크립트로 갈아 끼웠다.
+  이제는 나라말마다 페이지가 따로 나오므로, 글은 처음부터 박혀서 나온다.
+  그래서 `LANGS` `pickLang()` `apply()` 같은 것이 여기 없다.
+*/
+import GameLayout from '../../layouts/GameLayout.astro';
+import { findGame } from '../../data/games';
+import type { Lang } from '../../i18n';
+import { STR } from './strings';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+
+const game = findGame('hoppy-jump')!;
+const T = STR[lang];
+---
+
+<GameLayout lang={lang} game={game} tag={T.tagline} help={T.help}>
+  <div class="hud">
+    <div><b>{T.height}</b><i id="hHeight">0</i></div>
+    <div><b>{T.star}</b><i id="hStar">0</i></div>
+    <div><b>{T.best}</b><i id="hBest">0</i></div>
+  </div>
+
+  <div class="stage">
+    <canvas id="game"></canvas>
+
+    <div class="screen on" id="scReady">
+      <div class="card">
+        <h2>{T.readyTitle}</h2>
+        <p set:html={T.readyBody} />
+        <div class="legend">
+          <div><i class="chip bar" style="background:#7FD8C8"></i><span>{T.legend1}</span></div>
+          <div><i class="chip bar" style="background:#7FB8FF"></i><span>{T.legend2}</span></div>
+          <div><i class="chip bar" style="background:#FF9ECF"></i><span>{T.legend3}</span></div>
+          <div><i class="chip bar" style="background:#FFD23F"></i><span>{T.legend4}</span></div>
+        </div>
+        <button id="btnStart">{T.start}</button>
+      </div>
+    </div>
+
+    <div class="screen" id="scOver">
+      <div class="card">
+        <h2>{T.overTitle}</h2>
+        <div class="result">
+          <div><span>{T.height}</span><strong id="rHeight">0</strong></div>
+          <div><span>{T.star}</span><strong id="rStar">0</strong></div>
+        </div>
+        <button id="btnRetry">{T.retry}</button>
+      </div>
+    </div>
+
+    <div class="screen" id="scPause">
+      <div class="card">
+        <h2>{T.paused}</h2>
+        <p>{T.pausedHint}</p>
+        <button id="btnResume">{T.resume}</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="pad">
+    <button id="padL" aria-label={T.padLeft}>◀</button>
+    <button id="padR" aria-label={T.padRight}>▶</button>
+  </div>
+
+  <style>
+    /* 이 게임만 쓰는 것 — 캔버스 바탕 하늘색. 나머지는 src/styles/game.css 에 있다. */
+    canvas{ background:#BFE8FF }
+  </style>
+
+  <script define:vars={{ T }}>
+(() => {
+  const W = 360, H = 620;
+  const cv = document.getElementById('game');
+  const ctx = cv.getContext('2d');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function fit(){
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    cv.width = W * dpr; cv.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  fit();
+  addEventListener('resize', fit);
+
+  const INK = '#2A3145';
+  const COL = {
+    basic:'#7FD8C8', move:'#7FB8FF', crack:'#FF9ECF',
+    spring:'#FFD23F', body:'#FFF7EA', belly:'#FFD9A8'
+  };
+
+  // 하늘 색 — 높이 올라갈수록 낮 → 노을 → 밤
+  const SKY = [
+    { at:0,    top:'#8FD3FF', bot:'#DFF3FF' },
+    { at:1600, top:'#FFB07C', bot:'#FFE3C2' },
+    { at:3600, top:'#1F2547', bot:'#4A4E86' }
+  ];
+
+  const GRAV = 1900, JUMP = -720, SPRING = -1180;
+  const MOVE_A = 2200, MOVE_MAX = 300, FRICT = .86;
+  const PW = 21, PH = 22;      // 몸 반지름
+  const PLAT_W = 68, PLAT_H = 15;
+
+  let state = 'ready';
+  let px, py, vx, vy, prevBottom;
+  let plats, stars, parts, clouds, twinkle;
+  let height, starCount, gapBase, topY, land;
+  let best = 0;
+
+  function reset(){
+    px = W/2; py = H - 160; vx = 0; vy = 0; prevBottom = py + PH;
+    plats = []; stars = []; parts = [];
+    height = 0; starCount = 0; gapBase = 62; topY = H - 90;
+    land = 0;
+
+    plats.push({ x: W/2 - PLAT_W/2, y: H - 90, w: PLAT_W, type:'basic', spring:false, dead:false, press:0, vx:0 });
+    while (topY > -40) addPlat();
+
+    clouds = [];
+    for (let i = 0; i < 7; i++)
+      clouds.push({ x: Math.random()*W, y: Math.random()*H, s: .6 + Math.random()*.7 });
+
+    twinkle = [];
+    for (let i = 0; i < 40; i++)
+      twinkle.push({ x: Math.random()*W, y: Math.random()*H, r: .8 + Math.random()*1.6, p: Math.random()*6 });
+  }
+
+  function addPlat(){
+    const gap = gapBase + Math.random()*24;
+    topY -= gap;
+
+    let type = 'basic';
+    if (height > 350) {
+      const r = Math.random();
+      if (r < .18 + Math.min(.12, height/26000)) type = 'move';
+      else if (r < .34 + Math.min(.14, height/22000)) type = 'crack';
+    }
+    const spring = type !== 'crack' && Math.random() < .07;
+    const x = 14 + Math.random() * (W - PLAT_W - 28);
+
+    plats.push({
+      x, y: topY, w: PLAT_W, type, spring, dead:false, press:0,
+      vx: type === 'move' ? (Math.random() < .5 ? -1 : 1) * (55 + Math.random()*45) : 0
+    });
+
+    if (Math.random() < .1) stars.push({ x: x + PLAT_W/2, y: topY - 40, t: Math.random()*6, got:false });
+  }
+
+  // ── 그리기 도구 ─────────────────────────────────────
+  function rr(x, y, w, h, r){
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x+w, y, x+w, y+h, r);
+    ctx.arcTo(x+w, y+h, x, y+h, r);
+    ctx.arcTo(x, y+h, x, y, r);
+    ctx.arcTo(x, y, x+w, y, r);
+    ctx.closePath();
+  }
+  function fs(fill, lw){
+    ctx.fillStyle = fill; ctx.fill();
+    ctx.lineWidth = lw || 3; ctx.strokeStyle = INK; ctx.stroke();
+  }
+  function hex(h){ return [parseInt(h.slice(1,3),16), parseInt(h.slice(3,5),16), parseInt(h.slice(5,7),16)]; }
+  function mix(a, b, t){
+    const A = hex(a), B = hex(b);
+    return `rgb(${Math.round(A[0]+(B[0]-A[0])*t)},${Math.round(A[1]+(B[1]-A[1])*t)},${Math.round(A[2]+(B[2]-A[2])*t)})`;
+  }
+  function skyAt(h){
+    let i = 0;
+    while (i < SKY.length - 2 && h > SKY[i+1].at) i++;
+    const a = SKY[i], b = SKY[i+1];
+    const t = Math.max(0, Math.min(1, (h - a.at) / (b.at - a.at)));
+    return { top: mix(a.top, b.top, t), bot: mix(a.bot, b.bot, t), night: h > SKY[1].at ? Math.min(1, (h - SKY[1].at)/2000) : 0 };
+  }
+
+  function drawPlat(p){
+    if (p.dead) return;
+    const y = p.y + p.press;
+
+    if (p.spring) {
+      const cx = p.x + p.w/2, sh = 14 - p.press*.8;
+      ctx.lineWidth = 3.5; ctx.strokeStyle = INK;
+      ctx.beginPath();
+      for (let i = 0; i <= 3; i++) ctx.lineTo(cx + (i%2 ? 7 : -7), y - sh + i*(sh/3));
+      ctx.stroke();
+      rr(cx - 11, y - sh - 7, 22, 8, 3); fs(COL.spring, 3);
+    }
+
+    ctx.globalAlpha = .18;
+    ctx.fillStyle = '#1B2030';
+    rr(p.x + 3, y + 5, p.w, PLAT_H, 7); ctx.fill();
+    ctx.globalAlpha = 1;
+
+    rr(p.x, y, p.w, PLAT_H, 7);
+    fs(COL[p.type], 3.5);
+
+    ctx.globalAlpha = .5;
+    rr(p.x + 7, y + 3.5, p.w - 14, 4, 2);
+    ctx.fillStyle = '#fff'; ctx.fill();
+    ctx.globalAlpha = 1;
+
+    if (p.type === 'crack') {
+      ctx.lineWidth = 2.4; ctx.strokeStyle = 'rgba(42,49,69,.55)';
+      ctx.beginPath();
+      ctx.moveTo(p.x + 24, y); ctx.lineTo(p.x + 30, y + PLAT_H);
+      ctx.moveTo(p.x + 44, y + PLAT_H); ctx.lineTo(p.x + 38, y);
+      ctx.stroke();
+    }
+  }
+
+  function drawHero(){
+    const st = Math.max(-.22, Math.min(.28, vy * .00028));
+    const sy = 1 + st, sx = 1 - st * .8;
+    ctx.save();
+    ctx.translate(px, py);
+    ctx.scale(sx, sy);
+
+    ctx.globalAlpha = .16; ctx.fillStyle = '#1B2030';
+    ctx.beginPath(); ctx.ellipse(3, 6, PW, PH, 0, 0, 6.284); ctx.fill();
+    ctx.globalAlpha = 1;
+
+    // 귀
+    for (const s of [-1, 1]) {
+      ctx.save();
+      ctx.translate(s * 9, -PH + 3);
+      ctx.rotate(s * .28);
+      rr(-5, -17, 10, 22, 5); fs(COL.body, 3);
+      ctx.restore();
+    }
+
+    // 몸
+    ctx.beginPath(); ctx.ellipse(0, 0, PW, PH, 0, 0, 6.284);
+    fs(COL.body, 3.5);
+
+    // 배
+    ctx.beginPath(); ctx.ellipse(0, 6, 11, 10, 0, 0, 6.284);
+    ctx.fillStyle = COL.belly; ctx.fill();
+
+    // 눈
+    const look = Math.max(-1, Math.min(1, vx / 220));
+    for (const ex of [-7.5, 7.5]) {
+      ctx.beginPath(); ctx.arc(ex + look*1.8, -4, 3.4, 0, 6.284);
+      ctx.fillStyle = INK; ctx.fill();
+    }
+    // 입
+    ctx.lineWidth = 2.2; ctx.strokeStyle = INK;
+    ctx.beginPath();
+    if (vy < -180) { ctx.arc(0, 3, 4.5, .2, Math.PI - .2); }
+    else { ctx.moveTo(-3.5, 5); ctx.quadraticCurveTo(0, 7.5, 3.5, 5); }
+    ctx.stroke();
+
+    // 볼
+    ctx.globalAlpha = .55; ctx.fillStyle = '#FF9EA8';
+    ctx.beginPath(); ctx.arc(-13, 2, 3.6, 0, 6.284); ctx.fill();
+    ctx.beginPath(); ctx.arc(13, 2, 3.6, 0, 6.284); ctx.fill();
+    ctx.globalAlpha = 1;
+
+    ctx.restore();
+  }
+
+  function puff(x, y, n, c){
+    for (let i = 0; i < n; i++)
+      parts.push({ x, y, vx:(Math.random()-.5)*180, vy:(Math.random()-.5)*90 - 20,
+                   r: 3 + Math.random()*7, life:.4 + Math.random()*.4, max:.8, c });
+  }
+  function popText(x, y, txt){
+    parts.push({ x, y, vx:0, vy:-70, txt, life:.8, max:.8 });
+  }
+
+  // ── 조작 상태 ───────────────────────────────────────
+  let hold = 0;
+
+  function bounce(power){
+    vy = power;
+    land = 1;
+    if (!reduce) puff(px, py + PH - 2, power === SPRING ? 9 : 5, '#FFFFFF');
+  }
+
+  // ── 업데이트 ────────────────────────────────────────
+  function update(dt){
+    for (let i = parts.length - 1; i >= 0; i--) {
+      const p = parts[i];
+      p.life -= dt; p.x += p.vx*dt; p.y += p.vy*dt; p.vx *= .93; p.vy *= .93;
+      if (p.life <= 0) parts.splice(i, 1);
+    }
+    land *= Math.pow(.02, dt);
+
+    if (state !== 'play') {
+      for (const c of clouds) { c.x += 6 * dt * c.s; if (c.x > W + 40) c.x = -40; }
+      return;
+    }
+
+    // 좌우
+    if (hold) vx += hold * MOVE_A * dt;
+    else vx *= Math.pow(FRICT, dt * 60);
+    vx = Math.max(-MOVE_MAX, Math.min(MOVE_MAX, vx));
+    px += vx * dt;
+    if (px < -PW) px = W + PW;
+    if (px > W + PW) px = -PW;
+
+    // 위아래
+    prevBottom = py + PH;
+    vy += GRAV * dt;
+    py += vy * dt;
+    const bottom = py + PH;
+
+    // 발판
+    for (const p of plats) {
+      if (p.vx) {
+        p.x += p.vx * dt;
+        if (p.x < 12) { p.x = 12; p.vx *= -1; }
+        if (p.x + p.w > W - 12) { p.x = W - 12 - p.w; p.vx *= -1; }
+      }
+      p.press *= Math.pow(.001, dt);
+      if (p.dead) { p.y += (p.fall += GRAV*dt*.5) * dt; continue; }
+
+      if (vy > 0 && prevBottom <= p.y + 6 && bottom >= p.y &&
+          px + PW*.7 > p.x && px - PW*.7 < p.x + p.w) {
+        py = p.y - PH;
+        p.press = p.spring ? 7 : 4;
+        if (p.spring) { bounce(SPRING); popText(px, py - 30, T.whoosh); }
+        else bounce(JUMP);
+        if (p.type === 'crack') {
+          p.dead = true; p.fall = 0;
+          puff(p.x + p.w/2, p.y + 6, 7, COL.crack);
+        }
+      }
+    }
+
+    // 별
+    for (const s of stars) {
+      s.t += dt * 3;
+      if (!s.got && Math.abs(s.x - px) < 26 && Math.abs(s.y - py) < 28) {
+        s.got = true; starCount++;
+        puff(s.x, s.y, 6, '#FFD23F');
+        popText(s.x, s.y - 8, T.starPop.replace('{n}', 10));
+      }
+    }
+
+    // 화면 밀어 올리기
+    const line = H * .42;
+    if (py < line) {
+      const d = line - py;
+      py = line;
+      height += d;
+      topY += d;
+      for (const p of plats) p.y += d;
+      for (const s of stars) s.y += d;
+      for (const p of parts) p.y += d;
+      for (const c of clouds) c.y += d * .3;
+      for (const tw of twinkle) tw.y += d * .12;
+      for (const c of clouds) if (c.y > H + 50) { c.y = -50; c.x = Math.random()*W; }
+      for (const tw of twinkle) if (tw.y > H + 10) { tw.y = -10; tw.x = Math.random()*W; }
+
+      gapBase = 62 + Math.min(40, height / 260);
+      while (topY > -40) addPlat();
+    }
+
+    // 정리
+    for (let i = plats.length - 1; i >= 0; i--) if (plats[i].y > H + 80) plats.splice(i, 1);
+    for (let i = stars.length - 1; i >= 0; i--) if (stars[i].y > H + 40 || stars[i].got) stars.splice(i, 1);
+
+    for (const c of clouds) { c.x += 8 * dt * c.s; if (c.x > W + 45) c.x = -45; }
+
+    if (py - PH > H + 20) over();
+
+    hHeight.textContent = Math.floor(height / 10);
+    hStar.textContent = starCount;
+  }
+
+  function over(){
+    state = 'over';
+    const total = Math.floor(height / 10) + starCount * 10;
+    if (total > best) { best = total; hBest.textContent = best; saveBest(best); }
+    rHeight.textContent = Math.floor(height / 10);
+    rStar.textContent = starCount;
+    show('scOver');
+  }
+
+  // ── 화면 ────────────────────────────────────────────
+  function draw(){
+    const s = skyAt(height);
+    const g = ctx.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, s.top); g.addColorStop(1, s.bot);
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+
+    if (s.night > .02) {
+      for (const tw of twinkle) {
+        ctx.globalAlpha = s.night * (.45 + .55 * Math.abs(Math.sin(tw.p + performance.now()/900)));
+        ctx.fillStyle = '#FFF7EA';
+        ctx.beginPath(); ctx.arc(tw.x, tw.y, tw.r, 0, 6.284); ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+    }
+
+    const cloudA = .75 * (1 - s.night);
+    if (cloudA > .02) {
+      ctx.globalAlpha = cloudA; ctx.fillStyle = '#FFFFFF';
+      for (const c of clouds) {
+        const r = 16 * c.s;
+        ctx.beginPath();
+        ctx.arc(c.x, c.y, r, 0, 6.284);
+        ctx.arc(c.x + r, c.y + 3, r*.78, 0, 6.284);
+        ctx.arc(c.x - r*.9, c.y + 4, r*.66, 0, 6.284);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+    }
+
+    for (const p of plats) drawPlat(p);
+
+    for (const st of stars) {
+      if (st.got) continue;
+      ctx.save();
+      ctx.translate(st.x, st.y + Math.sin(st.t) * 4);
+      ctx.rotate(Math.sin(st.t * .5) * .2);
+      ctx.beginPath();
+      for (let i = 0; i < 10; i++) {
+        const a = -Math.PI/2 + i * Math.PI/5, r = i % 2 ? 5.5 : 13;
+        ctx.lineTo(Math.cos(a)*r, Math.sin(a)*r);
+      }
+      ctx.closePath();
+      fs('#FFD23F', 3);
+      ctx.restore();
+    }
+
+    if (state !== 'over' || py < H + 40) drawHero();
+
+    for (const p of parts) {
+      const a = Math.max(0, p.life / p.max);
+      ctx.globalAlpha = a;
+      if (p.txt) {
+        ctx.font = '900 20px system-ui, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.lineWidth = 4; ctx.strokeStyle = INK;
+        ctx.strokeText(p.txt, p.x, p.y);
+        ctx.fillStyle = '#FFF7EA'; ctx.fillText(p.txt, p.x, p.y);
+      } else {
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.r * a, 0, 6.284);
+        ctx.fillStyle = p.c; ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+    }
+  }
+
+  let last = 0;
+  function frame(t){
+    const dt = Math.min((t - last)/1000, .04);
+    last = t;
+    update(dt); draw();
+    requestAnimationFrame(frame);
+  }
+
+  // ── 버튼과 키 ───────────────────────────────────────
+  const scReady = document.getElementById('scReady');
+  const scOver = document.getElementById('scOver');
+  const scPause = document.getElementById('scPause');
+  const hHeight = document.getElementById('hHeight');
+  const hStar = document.getElementById('hStar');
+  const hBest = document.getElementById('hBest');
+  const rHeight = document.getElementById('rHeight');
+  const rStar = document.getElementById('rStar');
+  const padL = document.getElementById('padL');
+  const padR = document.getElementById('padR');
+
+  function show(id){
+    for (const s of [scReady, scOver, scPause]) s.classList.toggle('on', s.id === id);
+  }
+  function start(){
+    reset();
+    hHeight.textContent = '0'; hStar.textContent = '0';
+    state = 'play'; hold = 0;
+    show('none');
+  }
+  function togglePause(){
+    if (state === 'play') { state = 'pause'; hold = 0; show('scPause'); }
+    else if (state === 'pause') { state = 'play'; show('none'); }
+  }
+
+  document.getElementById('btnStart').onclick = start;
+  document.getElementById('btnRetry').onclick = start;
+  document.getElementById('btnResume').onclick = togglePause;
+
+  function padHold(el, dir){
+    el.addEventListener('pointerdown', e => { e.preventDefault(); hold = dir; });
+    for (const ev of ['pointerup','pointerleave','pointercancel'])
+      el.addEventListener(ev, () => { if (hold === dir) hold = 0; });
+  }
+  padHold(padL, -1);
+  padHold(padR, 1);
+
+  const keys = {};
+  addEventListener('keydown', e => {
+    const k = e.key.toLowerCase();
+    if (['arrowleft','arrowright','arrowup','arrowdown',' '].includes(k)) e.preventDefault();
+    keys[k] = true;
+    if (k === 'p') togglePause();
+    if ((k === ' ' || k === 'enter') && (state === 'ready' || state === 'over')) start();
+    sync();
+  });
+  addEventListener('keyup', e => { keys[e.key.toLowerCase()] = false; sync(); });
+  function sync(){
+    const l = keys['arrowleft'] || keys['a'];
+    const r = keys['arrowright'] || keys['d'];
+    hold = l && !r ? -1 : r && !l ? 1 : 0;
+  }
+
+  cv.addEventListener('pointerdown', e => {
+    if (state === 'ready' || state === 'over') { start(); return; }
+    const b = cv.getBoundingClientRect();
+    hold = (e.clientX - b.left < b.width/2) ? -1 : 1;
+  });
+  cv.addEventListener('pointermove', e => {
+    if (!hold || state !== 'play') return;
+    const b = cv.getBoundingClientRect();
+    hold = (e.clientX - b.left < b.width/2) ? -1 : 1;
+  });
+  for (const ev of ['pointerup','pointercancel','pointerleave'])
+    cv.addEventListener(ev, () => { hold = 0; });
+
+  // ── 최고 기록 ───────────────────────────────────────
+  // 기기에만 남는다. 서버로 보내지 않는다.
+  const KEY = 'jumpBest';
+  async function saveBest(v){
+    try { await window.storage.set(KEY, String(v)); return; } catch (e) {}
+    try { localStorage.setItem(KEY, String(v)); } catch (e) {}
+  }
+  (async () => {
+    let raw = null;
+    try { const r = await window.storage.get(KEY); raw = r && r.value; } catch (e) {}
+    if (raw == null) { try { raw = localStorage.getItem(KEY); } catch (e) {} }
+    if (raw) { best = parseInt(raw, 10) || 0; hBest.textContent = best; }
+  })();
+
+  reset();
+  requestAnimationFrame(frame);
+})();
+  </script>
+</GameLayout>

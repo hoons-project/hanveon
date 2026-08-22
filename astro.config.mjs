@@ -1,6 +1,5 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
-import { GAMES } from './src/data/games.ts';
 
 const SITE = 'https://hanveon.com';
 
@@ -9,12 +8,7 @@ export default defineConfig({
   site: SITE,
   output: 'static',
   trailingSlash: 'always',
-  integrations: [
-    sitemap({
-      // 게임은 아직 public/ 에 있는 그냥 HTML 이라 Astro 가 모른다.
-      // 그래서 games.ts 를 보고 사이트맵에 직접 넣는다.
-      // 단계 3에서 게임을 Astro 페이지로 옮기면 이 줄은 지워도 된다.
-      customPages: GAMES.map((g) => `${SITE}/play/${g.slug}/`),
-    }),
-  ],
+  // 게임도 이제 Astro 페이지라 사이트맵이 알아서 다 찾는다.
+  // (단계 3 전에는 게임이 public/ 에 있어서 customPages 로 직접 넣어 줘야 했다.)
+  integrations: [sitemap()],
 });

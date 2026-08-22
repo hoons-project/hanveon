@@ -1,171 +1,29 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Merge Fruit</title>
-<meta name="description" content="Drop fruit and merge matching pairs into bigger ones. A tiny browser game — no install, just play.">
-<meta name="theme-color" content="#FFF7EA">
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<style>
-  :root{
-    --ink:#2A3145;
-    --cream:#FFF7EA;
-    --peach:#FFD9B8;
-    --sun:#FFD23F;
-    --coral:#FF7A6B;
-    --grape:#9B7FE0;
-  }
+---
+/*
+  몽글 과일.
 
-  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  전에는 이 게임이 `public/play/merge-fruit/index.html` 한 통짜 파일이었고,
+  그 안에서 나라말 여섯 개를 자바스크립트로 갈아 끼웠다.
+  이제는 나라말마다 페이지가 따로 나오므로, 글은 처음부터 박혀서 나온다.
+  그래서 `LANGS` `pickLang()` `apply()` 같은 것이 여기 없다.
+*/
+import GameLayout from '../../layouts/GameLayout.astro';
+import { findGame } from '../../data/games';
+import type { Lang } from '../../i18n';
+import { STR } from './strings';
 
-  body{
-    margin:0;
-    min-height:100vh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:16px;
-    background:
-      radial-gradient(circle at 12% 8%, #FFFFFF 0 3px, transparent 3px) 0 0/26px 26px,
-      var(--peach);
-    font-family:"Pretendard","Apple SD Gothic Neo","Noto Sans KR","Segoe UI",system-ui,sans-serif;
-    color:var(--ink);
-  }
+interface Props { lang: Lang }
+const { lang } = Astro.props;
 
-  .cabinet{
-    width:100%;
-    max-width:392px;
-    background:var(--cream);
-    border:4px solid var(--ink);
-    border-radius:28px;
-    box-shadow:8px 8px 0 var(--ink);
-    padding:14px;
-  }
+const game = findGame('merge-fruit')!;
+const T = STR[lang];
+---
 
-  header{
-    display:flex;
-    align-items:flex-start;
-    justify-content:space-between;
-    gap:10px;
-    padding:2px 4px 14px;
-  }
-  .ttl{min-width:0}
-  h1{margin:0 0 3px;font-size:24px;font-weight:900;letter-spacing:-0.03em;word-break:keep-all}
-  h1 span{color:var(--coral)}
-  .tag{font-size:12.5px;font-weight:700;color:#7A8296;letter-spacing:-0.01em;line-height:1.45}
-
-  .lang{
-    flex:none;
-    font-family:inherit;font-size:12px;font-weight:800;
-    color:var(--ink);background:#fff;
-    border:3px solid var(--ink);border-radius:12px;
-    padding:7px 8px;cursor:pointer;
-    box-shadow:0 3px 0 var(--ink);
-  }
-  .lang:focus-visible{outline:3px solid var(--coral);outline-offset:3px}
-
-  .hud{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
-  .hud div{
-    background:#fff;
-    border:3px solid var(--ink);
-    border-radius:14px;
-    padding:6px 8px 7px;
-    text-align:center;
-  }
-  .hud b{display:block;font-size:11px;font-weight:800;color:#7A8296;letter-spacing:0.02em}
-  .hud i{
-    display:block;font-style:normal;font-size:19px;font-weight:900;
-    font-variant-numeric:tabular-nums;letter-spacing:-0.02em;
-  }
-  .hud i.word{font-size:16px}
-
-  .stage{position:relative}
-  canvas{
-    display:block;
-    width:100%;
-    aspect-ratio:360/620;
-    border:4px solid var(--ink);
-    border-radius:20px;
-    background:#FFE8D2;
-    touch-action:none;
-    cursor:pointer;
-  }
-
-  .screen{
-    position:absolute;inset:0;
-    display:none;flex-direction:column;align-items:center;justify-content:center;
-    padding:24px;text-align:center;border-radius:20px;
-    background:rgba(42,49,69,.62);
-    backdrop-filter:blur(2px);
-  }
-  .screen.on{display:flex}
-  .card{
-    width:100%;max-width:262px;
-    background:var(--cream);
-    border:4px solid var(--ink);
-    border-radius:22px;
-    box-shadow:6px 6px 0 rgba(0,0,0,.28);
-    padding:20px 18px;
-  }
-  .card h2{margin:0 0 6px;font-size:26px;font-weight:900;letter-spacing:-0.04em}
-  .card p{margin:0 0 14px;font-size:13px;line-height:1.55;color:#5C6479;font-weight:600}
-  .result{display:flex;justify-content:center;gap:18px;margin:2px 0 14px}
-  .result span{font-size:12px;font-weight:800;color:#7A8296;display:block}
-  .result strong{font-size:24px;font-weight:900;font-variant-numeric:tabular-nums}
-  .result strong.word{font-size:18px}
-
-  .chain{
-    display:flex;flex-wrap:wrap;align-items:center;justify-content:center;
-    gap:5px;margin:0 0 16px;
-  }
-  .chain i{
-    display:block;border:2.5px solid var(--ink);border-radius:50%;
-  }
-  .chain u{text-decoration:none;font-size:11px;font-weight:800;color:#9AA1B2}
-
-  button{
-    font-family:inherit;font-weight:900;font-size:16px;letter-spacing:-0.02em;
-    color:var(--ink);background:var(--sun);
-    border:3px solid var(--ink);border-radius:14px;
-    padding:11px 22px;cursor:pointer;
-    box-shadow:0 4px 0 var(--ink);
-    transition:transform .06s, box-shadow .06s;
-  }
-  button:active{transform:translateY(4px);box-shadow:0 0 0 var(--ink)}
-  button:focus-visible{outline:3px solid var(--coral);outline-offset:3px}
-
-  .pad{display:flex;gap:10px;margin-top:12px}
-  .pad button{flex:1;background:#fff;font-size:22px;padding:12px 0}
-  .pad button.drop{background:var(--sun);font-size:16px;flex:1.2}
-
-  .help{
-    margin:10px 2px 0;font-size:12px;line-height:1.6;
-    font-weight:600;color:#7A8296;text-align:center;
-  }
-
-  .backwrap{margin:12px 0 0;text-align:center}
-  .back{font-size:12px;font-weight:800;color:#7A8296;text-decoration:none}
-  .back:hover{color:var(--ink)}
-
-  @media (hover:hover){ .pad{display:none} }
-</style>
-</head>
-<body>
-
-<div class="cabinet">
-  <header>
-    <div class="ttl">
-      <h1 id="gameName">Merge <span>Fruit</span></h1>
-      <div class="tag" data-i18n="tagline">Match two, grow bigger.</div>
-    </div>
-    <select id="lang" aria-label="Language" class="lang"></select>
-  </header>
-
+<GameLayout lang={lang} game={game} tag={T.tagline} help={T.help}>
   <div class="hud">
-    <div><b data-i18n="score">Score</b><i id="hScore">0</i></div>
-    <div><b data-i18n="big">Biggest</b><i id="hBig" class="word">Pea</i></div>
-    <div><b data-i18n="best">Best</b><i id="hBest">0</i></div>
+    <div><b>{T.score}</b><i id="hScore">0</i></div>
+    <div><b>{T.big}</b><i id="hBig" class="word">{T.fruits[0]}</i></div>
+    <div><b>{T.best}</b><i id="hBest">0</i></div>
   </div>
 
   <div class="stage">
@@ -173,231 +31,60 @@
 
     <div class="screen on" id="scReady">
       <div class="card">
-        <h2 data-i18n="readyTitle">Fill It Up</h2>
-        <p data-i18n-html="readyBody">Drop the fruit in.<br>When two match touch,<br>they merge into one bigger fruit.</p>
+        <h2>{T.readyTitle}</h2>
+        <p set:html={T.readyBody} />
         <div class="chain" id="chain"></div>
-        <button id="btnStart" data-i18n="start">Start</button>
+        <button id="btnStart">{T.start}</button>
       </div>
     </div>
 
     <div class="screen" id="scOver">
       <div class="card">
-        <h2 data-i18n="overTitle">Overflow!</h2>
+        <h2>{T.overTitle}</h2>
         <div class="result">
-          <div><span data-i18n="score">Score</span><strong id="rScore">0</strong></div>
-          <div><span data-i18n="big">Biggest</span><strong id="rBig" class="word">Pea</strong></div>
+          <div><span>{T.score}</span><strong id="rScore">0</strong></div>
+          <div><span>{T.big}</span><strong id="rBig" class="word">{T.fruits[0]}</strong></div>
         </div>
-        <button id="btnRetry" data-i18n="retry">Play Again</button>
+        <button id="btnRetry">{T.retry}</button>
       </div>
     </div>
 
     <div class="screen" id="scPause">
       <div class="card">
-        <h2 data-i18n="paused">Paused</h2>
-        <p data-i18n="pausedHint">Press P again to keep going.</p>
-        <button id="btnResume" data-i18n="resume">Resume</button>
+        <h2>{T.paused}</h2>
+        <p>{T.pausedHint}</p>
+        <button id="btnResume">{T.resume}</button>
       </div>
     </div>
   </div>
 
   <div class="pad">
-    <button id="padL" aria-label="Left">◀</button>
-    <button id="padDrop" class="drop" data-i18n="padDrop">Drop</button>
-    <button id="padR" aria-label="Right">▶</button>
+    <button id="padL" aria-label={T.padLeft}>◀</button>
+    <button id="padDrop" class="drop">{T.padDrop}</button>
+    <button id="padR" aria-label={T.padRight}>▶</button>
   </div>
 
-  <p class="help" data-i18n-html="help">Tap to pick a spot, let go to drop<br>← → move · Space drop · P pause</p>
+  <style>
+    /* 이 게임만 쓰는 것. 나머지는 src/styles/game.css 에 있다. */
+    canvas{ background:#FFE8D2 }
 
-  <p class="backwrap"><a class="back" id="back" href="/">‹ <span data-i18n="allGames">All games</span></a></p>
-</div>
+    /* 합쳐지는 순서 줄. 안쪽 동그라미와 「›」 는 게임 스크립트가 만들기 때문에
+       Astro 의 자리표가 안 붙는다. 그래서 :global() 로 적는다. */
+    .chain{
+      display:flex;flex-wrap:wrap;align-items:center;justify-content:center;
+      gap:5px;margin:0 0 16px;
+    }
+    .chain :global(i){
+      display:block;border:2.5px solid var(--ink);border-radius:50%;
+    }
+    .chain :global(u){text-decoration:none;font-size:11px;font-weight:800;color:#9AA1B2}
 
-<script>
+    /* 가운데 「놓기」 단추만 노랗고 조금 넓다 */
+    .pad button.drop{background:var(--sun);font-size:16px;flex:1.2}
+  </style>
+
+  <script define:vars={{ T }}>
 (() => {
-  // ── 언어 ────────────────────────────────────────────
-  const LANGS = ['en','ko','ja','es','fr','zh'];
-  const LANG_NAME = {
-    en:'English', ko:'한국어', ja:'日本語',
-    es:'Español', fr:'Français', zh:'中文'
-  };
-
-  const STR = {
-    en: {
-      name1:'Merge', name2:'Fruit',
-      tagline:'Match two, grow bigger.',
-      score:'Score', big:'Biggest', best:'Best',
-      readyTitle:'Fill It Up',
-      readyBody:'Drop the fruit in.<br>When two match touch,<br>they merge into one bigger fruit.',
-      start:'Start',
-      overTitle:'Overflow!',
-      retry:'Play Again',
-      paused:'Paused',
-      pausedHint:'Press P again to keep going.',
-      resume:'Resume',
-      padLeft:'Left', padRight:'Right', padDrop:'Drop',
-      help:'Tap to pick a spot, let go to drop<br>← → move · Space drop · P pause',
-      allGames:'All games',
-      next:'Next',
-      fruits:['Pea','Cherry','Grape','Mandarin','Lemon','Apple','Pear','Peach','Pineapple','Melon','Watermelon']
-    },
-    ko: {
-      name1:'몽글', name2:'과일',
-      tagline:'같은 것끼리 닿으면 커져요',
-      score:'점수', big:'가장 큰 것', best:'최고',
-      readyTitle:'통에 담아요',
-      readyBody:'과일을 떨어뜨려요.<br>같은 과일끼리 닿으면<br>더 큰 과일 하나로 합쳐져요.',
-      start:'시작',
-      overTitle:'넘쳤다!',
-      retry:'다시 하기',
-      paused:'잠깐 멈춤',
-      pausedHint:'P 키를 다시 누르면 이어서 해요.',
-      resume:'이어 하기',
-      padLeft:'왼쪽으로', padRight:'오른쪽으로', padDrop:'놓기',
-      help:'화면을 눌러 자리 고르고, 떼면 떨어져요<br>← → 옮기기 · 스페이스 놓기 · P 멈춤',
-      allGames:'게임 목록',
-      next:'다음',
-      fruits:['완두','체리','포도','귤','레몬','사과','배','복숭아','파인애플','멜론','수박']
-    },
-    ja: {
-      name1:'もぐもぐ', name2:'フルーツ',
-      tagline:'同じ果物をくっつけて大きくしよう',
-      score:'スコア', big:'最大', best:'ベスト',
-      readyTitle:'びんにためよう',
-      readyBody:'果物を落とすよ。<br>同じ果物がくっつくと<br>もっと大きな一つになるよ。',
-      start:'スタート',
-      overTitle:'あふれた！',
-      retry:'もう一度',
-      paused:'一時停止',
-      pausedHint:'Pキーをもう一度押すと続きます。',
-      resume:'つづける',
-      padLeft:'左へ', padRight:'右へ', padDrop:'落とす',
-      help:'画面をタップして場所を決めて、離すと落ちるよ<br>← → で移動 · スペースで落とす · Pで一時停止',
-      allGames:'ゲーム一覧',
-      next:'つぎ',
-      fruits:['エンドウ','さくらんぼ','ぶどう','みかん','レモン','りんご','なし','もも','パイナップル','メロン','すいか']
-    },
-    es: {
-      name1:'Fusión', name2:'Frutal',
-      tagline:'Junta dos iguales y crecen.',
-      score:'Puntos', big:'Mayor', best:'Récord',
-      readyTitle:'¡Llena el bote!',
-      readyBody:'Deja caer la fruta.<br>Si dos iguales se tocan,<br>se unen en una más grande.',
-      start:'Empezar',
-      overTitle:'¡Se desbordó!',
-      retry:'Otra vez',
-      paused:'En pausa',
-      pausedHint:'Pulsa P otra vez para seguir.',
-      resume:'Continuar',
-      padLeft:'Izquierda', padRight:'Derecha', padDrop:'Soltar',
-      help:'Toca para elegir el lugar, suelta para caer<br>← → mover · Espacio soltar · P pausa',
-      allGames:'Todos los juegos',
-      next:'Sig.',
-      fruits:['Guisante','Cereza','Uva','Mandarina','Limón','Manzana','Pera','Melocotón','Piña','Melón','Sandía']
-    },
-    fr: {
-      name1:'Fusion', name2:'Fruitée',
-      tagline:'Associe deux fruits pareils, ils grossissent.',
-      score:'Score', big:'Plus gros', best:'Record',
-      readyTitle:'Remplis le pot !',
-      readyBody:'Laisse tomber les fruits.<br>Deux fruits pareils qui se touchent<br>fusionnent en un plus gros.',
-      start:'Commencer',
-      overTitle:'Ça déborde !',
-      retry:'Rejouer',
-      paused:'En pause',
-      pausedHint:'Appuie encore sur P pour continuer.',
-      resume:'Reprendre',
-      padLeft:'Gauche', padRight:'Droite', padDrop:'Lâcher',
-      help:"Touche pour choisir l'endroit, relâche pour lâcher<br>← → déplacer · Espace lâcher · P pause",
-      allGames:'Tous les jeux',
-      next:'Suiv.',
-      fruits:['Petit pois','Cerise','Raisin','Mandarine','Citron','Pomme','Poire','Pêche','Ananas','Melon','Pastèque']
-    },
-    zh: {
-      name1:'圆滚', name2:'水果',
-      tagline:'碰到一样的就会变大',
-      score:'分数', big:'最大', best:'最高',
-      readyTitle:'装满罐子',
-      readyBody:'把水果放下去。<br>两个一样的碰到一起，<br>就会合成更大的一个。',
-      start:'开始',
-      overTitle:'溢出了！',
-      retry:'再玩一次',
-      paused:'暂停',
-      pausedHint:'再按一次 P 继续。',
-      resume:'继续',
-      padLeft:'向左', padRight:'向右', padDrop:'放下',
-      help:'点屏幕选位置，松开就会掉下去<br>← → 移动 · 空格放下 · P 暂停',
-      allGames:'全部游戏',
-      next:'下一个',
-      fruits:['豌豆','樱桃','葡萄','橘子','柠檬','苹果','梨','桃子','菠萝','甜瓜','西瓜']
-    }
-  };
-
-  function pickLang(){
-    const q = new URLSearchParams(location.search).get('lang');
-    if (q && LANGS.includes(q)) return q;
-    try {
-      const saved = localStorage.getItem('arcadeLang');
-      if (saved && LANGS.includes(saved)) return saved;
-    } catch (e) {}
-    const want = navigator.languages || [navigator.language || 'en'];
-    for (const raw of want) {
-      const s = String(raw).toLowerCase();
-      for (const l of LANGS) if (s.startsWith(l)) return l;
-    }
-    return 'en';
-  }
-
-  let lang = pickLang();
-  function t(k){ return (STR[lang] && STR[lang][k]) || STR.en[k] || k; }
-
-  const sel = document.getElementById('lang');
-  for (const l of LANGS) {
-    const o = document.createElement('option');
-    o.value = l; o.textContent = LANG_NAME[l];
-    sel.appendChild(o);
-  }
-
-  const back = document.getElementById('back');
-  const padL = document.getElementById('padL');
-  const padR = document.getElementById('padR');
-
-  function esc(s){
-    return String(s).replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
-  }
-
-  function apply(){
-    document.documentElement.lang = lang;
-    sel.value = lang;
-
-    document.getElementById('gameName').innerHTML =
-      esc(t('name1')) + ' <span>' + esc(t('name2')) + '</span>';
-    document.title = t('name1') + ' ' + t('name2');
-
-    for (const el of document.querySelectorAll('[data-i18n]'))
-      el.textContent = t(el.dataset.i18n);
-    for (const el of document.querySelectorAll('[data-i18n-html]'))
-      el.innerHTML = t(el.dataset.i18nHtml);
-
-    padL.setAttribute('aria-label', t('padLeft'));
-    padR.setAttribute('aria-label', t('padRight'));
-
-    back.href = '/?lang=' + lang;
-
-    // 과일 이름 — 통 안 상황(HUD/결과/합체 순서)은 언어 바뀌어도 그대로
-    document.getElementById('hBig').textContent = t('fruits')[bigTier];
-    document.getElementById('rBig').textContent = t('fruits')[bigTier];
-    buildChain();
-  }
-
-  sel.addEventListener('change', () => {
-    lang = sel.value;
-    try { localStorage.setItem('arcadeLang', lang); } catch (e) {}
-    const u = new URL(location.href);
-    u.searchParams.set('lang', lang);
-    history.replaceState(null, '', u);
-    apply();
-  });
-
-  // ── 게임 ────────────────────────────────────────────
   const W = 360, H = 620;
   const cv = document.getElementById('game');
   const ctx = cv.getContext('2d');
@@ -620,14 +307,14 @@
     if (danger > 1.5) over();
 
     hScore.textContent = score;
-    hBig.textContent = t('fruits')[bigTier];
+    hBig.textContent = T.fruits[bigTier];
   }
 
   function over(){
     state = 'over';
     if (score > best) { best = score; hBest.textContent = best; saveBest(best); }
     rScore.textContent = score;
-    rBig.textContent = t('fruits')[bigTier];
+    rBig.textContent = T.fruits[bigTier];
     show('scOver');
   }
 
@@ -776,7 +463,7 @@
     ctx.fillStyle = '#7A8296';
     ctx.font = '800 11px system-ui, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(t('next'), W - 50, 32);
+    ctx.fillText(T.next, W - 50, 32);
     ctx.save();
     ctx.translate(W - 50, 56);
     const s = Math.min(1, 17 / FRUIT[next].r);
@@ -822,13 +509,15 @@
   const hBest = document.getElementById('hBest');
   const rScore = document.getElementById('rScore');
   const rBig = document.getElementById('rBig');
+  const padL = document.getElementById('padL');
+  const padR = document.getElementById('padR');
 
   function show(id){
     for (const s of [scReady, scOver, scPause]) s.classList.toggle('on', s.id === id);
   }
   function start(){
     reset();
-    hScore.textContent = '0'; hBig.textContent = t('fruits')[0];
+    hScore.textContent = '0'; hBig.textContent = T.fruits[0];
     state = 'play';
     show('none');
   }
@@ -845,7 +534,7 @@
   function buildChain(){
     const box = document.getElementById('chain');
     box.innerHTML = '';
-    const names = t('fruits');
+    const names = T.fruits;
     FRUIT.forEach((f, i) => {
       if (i) { const u = document.createElement('u'); u.textContent = '›'; box.appendChild(u); }
       const el = document.createElement('i');
@@ -916,21 +605,22 @@
   }, 16);
 
   // ── 최고 기록 ───────────────────────────────────────
+  // 기기에만 남는다. 서버로 보내지 않는다.
+  const KEY = 'fruitBest';
   async function saveBest(v){
-    try { await window.storage.set('fruitBest', String(v)); return; } catch (e) {}
-    try { localStorage.setItem('fruitBest', String(v)); } catch (e) {}
+    try { await window.storage.set(KEY, String(v)); return; } catch (e) {}
+    try { localStorage.setItem(KEY, String(v)); } catch (e) {}
   }
   (async () => {
-    let v = null;
-    try { const r = await window.storage.get('fruitBest'); if (r && r.value) v = r.value; } catch (e) {}
-    if (v === null) { try { v = localStorage.getItem('fruitBest'); } catch (e) {} }
-    if (v) { best = parseInt(v, 10) || 0; hBest.textContent = best; }
+    let raw = null;
+    try { const r = await window.storage.get(KEY); raw = r && r.value; } catch (e) {}
+    if (raw == null) { try { raw = localStorage.getItem(KEY); } catch (e) {} }
+    if (raw) { best = parseInt(raw, 10) || 0; hBest.textContent = best; }
   })();
 
   reset();
-  apply();
+  buildChain();
   requestAnimationFrame(frame);
 })();
-</script>
-</body>
-</html>
+  </script>
+</GameLayout>

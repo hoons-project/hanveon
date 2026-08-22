@@ -1,0 +1,63 @@
+---
+/*
+  게임 한 판을 담는 캐비닛.
+
+  머리(이름·설명·나라말 칸)와 발(안내글·목록으로 돌아가기)은 여기서 만든다.
+  게임마다 다른 알맹이(HUD·캔버스·덮개 화면·손가락 단추)는 slot 으로 받는다.
+
+  이름·색·배경은 `src/data/games.ts` 에서 가져온다. 여기 또 적지 않는다.
+*/
+import BaseLayout from './BaseLayout.astro';
+import LangPicker from '../components/LangPicker.astro';
+import '../styles/game.css';
+import { homePath, type Lang } from '../i18n';
+import { ui } from '../i18n/ui';
+import { fullName, nameSep, type Game } from '../data/games';
+
+interface Props {
+  lang: Lang;
+  game: Game;
+  /** 이름 밑 한 줄 */
+  tag: string;
+  /** 캐비닛 아래 조작 안내. `<br>` 를 쓸 수 있다. */
+  help: string;
+}
+
+const { lang, game, tag, help } = Astro.props;
+const t = ui(lang);
+const [name1, name2] = game.name[lang];
+const sep = nameSep(lang);
+const title = fullName(game, lang);
+---
+
+<BaseLayout
+  lang={lang}
+  kind="game"
+  slug={game.slug}
+  title={title}
+  description={game.desc[lang]}
+  pageBg={game.pageBg}
+>
+  <div class="cabinet game" style={`--accent:${game.accent}`}>
+    <header>
+      <div class="ttl">
+        <h1>{name1}{sep}<span>{name2}</span></h1>
+        <div class="tag">{tag}</div>
+      </div>
+      <LangPicker lang={lang} kind="game" slug={game.slug} />
+    </header>
+
+    <slot />
+
+    <p class="help" set:html={help} />
+
+    <p class="backwrap">
+      <a class="back" href={homePath(lang)}>‹ {t.allGames}</a>
+    </p>
+  </div>
+</BaseLayout>
+
+<style is:global>
+  /* 게임 쪽은 이름 뒤 조각 색을 게임마다 다르게 쓴다. */
+  .cabinet.game h1 span{ color:var(--accent) }
+</style>

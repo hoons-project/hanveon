@@ -24,7 +24,7 @@ body{
   padding:16px;
   background:
     radial-gradient(circle at 12% 8%, #FFFFFF 0 3px, transparent 3px) 0 0/26px 26px,
-    var(--pool);
+    var(--page-bg, var(--pool));
   font-family:"Pretendard","Apple SD Gothic Neo","Noto Sans KR","Segoe UI",system-ui,sans-serif;
   color:var(--ink);
 }
@@ -108,7 +108,23 @@ a.card:focus-visible{outline:3px solid var(--coral);outline-offset:3px}
   white-space:nowrap;
 }
 
+/* 「게임은 계속 늘어나요」 한 줄. 목록 바로 아래에 붙어서 기대를 남긴다. */
+.more{
+  margin:13px 4px 0;
+  font-size:12.5px;font-weight:800;
+  color:var(--coral);text-align:center;letter-spacing:-0.01em;
+}
+
 .help{
-  margin:16px 4px 2px;font-size:12px;line-height:1.6;
+  margin:9px 4px 2px;font-size:12px;line-height:1.6;
   font-weight:600;color:var(--muted);text-align:center;
 }
+
+/* 게임에서 목록으로 돌아가는 링크 */
+.backwrap{margin:12px 0 0;text-align:center}
+.back{
+  font-size:12px;font-weight:800;color:var(--muted);
+  text-decoration:none;
+}
+.back:hover{color:var(--ink)}
+.back:focus-visible{outline:3px solid var(--coral);outline-offset:3px;border-radius:6px}
