@@ -1,0 +1,77 @@
+---
+/*
+  머리 오른쪽 햄버거 목차.
+
+  지금은 게임 목록만 들어 있다. 단계 6에서 개인정보·쿠키·약관·소개·연락이 생기면
+  아래에 한 덩어리를 더 붙인다.
+*/
+import { GAMES, fullName } from '../data/games';
+import { gamePath, type Lang } from '../i18n';
+import { ui } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  /** 게임 쪽일 때 지금 보고 있는 게임. 목차에서 표시된다. */
+  slug?: string;
+}
+const { lang, slug } = Astro.props;
+const t = ui(lang);
+---
+
+<div class="menuwrap">
+  <button
+    id="menuBtn"
+    class="iconbtn"
+    type="button"
+    aria-label={t.menuLabel}
+    aria-expanded="false"
+    aria-controls="menuPanel"
+  >
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path d="M2 4.5h12M2 8h12M2 11.5h12" fill="none" stroke="currentColor"
+            stroke-width="1.6" stroke-linecap="round" />
+    </svg>
+  </button>
+
+  <div id="menuPanel" class="menupanel" hidden>
+    <p class="menuhead">{t.menuGames}</p>
+    <ul>
+      {GAMES.map((g) => (
+        <li>
+          <a href={gamePath(lang, g.slug)} aria-current={g.slug === slug ? 'page' : undefined}>
+            <span class="mthumb" set:html={g.art} />
+            {fullName(g, lang)}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</div>
+
+<script>
+  const btn = document.getElementById('menuBtn');
+  const panel = document.getElementById('menuPanel');
+
+  if (btn && panel) {
+    const open = (on: boolean) => {
+      panel.hidden = !on;
+      btn.setAttribute('aria-expanded', String(on));
+    };
+
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      open(panel.hidden);
+    });
+
+    /* 바깥을 누르면 닫는다 */
+    document.addEventListener('click', (e) => {
+      if (panel.hidden) return;
+      if (!panel.contains(e.target as Node)) open(false);
+    });
+
+    /* Esc 로도 닫는다. 닫고 나면 단추로 초점을 돌려준다 */
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !panel.hidden) { open(false); btn.focus(); }
+    });
+  }
+</script>

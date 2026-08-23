@@ -20,7 +20,9 @@ export type UiKey =
   | 'freeTag'      // 대표 그림 귀퉁이에 넣는 짧은 말
   | 'aboutTitle'   // 게임 쪽 읽을 글 — 소개
   | 'howTitle'     // 게임 쪽 읽을 글 — 어떻게 하나
-  | 'tipsTitle';   // 게임 쪽 읽을 글 — 요령
+  | 'tipsTitle'    // 게임 쪽 읽을 글 — 요령
+  | 'menuLabel'    // 햄버거 단추의 이름 (읽어주는 장치가 읽는다)
+  | 'menuGames';   // 목차 안 「게임」 머리말
 
 export const UI: Record<Lang, Record<UiKey, string>> = {
   en: {
@@ -38,6 +40,8 @@ export const UI: Record<Lang, Record<UiKey, string>> = {
     aboutTitle: 'About this game',
     howTitle: 'How to play',
     tipsTitle: 'Tips',
+    menuLabel: 'Menu',
+    menuGames: 'Games',
   },
   ko: {
     tagline: '한번 해볼까? 받을 것도 없어요.',
@@ -54,6 +58,8 @@ export const UI: Record<Lang, Record<UiKey, string>> = {
     aboutTitle: '게임 소개',
     howTitle: '어떻게 하나',
     tipsTitle: '잘하는 요령',
+    menuLabel: '메뉴',
+    menuGames: '게임',
   },
   ja: {
     tagline: '小さなゲーム。インストール不要。',
@@ -70,6 +76,8 @@ export const UI: Record<Lang, Record<UiKey, string>> = {
     aboutTitle: 'このゲームについて',
     howTitle: 'あそび方',
     tipsTitle: 'コツ',
+    menuLabel: 'メニュー',
+    menuGames: 'ゲーム',
   },
   es: {
     tagline: 'Juegos pequeños. Nada que instalar.',
@@ -86,6 +94,8 @@ export const UI: Record<Lang, Record<UiKey, string>> = {
     aboutTitle: 'Sobre el juego',
     howTitle: 'Cómo se juega',
     tipsTitle: 'Consejos',
+    menuLabel: 'Menú',
+    menuGames: 'Juegos',
   },
   fr: {
     tagline: 'Petits jeux. Rien à installer.',
@@ -102,6 +112,8 @@ export const UI: Record<Lang, Record<UiKey, string>> = {
     aboutTitle: 'À propos du jeu',
     howTitle: 'Comment jouer',
     tipsTitle: 'Astuces',
+    menuLabel: 'Menu',
+    menuGames: 'Jeux',
   },
   zh: {
     tagline: '小游戏，无需安装。',
@@ -118,6 +130,8 @@ export const UI: Record<Lang, Record<UiKey, string>> = {
     aboutTitle: '游戏介绍',
     howTitle: '怎么玩',
     tipsTitle: '小技巧',
+    menuLabel: '菜单',
+    menuGames: '游戏',
   },
 };
 

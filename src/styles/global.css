@@ -84,6 +84,50 @@ p{margin:0}
 }
 .lang:hover{background-color:var(--bebe)}
 
+/* ── 머리 오른쪽 묶음과 햄버거 목차 ─────────────────── */
+.topright{ display:flex;align-items:center;gap:8px }
+
+.menuwrap{ position:relative }
+
+.iconbtn{
+  display:flex;align-items:center;justify-content:center;
+  width:40px;height:40px;
+  padding:0;
+  background:var(--faint);color:var(--hof);
+  border:0;border-radius:9999px;
+  cursor:pointer;
+}
+.iconbtn:hover{ background:var(--bebe) }
+
+.menupanel{
+  position:absolute;top:calc(100% + 10px);right:0;z-index:20;
+  min-width:230px;
+  background:var(--white);
+  border:1px solid var(--bebe);
+  border-radius:12px;
+  box-shadow:0 6px 20px rgba(0,0,0,.2);
+  padding:8px;
+}
+.menupanel[hidden]{ display:none }
+.menuhead{
+  font-size:12px;font-weight:600;color:var(--foggy);
+  padding:6px 10px 4px;
+}
+.menupanel ul{ margin:0;padding:0;list-style:none }
+.menupanel a{
+  display:flex;align-items:center;gap:10px;
+  padding:7px 10px;border-radius:8px;
+  font-size:14px;font-weight:500;
+}
+.menupanel a:hover{ background:var(--faint) }
+.menupanel a[aria-current="page"]{ background:var(--faint);font-weight:700 }
+.mthumb{
+  flex:none;width:28px;height:28px;
+  border:2px solid var(--ink);border-radius:7px;
+  overflow:hidden;
+}
+.mthumb svg{display:block;width:100%;height:100%}
+
 /* ── 쪽 ────────────────────────────────────────────── */
 .page{
   flex:1;
@@ -207,6 +251,7 @@ button.ghost:hover{ background:var(--faint) }
   .lede{font-size:14px}
   .rowhead{margin:32px 0 16px}
   .rowhead h2{font-size:20px}
+  .menupanel{ min-width:0;width:calc(100vw - 32px);max-width:280px }
 }
 
 /* ── 폰 — 목록을 가로 줄로 ──────────────────────────
