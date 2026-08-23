@@ -205,6 +205,35 @@ export const GAMES: Game[] = [
       <circle cx="9" cy="30" r="3.6" fill="#FF7A6B" stroke="#2A3145" stroke-width="2"/>
       <circle cx="51" cy="30" r="3.6" fill="#C58BE8" stroke="#2A3145" stroke-width="2"/></svg>`,
   },
+  {
+    slug: 'spot-kick',
+    kind: 'quick',
+    name: {
+      en: ['Spot', 'Kick'],
+      ko: ['뻥뻥', '슛'],
+      ja: ['ドカン', 'シュート'],
+      es: ['Tiro', 'Penal'],
+      fr: ['Tir', 'au But'],
+      zh: ['点球', '大战'],
+    },
+    desc: {
+      en: 'Pick a corner, pick your power. Beat the keeper.',
+      ko: '구석을 고르고 힘을 맞춰요. 골키퍼를 넘기면 골.',
+      ja: 'コースと力を決めて、キーパーを抜こう。',
+      es: 'Elige el palo y la fuerza. Supera al portero.',
+      fr: 'Choisis le coin et la puissance. Bats le gardien.',
+      zh: '选好角度和力度，骗过门将。',
+    },
+    art: `<svg viewBox="0 0 60 60" aria-hidden="true">
+      <rect width="60" height="60" fill="#7FD8C8"/><rect width="60" height="26" fill="#BFE8FF"/>
+      <rect x="9" y="14" width="42" height="24" fill="#FFF7EA" stroke="#2A3145" stroke-width="2.6"/>
+      <path d="M17 16v20M25 16v20M35 16v20M43 16v20M11 22h38M11 30h38" stroke="#2A3145" stroke-width="1" opacity=".35"/>
+      <rect x="26" y="23" width="9" height="12" rx="3.4" fill="#FFD23F" stroke="#2A3145" stroke-width="2.2"/>
+      <circle cx="30.5" cy="20.4" r="3.6" fill="#FFF7EA" stroke="#2A3145" stroke-width="2.2"/>
+      <circle cx="29.2" cy="20.6" r="1" fill="#2A3145"/><circle cx="31.8" cy="20.6" r="1" fill="#2A3145"/>
+      <circle cx="30" cy="49" r="7" fill="#FFF7EA" stroke="#2A3145" stroke-width="2.6"/>
+      <path d="M30 45.4l2.7 2-1.1 3.2h-3.2l-1.1-3.2z" fill="#2A3145"/></svg>`,
+  },
 ];
 
 /** 주소 조각으로 게임을 찾는다. 없으면 undefined. */
