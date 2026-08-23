@@ -11,9 +11,14 @@ import type { Lang } from '../i18n';
 /** 이름 두 조각 사이를 띄우는 나라말. 일본말·중국말은 붙여 쓴다. */
 const SPACED: readonly Lang[] = ['en', 'ko', 'es', 'fr'];
 
+/** 게임 갈래. 대문을 나누는 데는 아직 안 쓰고, 「비슷한 게임」 고르는 데 쓴다. */
+export type Kind = 'quick' | 'think' | 'stack';
+
 export type Game = {
   /** 주소에 쓰는 이름. 게임은 /play/<slug>/ 에 놓인다. */
   slug: string;
+  /** 갈래. 지금은 「비슷한 게임」 고르는 데만 쓴다. */
+  kind: Kind;
   /** 나라말별 게임 이름 두 조각. 뒤 조각에 색이 들어간다. */
   name: Record<Lang, [string, string]>;
   /** 목록에 보이는 한 줄 설명. */
@@ -36,6 +41,7 @@ export function fullName(g: Game, lang: Lang): string {
 export const GAMES: Game[] = [
   {
     slug: 'hoppy-jump',
+    kind: 'quick',
     name: {
       en: ['Hoppy', 'Jump'],
       ko: ['폴짝', '점프'],
@@ -63,6 +69,7 @@ export const GAMES: Game[] = [
   },
   {
     slug: 'zoom-drive',
+    kind: 'quick',
     name: {
       en: ['Zoom', 'Drive'],
       ko: ['붕붕', '드라이브'],
@@ -90,6 +97,7 @@ export const GAMES: Game[] = [
   },
   {
     slug: 'merge-fruit',
+    kind: 'stack',
     name: {
       en: ['Merge', 'Fruit'],
       ko: ['몽글', '과일'],
@@ -115,6 +123,7 @@ export const GAMES: Game[] = [
   },
   {
     slug: 'zippy-plane',
+    kind: 'quick',
     name: {
       en: ['Zippy', 'Plane'],
       ko: ['슝슝', '비행기'],
@@ -141,6 +150,7 @@ export const GAMES: Game[] = [
   },
   {
     slug: 'pop-shot',
+    kind: 'quick',
     name: {
       en: ['Pop', 'Shot'],
       ko: ['탕탕', '사격'],
@@ -168,6 +178,7 @@ export const GAMES: Game[] = [
   },
   {
     slug: 'chain-dots',
+    kind: 'think',
     name: {
       en: ['Chain', 'Dots'],
       ko: ['쭉쭉', '구슬'],
@@ -199,4 +210,15 @@ export const GAMES: Game[] = [
 /** 주소 조각으로 게임을 찾는다. 없으면 undefined. */
 export function findGame(slug: string): Game | undefined {
   return GAMES.find((g) => g.slug === slug);
+}
+
+/**
+ * 「비슷한 게임」 고르기.
+ * 같은 갈래를 먼저 담고, 모자라면 다른 갈래에서 채워서 **늘 n 개**를 준다.
+ * 무작위를 쓰지 않는다 — 빌드할 때마다 같은 것이 나와야 한다.
+ */
+export function related(g: Game, n = 2): Game[] {
+  const same = GAMES.filter((x) => x.slug !== g.slug && x.kind === g.kind);
+  const rest = GAMES.filter((x) => x.slug !== g.slug && x.kind !== g.kind);
+  return [...same, ...rest].slice(0, n);
 }

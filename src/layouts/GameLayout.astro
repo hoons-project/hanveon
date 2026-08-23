@@ -12,9 +12,9 @@ import BaseLayout from './BaseLayout.astro';
 import TopBar from '../components/TopBar.astro';
 import Foot from '../components/Foot.astro';
 import '../styles/game.css';
-import { homePath, type Lang } from '../i18n';
+import { gamePath, homePath, type Lang } from '../i18n';
 import { ui } from '../i18n/ui';
-import { fullName, type Game } from '../data/games';
+import { fullName, related, type Game } from '../data/games';
 import { gameJsonLd } from '../seo';
 
 interface Props {
@@ -33,6 +33,7 @@ interface Props {
 const { lang, game, tag, help, about, how, tips } = Astro.props;
 const t = ui(lang);
 const name = fullName(game, lang);
+const near = related(game, 2);
 
 /* 창 제목과 설명은 검색 결과에 그대로 나온다. 틀은 src/i18n/ui.ts 에 있다. */
 const title = t.gameTitle.replace('{name}', name);
@@ -81,6 +82,18 @@ const description = `${game.desc[lang]} ${t.gameDescTail}`;
         </section>
       </div>
     </div>
+
+    <section class="related">
+      <h2>{t.moreLike}</h2>
+      <div class="relcards">
+        {near.map((r) => (
+          <a class="relcard" href={gamePath(lang, r.slug)}>
+            <span class="relthumb" set:html={r.art} />
+            <span class="relname">{fullName(r, lang)}</span>
+          </a>
+        ))}
+      </div>
+    </section>
   </main>
 
   <Foot lang={lang} />

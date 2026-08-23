@@ -22,7 +22,11 @@ export type UiKey =
   | 'howTitle'     // 게임 쪽 읽을 글 — 어떻게 하나
   | 'tipsTitle'    // 게임 쪽 읽을 글 — 요령
   | 'menuLabel'    // 햄버거 단추의 이름 (읽어주는 장치가 읽는다)
-  | 'menuGames';   // 목차 안 「게임」 머리말
+  | 'menuGames'    // 목차 안 「게임」 머리말
+  | 'moreLike'     // 게임 쪽 맨 아래 「비슷한 게임」
+  | 'kindQuick'    // 갈래 이름 셋. 지금은 화면에 안 나오지만 미리 적어 둔다
+  | 'kindThink'
+  | 'kindStack';
 
 export const UI: Record<Lang, Record<UiKey, string>> = {
   en: {
@@ -42,6 +46,10 @@ export const UI: Record<Lang, Record<UiKey, string>> = {
     tipsTitle: 'Tips',
     menuLabel: 'Menu',
     menuGames: 'Games',
+    moreLike: 'More like this',
+    kindQuick: 'Fast hands',
+    kindThink: 'Think a bit',
+    kindStack: 'Stack them up',
   },
   ko: {
     tagline: '한번 해볼까? 받을 것도 없어요.',
@@ -60,6 +68,10 @@ export const UI: Record<Lang, Record<UiKey, string>> = {
     tipsTitle: '잘하는 요령',
     menuLabel: '메뉴',
     menuGames: '게임',
+    moreLike: '비슷한 게임',
+    kindQuick: '손이 바쁜 것',
+    kindThink: '머리 쓰는 것',
+    kindStack: '쌓이는 것',
   },
   ja: {
     tagline: '小さなゲーム。インストール不要。',
@@ -78,6 +90,10 @@ export const UI: Record<Lang, Record<UiKey, string>> = {
     tipsTitle: 'コツ',
     menuLabel: 'メニュー',
     menuGames: 'ゲーム',
+    moreLike: '似ているゲーム',
+    kindQuick: '手が忙しい',
+    kindThink: 'あたまを使う',
+    kindStack: '積んでいく',
   },
   es: {
     tagline: 'Juegos pequeños. Nada que instalar.',
@@ -96,6 +112,10 @@ export const UI: Record<Lang, Record<UiKey, string>> = {
     tipsTitle: 'Consejos',
     menuLabel: 'Menú',
     menuGames: 'Juegos',
+    moreLike: 'Parecidos a este',
+    kindQuick: 'Manos rápidas',
+    kindThink: 'Para pensar',
+    kindStack: 'Apilar',
   },
   fr: {
     tagline: 'Petits jeux. Rien à installer.',
@@ -114,6 +134,10 @@ export const UI: Record<Lang, Record<UiKey, string>> = {
     tipsTitle: 'Astuces',
     menuLabel: 'Menu',
     menuGames: 'Jeux',
+    moreLike: 'Dans le même genre',
+    kindQuick: 'Doigts rapides',
+    kindThink: 'Réfléchir',
+    kindStack: 'Empiler',
   },
   zh: {
     tagline: '小游戏，无需安装。',
@@ -132,6 +156,10 @@ export const UI: Record<Lang, Record<UiKey, string>> = {
     tipsTitle: '小技巧',
     menuLabel: '菜单',
     menuGames: '游戏',
+    moreLike: '类似的游戏',
+    kindQuick: '手要快',
+    kindThink: '动脑筋',
+    kindStack: '堆起来',
   },
 };
 

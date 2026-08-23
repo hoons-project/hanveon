@@ -156,3 +156,36 @@ canvas{
   display:flex;align-items:center;justify-content:center;
 }
 .guide ul li::before{ content:"·";font-size:18px;line-height:1 }
+
+/* ── 비슷한 게임 — 게임 쪽 맨 아래 ─────────────────── */
+.related{ margin-top:48px }
+.related h2{
+  font-size:20px;font-weight:600;letter-spacing:-0.01em;
+  margin-bottom:14px;
+}
+.relcards{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:12px;
+  max-width:700px;
+}
+.relcard{
+  display:flex;align-items:center;gap:12px;
+  background:var(--white);
+  border:3px solid var(--ink);
+  border-radius:16px;
+  box-shadow:0 5px 0 var(--ink);
+  padding:10px 12px;
+  font-size:15px;font-weight:800;letter-spacing:-0.02em;
+  transition:transform .07s, box-shadow .07s;
+}
+.relcard:active{ transform:translateY(5px); box-shadow:0 0 0 var(--ink) }
+@media (hover:hover){
+  .relcard:hover{ transform:translateY(-2px); box-shadow:0 7px 0 var(--ink) }
+}
+.relthumb{
+  flex:none;width:52px;height:52px;
+  border:3px solid var(--ink);border-radius:12px;
+  overflow:hidden;
+}
+.relthumb svg{display:block;width:100%;height:100%}
