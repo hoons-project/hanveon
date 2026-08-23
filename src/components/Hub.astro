@@ -1,6 +1,7 @@
 ---
 /* 대문 알맹이. 나라말만 바꿔서 여섯 번 쓰인다. */
-import LangPicker from './LangPicker.astro';
+import TopBar from './TopBar.astro';
+import Foot from './Foot.astro';
 import { GAMES, fullName } from '../data/games';
 import { gamePath, type Lang } from '../i18n';
 import { ui } from '../i18n/ui';
@@ -10,30 +11,27 @@ const { lang } = Astro.props;
 const t = ui(lang);
 ---
 
-<div class="cabinet">
-  <header>
-    <div class="ttl">
-      <h1>Han<span>veon</span></h1>
-      <div class="tag">{t.tagline}</div>
-    </div>
-    <LangPicker lang={lang} kind="home" />
-  </header>
+<TopBar lang={lang} kind="home" />
 
-  <div class="grid">
+<main class="page">
+  <h1 class="pagetitle">{t.tagline}</h1>
+  <p class="lede">{t.metaDesc}</p>
+
+  <div class="rowhead"><h2>{t.allGames}</h2></div>
+
+  <div class="cards">
     {
       GAMES.map((g) => (
-        <a class="card" href={gamePath(lang, g.slug)} aria-label={`${fullName(g, lang)} — ${t.play}`}>
-          <span class="art" set:html={g.art} />
-          <span class="meta">
-            <b>{fullName(g, lang)}</b>
-            <span>{g.desc[lang]}</span>
-          </span>
-          <span class="go">{t.play}</span>
+        <a class="gcard" href={gamePath(lang, g.slug)}>
+          <span class="thumb" set:html={g.art} />
+          <span class="gname">{fullName(g, lang)}</span>
+          <span class="gdesc">{g.desc[lang]}</span>
         </a>
       ))
     }
   </div>
 
   <p class="more">{t.more}</p>
-  <p class="help">{t.footer}</p>
-</div>
+</main>
+
+<Foot lang={lang} />

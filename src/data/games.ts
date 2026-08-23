@@ -18,10 +18,6 @@ export type Game = {
   name: Record<Lang, [string, string]>;
   /** 목록에 보이는 한 줄 설명. */
   desc: Record<Lang, string>;
-  /** 이름 뒤 조각과 초점 테두리에 쓰는 색. */
-  accent: string;
-  /** 게임 쪽 몸통 배경색. */
-  pageBg: string;
   /** 목록 그림. 66×66 안에 들어가는 SVG. */
   art: string;
 };
@@ -40,8 +36,6 @@ export function fullName(g: Game, lang: Lang): string {
 export const GAMES: Game[] = [
   {
     slug: 'hoppy-jump',
-    accent: '#7FD8C8',
-    pageBg: '#BFE8FF',
     name: {
       en: ['Hoppy', 'Jump'],
       ko: ['폴짝', '점프'],
@@ -69,8 +63,6 @@ export const GAMES: Game[] = [
   },
   {
     slug: 'zoom-drive',
-    accent: '#FF7A6B',
-    pageBg: '#8FD9A8',
     name: {
       en: ['Zoom', 'Drive'],
       ko: ['붕붕', '드라이브'],
@@ -98,8 +90,6 @@ export const GAMES: Game[] = [
   },
   {
     slug: 'merge-fruit',
-    accent: '#FF7A6B',
-    pageBg: '#FFD9B8',
     name: {
       en: ['Merge', 'Fruit'],
       ko: ['몽글', '과일'],
@@ -125,8 +115,6 @@ export const GAMES: Game[] = [
   },
   {
     slug: 'zippy-plane',
-    accent: '#7FB8FF',
-    pageBg: '#C9C4F2',
     name: {
       en: ['Zippy', 'Plane'],
       ko: ['슝슝', '비행기'],
@@ -153,8 +141,6 @@ export const GAMES: Game[] = [
   },
   {
     slug: 'pop-shot',
-    accent: '#5D5FEF',
-    pageBg: '#FFD9E4',
     name: {
       en: ['Pop', 'Shot'],
       ko: ['탕탕', '사격'],
@@ -182,8 +168,6 @@ export const GAMES: Game[] = [
   },
   {
     slug: 'chain-dots',
-    accent: '#3BAF8F',
-    pageBg: '#FFE9A8',
     name: {
       en: ['Chain', 'Dots'],
       ko: ['쭉쭉', '구슬'],

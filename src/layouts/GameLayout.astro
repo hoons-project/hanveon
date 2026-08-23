@@ -1,18 +1,20 @@
 ---
 /*
-  게임 한 판을 담는 캐비닛.
+  게임 한 판을 담는 쪽.
 
-  머리(이름·설명·나라말 칸)와 발(안내글·목록으로 돌아가기)은 여기서 만든다.
+  넓은 화면에서는 왼쪽에 게임, 오른쪽에 읽을 글이 나란히 선다.
+  좁으면 위아래로 쌓인다.
+
   게임마다 다른 알맹이(HUD·캔버스·덮개 화면·손가락 단추)는 slot 으로 받는다.
-
-  이름·색·배경은 `src/data/games.ts` 에서 가져온다. 여기 또 적지 않는다.
+  읽을 글(소개·어떻게 하나·요령)은 각 게임 `strings.ts` 에서 온다.
 */
 import BaseLayout from './BaseLayout.astro';
-import LangPicker from '../components/LangPicker.astro';
+import TopBar from '../components/TopBar.astro';
+import Foot from '../components/Foot.astro';
 import '../styles/game.css';
 import { homePath, type Lang } from '../i18n';
 import { ui } from '../i18n/ui';
-import { fullName, nameSep, type Game } from '../data/games';
+import { fullName, type Game } from '../data/games';
 import { gameJsonLd } from '../seo';
 
 interface Props {
@@ -20,17 +22,20 @@ interface Props {
   game: Game;
   /** 이름 밑 한 줄 */
   tag: string;
-  /** 캐비닛 아래 조작 안내. `<br>` 를 쓸 수 있다. */
+  /** 캔버스 아래 조작 안내. `<br>` 를 쓸 수 있다. */
   help: string;
+  /** 읽을 글 */
+  about: string;
+  how: readonly string[];
+  tips: readonly string[];
 }
 
-const { lang, game, tag, help } = Astro.props;
+const { lang, game, tag, help, about, how, tips } = Astro.props;
 const t = ui(lang);
-const [name1, name2] = game.name[lang];
-const sep = nameSep(lang);
+const name = fullName(game, lang);
 
 /* 창 제목과 설명은 검색 결과에 그대로 나온다. 틀은 src/i18n/ui.ts 에 있다. */
-const title = t.gameTitle.replace('{name}', fullName(game, lang));
+const title = t.gameTitle.replace('{name}', name);
 const description = `${game.desc[lang]} ${t.gameDescTail}`;
 ---
 
@@ -40,29 +45,43 @@ const description = `${game.desc[lang]} ${t.gameDescTail}`;
   slug={game.slug}
   title={title}
   description={description}
-  pageBg={game.pageBg}
   jsonLd={gameJsonLd(game, lang, Astro.site!)}
 >
-  <div class="cabinet game" style={`--accent:${game.accent}`}>
-    <header>
-      <div class="ttl">
-        <h1>{name1}{sep}<span>{name2}</span></h1>
-        <div class="tag">{tag}</div>
+  <TopBar lang={lang} kind="game" slug={game.slug} />
+
+  <main class="page">
+    <p class="crumb"><a href={homePath(lang)}>‹ {t.allGames}</a></p>
+    <h1 class="pagetitle">{name}</h1>
+    <p class="lede">{tag}</p>
+
+    <div class="gamewrap">
+      <div class="play">
+        <slot />
+        <p class="help" set:html={help} />
       </div>
-      <LangPicker lang={lang} kind="game" slug={game.slug} />
-    </header>
 
-    <slot />
+      <div class="guide">
+        <section>
+          <h2>{t.aboutTitle}</h2>
+          <p>{about}</p>
+        </section>
 
-    <p class="help" set:html={help} />
+        <section>
+          <h2>{t.howTitle}</h2>
+          <ol>
+            {how.map((line, i) => <li data-n={i + 1}>{line}</li>)}
+          </ol>
+        </section>
 
-    <p class="backwrap">
-      <a class="back" href={homePath(lang)}>‹ {t.allGames}</a>
-    </p>
-  </div>
+        <section>
+          <h2>{t.tipsTitle}</h2>
+          <ul>
+            {tips.map((line) => <li>{line}</li>)}
+          </ul>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <Foot lang={lang} />
 </BaseLayout>
-
-<style is:global>
-  /* 게임 쪽은 이름 뒤 조각 색을 게임마다 다르게 쓴다. */
-  .cabinet.game h1 span{ color:var(--accent) }
-</style>

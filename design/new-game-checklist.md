@@ -14,14 +14,18 @@
 - 최고 기록은 `window.storage` → 없으면 `localStorage`.
   열쇠말은 게임마다 다르게 (`jumpBest` `fruitBest` `planeBest` …)
 
-**캐비닛 CSS 는 새로 쓰지 않는다.** `src/styles/game.css` 에 이미 다 있다 —
+**바깥 CSS 는 새로 쓰지 않는다.** `src/styles/game.css` 에 이미 다 있다 —
 `.hud` `.stage` `canvas` `.screen` `.card` `.result` `.legend` `.chip` `.chip.bar` `.chips`
-`button` `.pad`. 그 게임만 쓰는 것(캔버스 바탕색, 자기만의 조각)만 따로 쓴다.
+`button` `.pad` `.help` `.guide`. 그 게임만 쓰는 것(캔버스 바탕색, 커서 모양)만 따로 쓴다.
+
+**캔버스 안쪽 그림은 옛 「장난감 오락기」 그대로 그린다** — 두꺼운 잉크 테두리(`#2A3145`),
+눈과 볼. 바깥 껍데기만 흰 벽이다. 왜 그런지는 `design/README.md` 의 「게임 안쪽」을 본다.
 
 ## 2. 이름 정하기
 
 - 나라말 여섯 개 다 (`en` `ko` `ja` `es` `fr` `zh`)
-- **두 조각으로.** 뒤 조각에 색이 들어간다 — `['Hoppy', 'Jump']`
+- **두 조각으로 적는다** — `['Hoppy', 'Jump']`. 일본말·중국말은 붙여 쓰고
+  나머지는 사이를 띄운다. 그 규칙이 `nameSep()` 에 있다
 - **일본말·중국말 이름은 짧게.** 길면 제목이 두 줄로 넘어간다
   (겪은 것 — `ぴょんぴょんジャンプ` 는 넘쳐서 `ぴょんジャンプ` 로 줄였다)
 
@@ -30,11 +34,9 @@
 ```ts
 {
   slug: 'my-game',
-  accent: '#7FD8C8',        // 이름 뒤 조각 색
-  pageBg: '#BFE8FF',        // 게임 쪽 몸통 배경색
   name: { en:['A','B'], ko:['가','나'], ja:[…], es:[…], fr:[…], zh:[…] },
   desc: { en:'…', ko:'…', ja:'…', es:'…', fr:'…', zh:'…' },
-  art: `<svg …>`,           // 66×66 안에 들어가는 SVG. 사진은 안 쓴다
+  art: `<svg …>`,   // 네모(1:1) 안에 꽉 차게. 목록에서 크게 보인다. 사진은 안 쓴다
 }
 ```
 
@@ -45,7 +47,11 @@
 
 그 게임 **안에서만** 쓰는 글. `src/games/hoppy-jump/strings.ts` 를 본떠서 쓴다.
 
-- `tagline`(이름 밑 한 줄)과 `help`(캐비닛 아래 조작 안내)는 꼭 넣는다
+- `tagline`(이름 밑 한 줄)과 `help`(캔버스 아래 조작 안내)는 꼭 넣는다
+- **읽을 글 세 가지도 꼭 넣는다** — 게임 쪽 오른쪽에 나온다
+  - `about` — 두세 문장. 검색엔진이 읽는 본문이기도 하다
+  - `how` — 정확히 네 줄. 조작 · 목표 · 피할 것 · 어떻게 끝나는지
+  - `tips` — 정확히 세 줄. **코드에서 확인한 사실만 쓴다.** 지어내지 않는다
 - **게임 이름은 여기 안 쓴다** — `games.ts` 에 있다
 - **「게임 목록」 같은 공통 글도 여기 안 쓴다** — `src/i18n/ui.ts` 에 있다
 - **캔버스에 그리는 글씨도 빠뜨리지 않는다**
@@ -71,7 +77,11 @@ const game = findGame('my-game')!;
 const T = STR[lang];
 ---
 
-<GameLayout lang={lang} game={game} tag={T.tagline} help={T.help}>
+<GameLayout
+  lang={lang} game={game}
+  tag={T.tagline} help={T.help}
+  about={T.about} how={T.how} tips={T.tips}
+>
   …HUD·캔버스·덮개 화면·손가락 단추…
 
   <style>canvas{ background:#BFE8FF }</style>
@@ -84,7 +94,7 @@ const T = STR[lang];
 
 지킬 것 —
 
-- 머리(이름·나라말 칸)와 발(안내글·목록으로 돌아가기)은 **GameLayout 이 만든다.**
+- 머리(로고·나라말 칸), 제목, 읽을 글, 발은 **GameLayout 이 만든다.**
   게임 쪽에 또 쓰지 않는다
 - `<style>` 과 `<script>` 는 **`</GameLayout>` 안쪽 맨 끝**에 둔다.
   밖에 두면 `<body>` 밖으로 나간다
@@ -126,6 +136,8 @@ npm run build
 - [ ] 폰 크기(390px 안팎)에서 안 깨진다
 - [ ] 사이트맵(`dist/sitemap-0.xml`)에 여섯 주소가 다 있다
 - [ ] 대표 그림이 나라말 여섯 개 다 있다 (`public/og/<이름>-ko.png` …)
+- [ ] 읽을 글(소개·어떻게 하나·요령)이 여섯 나라말 다 나온다
+- [ ] 넓은 화면에서 왼쪽 게임 · 오른쪽 글로 나란히 선다
 
 ## 8. 목록이 길어지면
 

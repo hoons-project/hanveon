@@ -40,6 +40,12 @@ export type S = {
   levelUp: string;
   lifePop: string;
   bombPickup: string;
+  /** 게임 소개 두세 문장. 검색엔진이 읽는 본문이기도 하다. */
+  about: string;
+  /** 「어떻게 하나」 — 정확히 네 줄. 짧은 명령문. */
+  how: [string, string, string, string];
+  /** 「잘하는 요령」 — 정확히 세 줄. */
+  tips: [string, string, string];
 };
 
 export const STR: Record<Lang, S> = {
@@ -73,6 +79,19 @@ export const STR: Record<Lang, S> = {
     levelUp: 'Lv.{n}',
     lifePop: 'Life +1',
     bombPickup: 'Bomb +1',
+    about:
+      'A top-down shooter where the plane fires on its own, so your whole job is dodging. Enemies drop weapon swaps, power-ups, spare lives and bombs, and a boss turns up roughly every 40 seconds. You start with three lives and the run ends when the last one is gone.',
+    how: [
+      'Drag on the screen to fly, or use the arrow keys.',
+      'The gun fires by itself — just line up the shot.',
+      'Dodge enemy bullets and never touch an enemy.',
+      'Lose all three lives and the run is over.',
+    ],
+    tips: [
+      'A hit costs a life and knocks your gun down a level, so a bomb is cheaper than a crash.',
+      'A bomb wipes the enemy bullets on screen and keeps you safe for a moment — save one for when you are boxed in.',
+      'The big slow enemies always drop something when destroyed, so shoot them instead of slipping past.',
+    ],
   },
   ko: {
     tagline: '알아서 쏴요. 피하기만 하면 돼요',
@@ -104,6 +123,19 @@ export const STR: Record<Lang, S> = {
     levelUp: '{n}단계',
     lifePop: '목숨 +1',
     bombPickup: '폭탄 +1',
+    about:
+      '총이 알아서 나가는 비행기 게임이에요. 하는 일은 피하는 것 하나예요. 적을 잡으면 총을 세게 하는 알, 다른 총, 목숨, 폭탄이 떨어지고 40초쯤마다 큰 대장이 나와요. 목숨 셋이 다 없어지면 그 판은 끝나요.',
+    how: [
+      '화면을 끌어서 움직여요. 화살표 키로도 돼요.',
+      '총은 알아서 나가니까 겨누기만 하면 돼요.',
+      '적 총알도, 적 몸도 닿지 않게 피해요.',
+      '목숨 셋을 다 잃으면 끝이에요.',
+    ],
+    tips: [
+      '한 대 맞으면 목숨만 주는 게 아니라 총 세기도 한 단계 내려가요. 위험하면 아끼지 말고 폭탄을 써요.',
+      '폭탄을 터뜨리면 화면에 있던 적 총알이 싹 사라지고 잠깐 안 맞아요. 둘러싸였을 때 쓰면 좋아요.',
+      '느리고 큰 적은 잡으면 꼭 뭔가 떨어뜨려요. 그냥 지나치지 말고 잡는 게 이득이에요.',
+    ],
   },
   ja: {
     tagline: '弾は自動発射。よけるだけ。',
@@ -135,6 +167,19 @@ export const STR: Record<Lang, S> = {
     levelUp: 'Lv.{n}',
     lifePop: 'ライフ+1',
     bombPickup: '爆弾+1',
+    about:
+      '弾が自動で出る縦スクロールのシューティング。やることはよけることだけ。敵を倒すと武器や強化、ライフ、爆弾が落ち、40秒ほどごとにボスが現れる。ライフを三つとも失うと、その回は終わり。',
+    how: [
+      '画面をドラッグして動かす。矢印キーでも動く。',
+      '弾は自動で出る。ねらいを合わせるだけ。',
+      '敵弾をよけ、敵の体にも触れない。',
+      'ライフを三つとも失うと終わり。',
+    ],
+    tips: [
+      '被弾するとライフだけでなく武器のレベルも一つ下がる。危ないときは爆弾を惜しまない。',
+      '爆弾は画面の敵弾を消し、その間は少し無敵になる。囲まれたときのために一つ残しておく。',
+      '大きくて遅い敵は倒すと必ずアイテムを落とす。よけずに撃ち落とすほうが得。',
+    ],
   },
   es: {
     tagline: 'Dispara sola. Solo esquiva.',
@@ -166,6 +211,19 @@ export const STR: Record<Lang, S> = {
     levelUp: 'Niv.{n}',
     lifePop: 'Vida +1',
     bombPickup: 'Bomba +1',
+    about:
+      'Un juego de naves en vertical donde el avión dispara solo, así que tu único trabajo es esquivar. Los enemigos sueltan armas nuevas, mejoras, vidas y bombas, y cada 40 segundos aparece un jefe. Empiezas con tres vidas y la partida acaba cuando pierdes la última.',
+    how: [
+      'Arrastra por la pantalla o usa las flechas.',
+      'El arma dispara sola: solo tienes que apuntar.',
+      'Esquiva las balas y no choques con nadie.',
+      'Se acaba cuando pierdes las tres vidas.',
+    ],
+    tips: [
+      'Cada golpe te quita una vida y además baja un nivel el arma: sale más barato gastar una bomba.',
+      'La bomba borra las balas enemigas de la pantalla y te deja a salvo un instante; guarda una para cuando te rodeen.',
+      'Los enemigos grandes y lentos siempre sueltan algo al caer, así que conviene derribarlos.',
+    ],
   },
   fr: {
     tagline: 'Il tire tout seul. Esquive.',
@@ -197,6 +255,19 @@ export const STR: Record<Lang, S> = {
     levelUp: 'Niv.{n}',
     lifePop: 'Vie +1',
     bombPickup: 'Bombe +1',
+    about:
+      'Un shoot vertical où l’avion tire tout seul : ton seul travail, c’est d’esquiver. Les ennemis lâchent d’autres armes, des améliorations, des vies et des bombes, et un boss arrive environ toutes les 40 secondes. Tu commences avec trois vies et la partie s’arrête à la dernière perdue.',
+    how: [
+      'Glisse sur l’écran ou utilise les flèches.',
+      'Le tir est automatique : tu n’as qu’à viser.',
+      'Esquive les tirs et ne percute aucun ennemi.',
+      'La partie s’arrête à la troisième vie perdue.',
+    ],
+    tips: [
+      'Un coup encaissé coûte une vie et fait baisser l’arme d’un niveau : une bombe revient moins cher.',
+      'La bombe efface les tirs ennemis à l’écran et te protège un instant ; garde-en une pour les moments où tu es cerné.',
+      'Les gros ennemis lents lâchent toujours un objet quand ils tombent : mieux vaut les abattre que les contourner.',
+    ],
   },
   zh: {
     tagline: '自动开火，只要躲避就好。',
@@ -228,5 +299,18 @@ export const STR: Record<Lang, S> = {
     levelUp: '{n}级',
     lifePop: '生命+1',
     bombPickup: '炸弹+1',
+    about:
+      '竖版射击游戏，子弹自动发射，你要做的只是闪避。打掉敌人会掉出别的武器、强化、生命和炸弹，大约每 40 秒出现一次首领。开局三条命，全部用完这一局就结束。',
+    how: [
+      '拖动画面移动，方向键也可以。',
+      '子弹自动发射，你只要对准。',
+      '躲开子弹，也别撞上敌人的身体。',
+      '三条命全部失去就结束。',
+    ],
+    tips: [
+      '被打中不只掉一条命，武器等级也会降一级，与其硬挨不如扔颗炸弹。',
+      '炸弹会清掉屏幕上的敌方子弹，而且有短暂无敌，留一颗给被围住的时候。',
+      '又大又慢的敌人被打掉一定会掉道具，绕开不如打掉。',
+    ],
   },
 };

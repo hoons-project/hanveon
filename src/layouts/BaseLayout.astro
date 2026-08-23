@@ -11,13 +11,11 @@ interface Props {
   slug?: string;
   title?: string;
   description?: string;
-  /** 몸통 배경색. 쪽마다 다르다 (design/README.md 참고). */
-  pageBg?: string;
   /** 검색엔진에 주는 구조화 자료. 그대로 JSON 으로 박힌다. */
   jsonLd?: unknown;
 }
 
-const { lang, kind, slug, title, description, pageBg, jsonLd } = Astro.props;
+const { lang, kind, slug, title, description, jsonLd } = Astro.props;
 const t = ui(lang);
 
 const docTitle = title ?? t.homeTitle;
@@ -38,6 +36,14 @@ const ogImage = new URL(ogPath(kind, lang, slug), Astro.site);
     <link rel="canonical" href={canonical} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 
+    {/* 글씨 — Inter. 한글·일본말·중국말은 기기에 있는 글꼴이 받는다 */}
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+    />
+
     {/* 같은 페이지의 다른 나라말이 어디 있는지 검색엔진에 알려준다.
         x-default 는 「어느 것도 안 맞으면 여기로」라는 뜻. 영어를 쓴다. */}
     {alts.map((a) => (
@@ -45,7 +51,7 @@ const ogImage = new URL(ogPath(kind, lang, slug), Astro.site);
     ))}
     <link rel="alternate" hreflang="x-default" href={new URL(alts[0]!.path, Astro.site)} />
 
-    <meta name="theme-color" content="#FFF7EA" />
+    <meta name="theme-color" content="#FFFFFF" />
     <meta property="og:site_name" content="Hanveon" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={docTitle} />
@@ -68,8 +74,6 @@ const ogImage = new URL(ogPath(kind, lang, slug), Astro.site);
 
     {/* 구조화 자료 — 구글에 「이건 게임이다」라고 알려주는 표시 */}
     {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
-
-    {pageBg && <style set:html={`body{--page-bg:${pageBg}}`} />}
   </head>
   <body>
     <slot />

@@ -17,7 +17,15 @@ const game = findGame('pop-shot')!;
 const T = STR[lang];
 ---
 
-<GameLayout lang={lang} game={game} tag={T.tagline} help={T.help}>
+<GameLayout
+  lang={lang}
+  game={game}
+  tag={T.tagline}
+  help={T.help}
+  about={T.about}
+  how={T.how}
+  tips={T.tips}
+>
   <div class="hud">
     <div><b>{T.score}</b><i id="hScore">0</i></div>
     <div><b>{T.life}</b><i id="hLife" class="word">♥♥♥</i></div>

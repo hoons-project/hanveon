@@ -19,7 +19,15 @@ const game = findGame('merge-fruit')!;
 const T = STR[lang];
 ---
 
-<GameLayout lang={lang} game={game} tag={T.tagline} help={T.help}>
+<GameLayout
+  lang={lang}
+  game={game}
+  tag={T.tagline}
+  help={T.help}
+  about={T.about}
+  how={T.how}
+  tips={T.tips}
+>
   <div class="hud">
     <div><b>{T.score}</b><i id="hScore">0</i></div>
     <div><b>{T.big}</b><i id="hBig" class="word">{T.fruits[0]}</i></div>

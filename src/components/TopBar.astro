@@ -1,0 +1,19 @@
+---
+/* 모든 쪽 맨 위. 왼쪽에 로고, 오른쪽에 나라말 고르는 칸. */
+import LangPicker from './LangPicker.astro';
+import { homePath, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+  kind: 'home' | 'game';
+  slug?: string;
+}
+const { lang, kind, slug } = Astro.props;
+---
+
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="logo" href={homePath(lang)}>Han<span>veon</span></a>
+    <LangPicker lang={lang} kind={kind} slug={slug} />
+  </div>
+</header>

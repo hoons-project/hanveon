@@ -1,86 +1,140 @@
 /* ─────────────────────────────────────────────────────────────
    게임 쪽 공통 생김새.
 
-   전에는 이 CSS 가 게임 파일마다 통째로 복사돼 있었다. 이제 여기 한 곳에 있다.
-   게임마다 다른 것(자기 색, 캔버스 바탕, 자기만 쓰는 조각)만 각 게임 안에 둔다.
+   바깥(HUD·덮개 화면·단추·읽을 글)은 「조용한 흰 벽」을 따른다.
+   캔버스 **안쪽** 그림만 옛 「장난감 오락기」다 — design/README.md 참고.
    ───────────────────────────────────────────────────────────── */
 
-.cabinet.game{ max-width:392px }
+/* 넓으면 왼쪽에 게임, 오른쪽에 읽을 글. 좁으면 위아래로. */
+.gamewrap{
+  display:grid;
+  grid-template-columns:minmax(0,392px) minmax(0,1fr);
+  gap:48px;
+  align-items:start;
+  margin-top:28px;
+}
+@media (max-width:880px){
+  .gamewrap{ grid-template-columns:minmax(0,1fr); gap:36px; max-width:440px }
+}
 
-.hud{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
+.crumb{
+  margin-bottom:10px;
+  font-size:14px;color:var(--foggy);
+}
+.crumb a:hover{color:var(--hof)}
+
+/* ── HUD — 상자 없이 얇은 줄로만 나눈다 ─────────────── */
+.hud{
+  display:grid;grid-template-columns:1fr 1fr 1fr;
+  border:1px solid var(--bebe);
+  border-radius:12px;
+  overflow:hidden;
+  margin-bottom:12px;
+}
 .hud div{
-  background:#fff;
-  border:3px solid var(--ink);
-  border-radius:14px;
-  padding:6px 8px 7px;
+  padding:10px 8px 12px;
   text-align:center;
 }
-.hud b{display:block;font-size:11px;font-weight:800;color:var(--muted);letter-spacing:0.02em}
-.hud i{
-  display:block;font-style:normal;font-size:19px;font-weight:900;
-  font-variant-numeric:tabular-nums;letter-spacing:-0.02em;
+.hud div + div{ border-left:1px solid var(--bebe) }
+.hud b{
+  display:block;font-size:12px;font-weight:400;color:var(--foggy);
 }
-.hud i.word{font-size:16px}
+.hud i{
+  display:block;font-style:normal;
+  font-size:20px;font-weight:600;line-height:1.2;
+  font-variant-numeric:tabular-nums;letter-spacing:-0.02em;
+  margin-top:2px;
+}
+.hud i.word{font-size:17px}
 
+/* ── 캔버스 ────────────────────────────────────────── */
 .stage{position:relative}
 canvas{
   display:block;
   width:100%;
   aspect-ratio:360/620;
-  border:4px solid var(--ink);
-  border-radius:20px;
+  border-radius:12px;
   touch-action:none;
   cursor:pointer;
 }
 
-/* 덮개 화면 — 시작 / 끝 / 멈춤 */
+/* ── 덮개 화면 — 시작 / 끝 / 멈춤 ──────────────────── */
 .screen{
   position:absolute;inset:0;
   display:none;flex-direction:column;align-items:center;justify-content:center;
-  padding:24px;text-align:center;border-radius:20px;
-  background:rgba(42,49,69,.64);
-  backdrop-filter:blur(2px);
+  padding:20px;text-align:center;border-radius:12px;
+  background:rgba(34,34,34,.45);
 }
 .screen.on{display:flex}
 .card{
-  width:100%;max-width:268px;
-  background:var(--cream);
-  border:4px solid var(--ink);
-  border-radius:22px;
-  box-shadow:6px 6px 0 rgba(0,0,0,.28);
-  padding:20px 18px;
+  width:100%;max-width:290px;
+  background:var(--white);
+  border-radius:12px;
+  box-shadow:0 8px 28px rgba(0,0,0,.28);
+  padding:24px 20px;
+  text-align:left;
 }
-.card h2{margin:0 0 6px;font-size:26px;font-weight:900;letter-spacing:-0.04em}
-.card p{margin:0 0 14px;font-size:13px;line-height:1.55;color:#5C6479;font-weight:600}
+.card h2{margin:0 0 8px;font-size:22px;font-weight:600;letter-spacing:-0.02em}
+.card p{margin:0 0 16px;font-size:14px;line-height:1.5;color:var(--foggy)}
+.card button{width:100%}
 
-.result{display:flex;justify-content:center;gap:18px;margin:2px 0 14px}
-.result span{font-size:12px;font-weight:800;color:var(--muted);display:block}
-.result strong{font-size:24px;font-weight:900;font-variant-numeric:tabular-nums}
+.result{
+  display:flex;gap:24px;margin:0 0 18px;
+}
+.result span{display:block;font-size:12px;color:var(--foggy)}
+.result strong{font-size:22px;font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:-0.02em}
 .result strong.word{font-size:18px}
 
 /* 시작 화면의 설명 줄 */
-.legend{display:flex;flex-direction:column;gap:7px;margin:0 0 16px;text-align:left}
-.legend div{display:flex;align-items:center;gap:9px;font-size:12.5px;font-weight:700;color:#5C6479}
+.legend{display:flex;flex-direction:column;gap:10px;margin:0 0 20px}
+.legend div{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--foggy)}
 .chip{
-  width:18px;height:18px;border:2.5px solid var(--ink);border-radius:50%;flex:none;
+  width:16px;height:16px;border:2px solid var(--ink);border-radius:50%;flex:none;
   display:flex;align-items:center;justify-content:center;
-  font-size:9px;font-weight:900;font-style:normal;color:var(--ink);
+  font-size:9px;font-weight:700;font-style:normal;color:var(--ink);
 }
-.chip.bar{width:26px;height:12px;border-radius:5px}
+.chip.bar{width:24px;height:11px;border-radius:4px}
 .chips{display:flex;gap:3px;flex:none}
 
-button{
-  font-family:inherit;font-weight:900;font-size:16px;letter-spacing:-0.02em;
-  color:var(--ink);background:var(--sun);
-  border:3px solid var(--ink);border-radius:14px;
-  padding:11px 22px;cursor:pointer;
-  box-shadow:0 4px 0 var(--ink);
-  transition:transform .06s, box-shadow .06s;
+/* ── 손가락용 단추. 마우스가 있는 기기에서는 숨긴다 ── */
+.pad{display:flex;gap:8px;margin-top:12px}
+.pad button{
+  flex:1;
+  background:var(--faint);color:var(--hof);
+  font-size:20px;padding:14px 0;
 }
-button:active{transform:translateY(4px);box-shadow:0 0 0 var(--ink)}
-button:focus-visible{outline:3px solid var(--coral);outline-offset:3px}
-
-/* 손가락용 단추. 마우스가 있는 기기에서는 숨긴다. */
-.pad{display:flex;gap:10px;margin-top:12px}
-.pad button{flex:1;background:#fff;font-size:22px;padding:12px 0}
+.pad button:hover{background:var(--bebe)}
 @media (hover:hover){ .pad{display:none} }
+
+/* ── 캐비닛 아래 조작 안내 ─────────────────────────── */
+.help{
+  margin-top:12px;
+  font-size:13px;line-height:1.6;color:var(--foggy);text-align:center;
+}
+
+/* ── 읽을 글 ───────────────────────────────────────── */
+.guide section + section{ margin-top:32px }
+.guide h2{
+  font-size:20px;font-weight:600;letter-spacing:-0.01em;
+  margin-bottom:10px;
+}
+.guide p{ font-size:14px;line-height:1.6;color:var(--foggy);max-width:62ch }
+.guide ol,
+.guide ul{
+  margin:0;padding:0;list-style:none;
+  display:flex;flex-direction:column;gap:10px;
+  max-width:62ch;
+}
+.guide li{
+  display:flex;gap:12px;
+  font-size:14px;line-height:1.5;color:var(--foggy);
+}
+.guide li::before{
+  content:attr(data-n);
+  flex:none;
+  width:22px;height:22px;border-radius:9999px;
+  background:var(--faint);color:var(--hof);
+  font-size:12px;font-weight:600;
+  display:flex;align-items:center;justify-content:center;
+}
+.guide ul li::before{ content:"·";font-size:18px;line-height:1 }

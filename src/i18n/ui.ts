@@ -17,7 +17,10 @@ export type UiKey =
   | 'homeTitle'    // 대문의 창 제목. 검색 결과의 파란 줄이 된다
   | 'gameTitle'    // 게임 쪽 창 제목 틀. `{name}` 자리에 게임 이름이 들어간다
   | 'gameDescTail' // 게임 설명 뒤에 붙이는 한 마디. 검색 결과 설명을 길게 만든다
-  | 'freeTag';     // 대표 그림 귀퉁이에 넣는 짧은 말
+  | 'freeTag'      // 대표 그림 귀퉁이에 넣는 짧은 말
+  | 'aboutTitle'   // 게임 쪽 읽을 글 — 소개
+  | 'howTitle'     // 게임 쪽 읽을 글 — 어떻게 하나
+  | 'tipsTitle';   // 게임 쪽 읽을 글 — 요령
 
 export const UI: Record<Lang, Record<UiKey, string>> = {
   en: {
@@ -32,6 +35,9 @@ export const UI: Record<Lang, Record<UiKey, string>> = {
     gameTitle: '{name} — Free online game | Hanveon',
     gameDescTail: 'Play free in your browser — no download, no sign-up.',
     freeTag: 'Free · No install',
+    aboutTitle: 'About this game',
+    howTitle: 'How to play',
+    tipsTitle: 'Tips',
   },
   ko: {
     tagline: '한번 해볼까? 받을 것도 없어요.',
@@ -45,6 +51,9 @@ export const UI: Record<Lang, Record<UiKey, string>> = {
     gameTitle: '{name} — 무료 온라인 게임 | Hanveon',
     gameDescTail: '브라우저에서 무료로 바로. 설치도 가입도 없어요.',
     freeTag: '무료 · 설치 없음',
+    aboutTitle: '게임 소개',
+    howTitle: '어떻게 하나',
+    tipsTitle: '잘하는 요령',
   },
   ja: {
     tagline: '小さなゲーム。インストール不要。',
@@ -58,6 +67,9 @@ export const UI: Record<Lang, Record<UiKey, string>> = {
     gameTitle: '{name} — 無料オンラインゲーム | Hanveon',
     gameDescTail: 'ブラウザで無料ですぐ遊べます。インストールも登録も不要。',
     freeTag: '無料 · インストール不要',
+    aboutTitle: 'このゲームについて',
+    howTitle: 'あそび方',
+    tipsTitle: 'コツ',
   },
   es: {
     tagline: 'Juegos pequeños. Nada que instalar.',
@@ -71,6 +83,9 @@ export const UI: Record<Lang, Record<UiKey, string>> = {
     gameTitle: '{name} — Juego online gratis | Hanveon',
     gameDescTail: 'Juega gratis en el navegador, sin descargas ni registro.',
     freeTag: 'Gratis · Sin instalar',
+    aboutTitle: 'Sobre el juego',
+    howTitle: 'Cómo se juega',
+    tipsTitle: 'Consejos',
   },
   fr: {
     tagline: 'Petits jeux. Rien à installer.',
@@ -84,6 +99,9 @@ export const UI: Record<Lang, Record<UiKey, string>> = {
     gameTitle: '{name} — Jeu en ligne gratuit | Hanveon',
     gameDescTail: 'Joue gratuitement dans ton navigateur, sans téléchargement ni inscription.',
     freeTag: 'Gratuit · Sans installation',
+    aboutTitle: 'À propos du jeu',
+    howTitle: 'Comment jouer',
+    tipsTitle: 'Astuces',
   },
   zh: {
     tagline: '小游戏，无需安装。',
@@ -97,6 +115,9 @@ export const UI: Record<Lang, Record<UiKey, string>> = {
     gameTitle: '{name} — 免费在线游戏 | Hanveon',
     gameDescTail: '打开浏览器就能免费玩，无需下载和注册。',
     freeTag: '免费 · 免安装',
+    aboutTitle: '游戏介绍',
+    howTitle: '怎么玩',
+    tipsTitle: '小技巧',
   },
 };
 

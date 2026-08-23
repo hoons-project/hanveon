@@ -1,0 +1,18 @@
+---
+/* 모든 쪽 맨 아래. 지금은 안내 한 줄과 해 표시뿐이다.
+   단계 6에서 개인정보·쿠키·약관 링크가 여기 들어간다. */
+import { type Lang } from '../i18n';
+import { ui } from '../i18n/ui';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = ui(lang);
+const year = 2026;
+---
+
+<footer class="foot">
+  <div class="foot-in">
+    <span>{t.footer}</span>
+    <span>© {year} Hanveon</span>
+  </div>
+</footer>

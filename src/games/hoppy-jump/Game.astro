@@ -19,7 +19,15 @@ const game = findGame('hoppy-jump')!;
 const T = STR[lang];
 ---
 
-<GameLayout lang={lang} game={game} tag={T.tagline} help={T.help}>
+<GameLayout
+  lang={lang}
+  game={game}
+  tag={T.tagline}
+  help={T.help}
+  about={T.about}
+  how={T.how}
+  tips={T.tips}
+>
   <div class="hud">
     <div><b>{T.height}</b><i id="hHeight">0</i></div>
     <div><b>{T.star}</b><i id="hStar">0</i></div>

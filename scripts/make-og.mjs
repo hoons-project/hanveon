@@ -4,13 +4,17 @@
    카톡·트위터·페이스북에 링크를 붙이면 나오는 1200×630 그림이다.
    게임마다 나라말마다 한 장씩, 대문도 나라말마다 한 장씩 만든다.
 
+   생김새는 `design/README.md` 를 따른다 — 흰 바탕, 회색 글씨,
+   산호는 로고 한 곳에만.
+
    돌리는 법 —
 
      node scripts/make-og.mjs
 
    Chromium 이 필요하다. 저장소 꾸러미에는 안 들어 있으니 둘 중 하나로 준다.
 
-     PLAYWRIGHT_DIR=/어디/node_modules/playwright node scripts/make-og.mjs
+     PLAYWRIGHT_DIR=/어디/node_modules/playwright CHROMIUM_PATH=/어디/chromium \
+       node scripts/make-og.mjs
      또는  npm i -D playwright && npx playwright install chromium
 
    한국말·일본말·중국말 글씨가 나오려면 Noto Sans CJK 가 깔려 있어야 한다.
@@ -36,7 +40,7 @@ const bundled = await build({
   write: false,
 });
 const src = bundled.outputFiles[0].text;
-const { GAMES, fullName, nameSep, LANGS, UI } = await import(
+const { GAMES, nameSep, LANGS, UI } = await import(
   'data:text/javascript;base64,' + Buffer.from(src).toString('base64')
 );
 
@@ -55,12 +59,12 @@ try {
   process.exit(1);
 }
 
-// ── 생김새 ───────────────────────────────────────────────────
-const INK = '#2A3145';
-const CREAM = '#FFF7EA';
-const SUN = '#FFD23F';
-const CORAL = '#FF7A6B';
-const MUTED = '#7A8296';
+// ── 색 (design/README.md 와 같아야 한다) ─────────────────────
+const RAUSCH = '#FF385C';
+const HOF = '#222222';
+const FOGGY = '#6A6A6A';
+const FAINT = '#F7F7F7';
+const BEBE = '#EBEBEB';
 
 /** 나라말마다 글꼴이 다르다. CJK 는 제 나라 것을 써야 글자 모양이 맞는다. */
 const FONT = {
@@ -76,84 +80,67 @@ function esc(s) {
   return String(s).replace(/[&<>"]/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[m]);
 }
 
-const CSS = (lang, bg, accent) => `
+const CSS = (lang) => `
   *{box-sizing:border-box;margin:0;padding:0}
   body{
     width:1200px;height:630px;overflow:hidden;
+    background:#FFFFFF;color:${HOF};
     font-family:${FONT[lang]};
-    color:${INK};
-    background:
-      radial-gradient(circle at 14% 10%, #FFFFFF 0 5px, transparent 5px) 0 0/44px 44px,
-      ${bg};
-  }
-  .card{
-    position:absolute;inset:44px 60px 60px 44px;
-    background:${CREAM};
-    border:8px solid ${INK};
-    border-radius:52px;
-    box-shadow:16px 16px 0 ${INK};
-    display:flex;align-items:center;gap:52px;
-    padding:52px 60px;
+    padding:64px 72px;
+    display:flex;align-items:center;gap:56px;
   }
   .art{
-    flex:none;width:300px;height:300px;
-    border:8px solid ${INK};border-radius:44px;overflow:hidden;
+    flex:none;width:340px;height:340px;
+    border-radius:24px;overflow:hidden;background:${FAINT};
   }
   .art svg{display:block;width:100%;height:100%}
-  .txt{min-width:0;flex:1;display:flex;flex-direction:column;gap:16px}
-  .brand{font-size:30px;font-weight:900;letter-spacing:-0.02em;color:${MUTED}}
-  .brand span{color:${CORAL}}
-  .name{
-    font-size:68px;font-weight:900;line-height:1.06;letter-spacing:-0.035em;
-    word-break:keep-all;
-  }
-  .name span{color:${accent}}
-  .desc{font-size:27px;font-weight:700;line-height:1.45;color:#5C6479;word-break:keep-all}
+  .txt{min-width:0;flex:1;display:flex;flex-direction:column;gap:18px}
+  .brand{font-size:30px;font-weight:900;letter-spacing:-0.03em}
+  .brand span{color:${RAUSCH}}
+  .name{font-size:66px;font-weight:900;line-height:1.08;letter-spacing:-0.04em;word-break:keep-all}
+  .desc{font-size:27px;font-weight:400;line-height:1.45;color:${FOGGY};word-break:keep-all}
   .tag{
-    align-self:flex-start;margin-top:6px;
-    font-size:23px;font-weight:900;
-    background:${SUN};border:5px solid ${INK};border-radius:18px;
-    padding:9px 20px;box-shadow:0 6px 0 ${INK};
+    align-self:flex-start;margin-top:4px;
+    font-size:22px;font-weight:700;
+    background:${FAINT};border-radius:9999px;padding:11px 22px;
   }
 
-  /* 대문 그림 — 그림 넷을 한 줄로 늘어놓는다 */
-  .card.home{flex-direction:column;align-items:flex-start;justify-content:center;gap:22px}
-  .home .name{font-size:96px}
-  .home .desc{font-size:30px}
-  .arts{display:flex;gap:20px;margin-top:8px}
-  .arts .art{width:132px;height:132px;border-width:6px;border-radius:24px}
+  /* 대문 그림 — 그림 여섯을 한 줄로 늘어놓는다 */
+  body.home{flex-direction:column;align-items:flex-start;justify-content:center;gap:22px}
+  .home .name{font-size:104px}
+  .home .desc{font-size:29px;max-width:1000px}
+  .arts{display:flex;gap:18px;margin-top:10px}
+  .arts .art{width:132px;height:132px;border-radius:16px;border:1px solid ${BEBE}}
 `;
 
 function gameCard(game, lang) {
   const [n1, n2] = game.name[lang];
   const t = UI[lang];
   return `<!doctype html><html lang="${lang}"><head><meta charset="utf-8">
-<style>${CSS(lang, game.pageBg, game.accent)}</style></head><body>
-<div class="card">
-  <div class="art">${game.art}</div>
-  <div class="txt">
-    <div class="brand">Han<span>veon</span></div>
-    <div class="name">${esc(n1)}${nameSep(lang)}<span>${esc(n2)}</span></div>
-    <div class="desc">${esc(game.desc[lang])}</div>
-    <div class="tag">${esc(t.freeTag)}</div>
-  </div>
+<style>${CSS(lang)}</style></head><body>
+<div class="art">${game.art}</div>
+<div class="txt">
+  <div class="brand">Han<span>veon</span></div>
+  <div class="name">${esc(n1)}${nameSep(lang)}${esc(n2)}</div>
+  <div class="desc">${esc(game.desc[lang])}</div>
+  <div class="tag">${esc(t.freeTag)}</div>
 </div></body></html>`;
 }
 
 function homeCard(lang) {
   const t = UI[lang];
   return `<!doctype html><html lang="${lang}"><head><meta charset="utf-8">
-<style>${CSS(lang, '#BFE8FF', CORAL)}</style></head><body>
-<div class="card home">
-  <div class="name">Han<span>veon</span></div>
-  <div class="desc">${esc(t.metaDesc)}</div>
-  <div class="arts">${GAMES.map((g) => `<div class="art">${g.art}</div>`).join('')}</div>
-  <div class="tag">${esc(t.freeTag)}</div>
-</div></body></html>`;
+<style>${CSS(lang)}</style></head><body class="home">
+<div class="name">Han<span style="color:${RAUSCH}">veon</span></div>
+<div class="desc">${esc(t.metaDesc)}</div>
+<div class="arts">${GAMES.map((g) => `<div class="art">${g.art}</div>`).join('')}</div>
+<div class="tag">${esc(t.freeTag)}</div>
+</body></html>`;
 }
 
 // ── 찍기 ─────────────────────────────────────────────────────
 fs.mkdirSync(OUT, { recursive: true });
+
 /* CHROMIUM_PATH 를 주면 그걸 쓰고, 없으면 playwright 가 받아 둔 것을 쓴다. */
 const browser = await chromium.launch(
   process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : {},

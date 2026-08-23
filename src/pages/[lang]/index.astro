@@ -12,6 +12,6 @@ export function getStaticPaths() {
 const lang = Astro.params.lang as Lang;
 ---
 
-<BaseLayout lang={lang} kind="home" pageBg="#BFE8FF" jsonLd={homeJsonLd(lang, Astro.site!)}>
+<BaseLayout lang={lang} kind="home" jsonLd={homeJsonLd(lang, Astro.site!)}>
   <Hub lang={lang} />
 </BaseLayout>
