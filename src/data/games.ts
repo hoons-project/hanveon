@@ -35,7 +35,7 @@ export function nameSep(lang: Lang): string {
 /** 두 조각을 이어 붙인 게임 이름. 대문 목록과 페이지 제목에 쓴다. */
 export function fullName(g: Game, lang: Lang): string {
   const [a, b] = g.name[lang];
-  return a + nameSep(lang);
+  return a + nameSep(lang) + b;
 }
 
 export const GAMES: Game[] = [
