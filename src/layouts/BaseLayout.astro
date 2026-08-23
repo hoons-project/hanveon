@@ -1,4 +1,5 @@
 ---
+import '@fontsource-variable/inter/wght.css';
 import '../styles/global.css';
 import { altPaths, HREFLANG, ogPath, type Lang } from '../i18n';
 import { ui } from '../i18n/ui';
@@ -35,14 +36,6 @@ const ogImage = new URL(ogPath(kind, lang, slug), Astro.site);
     <title>{docTitle}</title>
     <link rel="canonical" href={canonical} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-
-    {/* 글씨 — Inter. 한글·일본말·중국말은 기기에 있는 글꼴이 받는다 */}
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-    />
 
     {/* 같은 페이지의 다른 나라말이 어디 있는지 검색엔진에 알려준다.
         x-default 는 「어느 것도 안 맞으면 여기로」라는 뜻. 영어를 쓴다. */}

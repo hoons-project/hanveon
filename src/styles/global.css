@@ -37,7 +37,7 @@ body{
   flex-direction:column;
   background:var(--white);
   color:var(--hof);
-  font-family:"Inter","Pretendard","Apple SD Gothic Neo","Hiragino Sans",
+  font-family:"Inter Variable","Inter","Pretendard","Apple SD Gothic Neo","Hiragino Sans",
               "Noto Sans KR","Noto Sans JP","PingFang SC",system-ui,sans-serif;
   font-size:14px;
   line-height:1.43;
