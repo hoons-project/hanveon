@@ -86,7 +86,7 @@ export const UI: Record<Lang, Record<UiKey, string>> = {
     updatedLabel: '마지막 수정',
     menuMore: '더 보기',
     navAbout: '소개',
-    navContact: '연락',
+    navContact: '고객센터',
     navPrivacy: '개인정보',
     navCookies: '쿠키',
     navTerms: '이용 약관',
