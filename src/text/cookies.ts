@@ -9,46 +9,46 @@ const M = `<a href="mailto:${CONTACT_EMAIL}">${CONTACT_EMAIL}</a>`;
 export const COOKIES: TextCopy = {
   en: {
     h1: 'Cookies',
-    lede: 'Hanveon sets no cookies. That is why there is no cookie banner here.',
+    lede: 'Hanveon does not set its own cookies. That is why there is no cookie banner here.',
     metaTitle: 'Cookies | Hanveon',
     metaDesc:
-      'Hanveon sets no cookies of its own — no sign-in cookie, no advertising cookie, no analytics cookie. Here is what it does use instead.',
+      'Hanveon does not set its own sign-in, advertising or analytics cookies. Here is what the site stores instead, and what Cloudflare may do.',
     blocks: [
       {
-        h: 'We set none',
+        h: 'Hanveon does not set cookies',
         p: [
-          'Hanveon itself does not set a single cookie. There is no sign-in cookie, because there is nothing to sign in to. There is no advertising cookie, because there are no ads. The tool we use to count visits sets none either.',
-          'That is why you were not asked to accept anything when you arrived.',
+          'Hanveon itself does not set any cookies. There is no sign-in cookie because there is no account system, and there is no advertising cookie because there are no ads. The analytics tool used to count visits does not set cookies either.',
+          'That is why you are not shown a cookie consent banner when you arrive.',
         ],
       },
       {
-        h: 'What we use instead',
+        h: 'What the site stores instead',
         p: [
-          'Two small things are saved by your browser on your device. They are not cookies: they are never attached to a request and never reach any server.',
+          'Your browser stores two small pieces of information on your device. They are not cookies: they are not attached to web requests and they are not sent to a server.',
         ],
         list: [
-          'The language you picked, so the site opens in it next time.',
-          'Your best score in each game — one small number per game.',
+          'The language you selected, so Hanveon can open in that language next time.',
+          'Your best score in each game — one small value per game.',
         ],
       },
       {
-        h: 'Getting rid of them',
+        h: 'How to remove them',
         p: [
-          'Clearing your browser data for hanveon.com removes both, immediately and for good. Your best scores go with them and cannot be brought back, because no copy exists anywhere else.',
+          'Clearing the site data for hanveon.com in your browser removes both. Your best scores are removed at the same time and cannot be restored because no copy exists anywhere else.',
         ],
       },
       {
         h: 'Cloudflare',
         p: [
-          'The site is served by Cloudflare. To keep sites working under automated abuse, Cloudflare may set a technical cookie of its own on some requests. It says nothing about you as a person and is not used for advertising.',
-          'Cloudflare Web Analytics, which we use to count visits, sets no cookie at all.',
+          'Hanveon is served through Cloudflare. To protect sites from automated abuse, Cloudflare may set one of its own technical cookies on some requests. That cookie is not used for advertising.',
+          'Cloudflare Web Analytics, which Hanveon uses to count visits, does not set cookies.',
         ],
       },
       {
-        h: 'If ads arrive',
+        h: 'If advertising is added later',
         p: [
-          'We may put advertising on Hanveon later. Ads usually do use cookies. If that day comes, this page will say so before the ads go live, and you will be asked for consent where the law requires it.',
-          `Questions about any of this: ${M}.`,
+          'Hanveon may add advertising in the future. Advertising services often use cookies. If that happens, this page will be updated before the ads go live, and consent will be requested where the law requires it.',
+          `Questions about cookies or local storage: ${M}.`,
         ],
       },
     ],
@@ -56,46 +56,46 @@ export const COOKIES: TextCopy = {
 
   ko: {
     h1: '쿠키',
-    lede: 'Hanveon 은 쿠키를 심지 않습니다. 그래서 쿠키 동의 창이 안 뜹니다.',
+    lede: 'Hanveon은 자체 쿠키를 사용하지 않습니다. 그래서 쿠키 동의 창도 띄우지 않습니다.',
     metaTitle: '쿠키 | Hanveon',
     metaDesc:
-      'Hanveon 은 자체 쿠키를 하나도 심지 않습니다 — 로그인 쿠키도, 광고 쿠키도, 분석 쿠키도 없습니다. 대신 무엇을 쓰는지 적었습니다.',
+      'Hanveon은 로그인·광고·분석을 위한 자체 쿠키를 사용하지 않습니다. 대신 기기에 무엇을 저장하는지, Cloudflare에서는 무엇을 할 수 있는지 안내합니다.',
     blocks: [
       {
-        h: '하나도 안 심습니다',
+        h: 'Hanveon은 자체 쿠키를 사용하지 않습니다',
         p: [
-          'Hanveon 은 쿠키를 하나도 심지 않습니다. 로그인할 것이 없으니 로그인 쿠키가 없고, 광고가 없으니 광고 쿠키가 없습니다. 방문 수를 세는 데 쓰는 것도 쿠키를 안 심습니다.',
-          '그래서 들어오실 때 무언가에 동의하라는 창이 안 떴습니다.',
+          'Hanveon 자체에서는 쿠키를 만들지 않습니다. 계정 기능이 없으니 로그인 쿠키도 없고, 광고가 없으니 광고 쿠키도 없습니다. 방문 수를 확인하는 분석 도구도 쿠키를 사용하지 않습니다.',
+          '그래서 사이트에 들어왔을 때 쿠키 동의 창이 나타나지 않습니다.',
         ],
       },
       {
-        h: '대신 쓰는 것',
+        h: '대신 기기에 저장하는 것',
         p: [
-          '브라우저가 여러분 기기에 저장하는 작은 것이 둘 있습니다. 쿠키가 아닙니다 — 요청에 붙어 나가지 않고, 어느 서버에도 닿지 않습니다.',
+          '브라우저가 기기에 작은 정보 두 가지를 저장합니다. 쿠키가 아니며, 웹 요청에 붙어서 전송되지도 않고 서버로 보내지지도 않습니다.',
         ],
         list: [
-          '고른 언어. 다음에 올 때 그 말로 열리라고요.',
-          '게임마다의 최고 기록 — 게임 하나에 작은 숫자 하나.',
+          '선택한 언어 — 다음에 Hanveon을 열 때 같은 언어로 보여주기 위해 저장합니다.',
+          '게임별 최고 기록 — 게임 하나당 작은 값 하나가 저장됩니다.',
         ],
       },
       {
-        h: '지우려면',
+        h: '지우는 방법',
         p: [
-          '브라우저에서 hanveon.com 의 사이트 자료를 지우면 둘 다 바로, 완전히 사라집니다. 최고 기록도 같이 사라지고 되살릴 수 없습니다. 다른 곳에 사본이 없기 때문입니다.',
+          '브라우저에서 hanveon.com의 사이트 데이터를 지우면 두 정보 모두 삭제됩니다. 최고 기록도 함께 사라지며, 다른 곳에 사본이 없기 때문에 복구할 수 없습니다.',
         ],
       },
       {
         h: 'Cloudflare',
         p: [
-          '이 사이트는 Cloudflare 가 보내줍니다. 기계가 자동으로 몰려드는 것을 막으려고, Cloudflare 가 일부 요청에 자기 쪽 기술 쿠키를 심을 수 있습니다. 그 쿠키는 여러분이 누구인지에 관해 아무것도 담지 않고 광고에 쓰이지 않습니다.',
-          '방문 수를 세는 데 쓰는 Cloudflare 웹 애널리틱스는 쿠키를 아예 안 심습니다.',
+          'Hanveon은 Cloudflare를 통해 제공됩니다. 자동화된 공격이나 악용으로부터 사이트를 보호하기 위해, Cloudflare가 일부 요청에서 자체 기술 쿠키를 사용할 수 있습니다. 이 쿠키는 광고 목적으로 사용되지 않습니다.',
+          '방문 수를 확인하는 Cloudflare Web Analytics는 쿠키를 사용하지 않습니다.',
         ],
       },
       {
-        h: '광고가 붙으면',
+        h: '나중에 광고가 추가된다면',
         p: [
-          '나중에 Hanveon 에 광고를 붙일 수도 있습니다. 광고는 보통 쿠키를 씁니다. 그렇게 되면 광고가 나가기 전에 이 쪽에 먼저 적고, 법이 요구하는 곳에서는 동의를 여쭙습니다.',
-          `이 쪽에 대해 궁금한 것은 ${M} 으로 보내주세요.`,
+          '앞으로 Hanveon에 광고가 들어갈 수도 있습니다. 광고 서비스는 쿠키를 사용하는 경우가 많습니다. 광고를 추가하게 되면 실제 광고가 나오기 전에 이 페이지부터 수정하고, 법에서 요구하는 지역에서는 동의를 받겠습니다.',
+          `쿠키나 기기 저장 방식에 관한 질문은 ${M}으로 보내주세요.`,
         ],
       },
     ],
@@ -103,46 +103,46 @@ export const COOKIES: TextCopy = {
 
   ja: {
     h1: 'クッキー',
-    lede: 'Hanveon はクッキーを置きません。だからクッキーの同意バナーが出ません。',
+    lede: 'Hanveon は独自のクッキーを使用していません。そのため、クッキー同意バナーも表示しません。',
     metaTitle: 'クッキー | Hanveon',
     metaDesc:
-      'Hanveon は自前のクッキーを一つも置きません — ログイン用も、広告用も、解析用もありません。代わりに何を使っているかを書いています。',
+      'Hanveon はログイン・広告・アクセス解析のための独自クッキーを使用していません。代わりに端末へ保存する情報と、Cloudflare が利用する可能性のあるクッキーについて説明します。',
     blocks: [
       {
-        h: '一つも置きません',
+        h: 'Hanveon は独自のクッキーを使用しません',
         p: [
-          'Hanveon はクッキーを一つも置きません。ログインするものがないのでログイン用のクッキーはなく、広告がないので広告用のクッキーもありません。訪問数を数えるのに使っているものもクッキーを置きません。',
-          'だから、来たときに何かに同意を求める画面が出なかったのです。',
+          'Hanveon 自体はクッキーを設定しません。アカウント機能がないためログイン用クッキーはなく、広告がないため広告用クッキーもありません。訪問数を確認するアクセス解析ツールもクッキーを使用しません。',
+          'そのため、サイトを開いたときにクッキーへの同意を求めるバナーは表示されません。',
         ],
       },
       {
-        h: '代わりに使っているもの',
+        h: '代わりに端末へ保存するもの',
         p: [
-          'ブラウザがあなたの端末に保存する小さなものが二つあります。クッキーではありません — 通信にくっついて出ていくことがなく、どのサーバーにも届きません。',
+          'ブラウザが端末内に小さな情報を二つ保存します。どちらもクッキーではなく、ウェブ通信に添付されたりサーバーへ送信されたりすることはありません。',
         ],
         list: [
-          '選んだ言語。次に来たときその言葉で開くためです。',
-          'ゲームごとのベスト記録 — ゲーム一つにつき小さな数字が一つ。',
+          '選択した言語 — 次回も同じ言語で Hanveon を開くために使います。',
+          'ゲームごとのベスト記録 — 1ゲームにつき小さな値を一つ保存します。',
         ],
       },
       {
-        h: '消したいとき',
+        h: '削除するには',
         p: [
-          'ブラウザで hanveon.com のサイトデータを消すと、二つとも即座に、完全になくなります。ベスト記録も一緒に消え、元に戻せません。ほかにコピーがないからです。',
+          'ブラウザで hanveon.com のサイトデータを削除すると、どちらの情報も消えます。ベスト記録も同時に削除され、ほかにコピーがないため復元できません。',
         ],
       },
       {
         h: 'Cloudflare',
         p: [
-          'このサイトは Cloudflare が配信しています。自動化された悪用からサイトを守るため、Cloudflare が一部の通信で自社の技術的なクッキーを置くことがあります。それはあなたが誰かについて何も含まず、広告にも使われません。',
-          '訪問数を数えるのに使っている Cloudflare Web Analytics は、クッキーをまったく置きません。',
+          'Hanveon は Cloudflare を通じて配信されています。自動化された攻撃や不正利用からサイトを守るため、Cloudflare が一部の通信で独自の技術用クッキーを使用することがあります。このクッキーは広告目的では使われません。',
+          '訪問数を確認する Cloudflare Web Analytics はクッキーを使用しません。',
         ],
       },
       {
-        h: '広告が入ったら',
+        h: '将来広告を追加する場合',
         p: [
-          'あとから Hanveon に広告を入れることはあるかもしれません。広告はたいていクッキーを使います。そのときは広告が出る前にこのページに書き、法律が求める地域では同意をおうかがいします。',
-          `ここについて聞きたいことがあれば ${M} までどうぞ。`,
+          '今後 Hanveon に広告を追加する可能性があります。広告サービスではクッキーを使うことがあります。その場合は広告を表示する前にこのページを更新し、法律で必要な地域では同意を求めます。',
+          `クッキーや端末内の保存についての質問は ${M} までどうぞ。`,
         ],
       },
     ],
@@ -150,46 +150,46 @@ export const COOKIES: TextCopy = {
 
   es: {
     h1: 'Cookies',
-    lede: 'Hanveon no pone cookies. Por eso aquí no hay ningún aviso de cookies.',
+    lede: 'Hanveon no utiliza cookies propias. Por eso no aparece ningún aviso de cookies al entrar.',
     metaTitle: 'Cookies | Hanveon',
     metaDesc:
-      'Hanveon no pone ninguna cookie propia: ni de sesión, ni de publicidad, ni de analítica. Aquí está lo que usa en su lugar.',
+      'Hanveon no utiliza cookies propias para iniciar sesión, mostrar publicidad o medir visitas. Aquí explicamos qué se guarda en tu dispositivo y qué puede hacer Cloudflare.',
     blocks: [
       {
-        h: 'No ponemos ninguna',
+        h: 'Hanveon no utiliza cookies propias',
         p: [
-          'Hanveon no pone ni una sola cookie. No hay cookie de sesión, porque no hay nada donde iniciar sesión. No hay cookie de publicidad, porque no hay anuncios. La herramienta con la que contamos visitas tampoco pone ninguna.',
-          'Por eso no se te pidió aceptar nada al llegar.',
+          'Hanveon no configura cookies propias. Como no hay cuentas, no hacen falta cookies de inicio de sesión; y como no hay anuncios, tampoco hay cookies publicitarias. La herramienta que usamos para contar visitas tampoco utiliza cookies.',
+          'Por eso no ves un aviso pidiéndote que aceptes cookies al entrar.',
         ],
       },
       {
-        h: 'Lo que usamos en su lugar',
+        h: 'Qué se guarda en su lugar',
         p: [
-          'Tu navegador guarda dos cosas pequeñas en tu dispositivo. No son cookies: nunca se adjuntan a una petición ni llegan a ningún servidor.',
+          'El navegador guarda dos datos pequeños en tu dispositivo. No son cookies: no se adjuntan a las solicitudes web ni se envían a ningún servidor.',
         ],
         list: [
-          'El idioma que elegiste, para que el sitio se abra en él la próxima vez.',
-          'Tu récord en cada juego: un número pequeño por juego.',
+          'El idioma que elegiste, para que Hanveon vuelva a abrirse en ese idioma la próxima vez.',
+          'Tu mejor puntuación en cada juego — un valor pequeño por juego.',
         ],
       },
       {
-        h: 'Cómo quitarlas',
+        h: 'Cómo borrarlos',
         p: [
-          'Al borrar los datos del navegador para hanveon.com desaparecen las dos, al momento y para siempre. Tus récords se van con ellas y no se pueden recuperar, porque no existe ninguna copia en otro sitio.',
+          'Si borras los datos del sitio hanveon.com desde el navegador, se eliminan ambos. Tus récords también desaparecen y no se pueden recuperar porque no existe ninguna copia en otro sitio.',
         ],
       },
       {
         h: 'Cloudflare',
         p: [
-          'El sitio lo sirve Cloudflare. Para que los sitios sigan funcionando frente al abuso automatizado, Cloudflare puede poner una cookie técnica propia en algunas peticiones. No dice nada sobre ti como persona y no se usa para publicidad.',
-          'Cloudflare Web Analytics, que usamos para contar visitas, no pone ninguna cookie.',
+          'Hanveon se sirve a través de Cloudflare. Para proteger los sitios frente a abusos automatizados, Cloudflare puede utilizar una cookie técnica propia en algunas solicitudes. Esa cookie no se utiliza con fines publicitarios.',
+          'Cloudflare Web Analytics, que usamos para contar visitas, no utiliza cookies.',
         ],
       },
       {
-        h: 'Si llegan los anuncios',
+        h: 'Si añadimos publicidad más adelante',
         p: [
-          'Puede que más adelante pongamos publicidad en Hanveon. Los anuncios sí suelen usar cookies. Si llega ese día, esta página lo dirá antes de que los anuncios se activen, y se te pedirá consentimiento donde la ley lo exija.',
-          `Cualquier duda sobre esto: ${M}.`,
+          'Es posible que Hanveon incluya publicidad en el futuro. Los servicios publicitarios suelen utilizar cookies. Si eso ocurre, actualizaremos esta página antes de activar los anuncios y pediremos consentimiento donde la ley lo exija.',
+          `Si tienes alguna pregunta sobre cookies o almacenamiento local, escribe a ${M}.`,
         ],
       },
     ],
@@ -197,46 +197,46 @@ export const COOKIES: TextCopy = {
 
   fr: {
     h1: 'Cookies',
-    lede: 'Hanveon ne pose aucun cookie. C’est pour cela qu’il n’y a pas de bandeau ici.',
+    lede: 'Hanveon n’utilise pas ses propres cookies. C’est pourquoi aucun bandeau de consentement ne s’affiche ici.',
     metaTitle: 'Cookies | Hanveon',
     metaDesc:
-      'Hanveon ne pose aucun cookie qui lui soit propre : ni de connexion, ni de publicité, ni de mesure d’audience. Voici ce qu’il utilise à la place.',
+      'Hanveon n’utilise pas de cookies propres pour la connexion, la publicité ou la mesure d’audience. Voici ce qui est enregistré sur ton appareil et ce que Cloudflare peut faire.',
     blocks: [
       {
-        h: 'Nous n’en posons aucun',
+        h: 'Hanveon n’utilise pas ses propres cookies',
         p: [
-          'Hanveon ne pose pas un seul cookie. Pas de cookie de connexion, puisqu’il n’y a rien où se connecter. Pas de cookie publicitaire, puisqu’il n’y a pas de publicité. L’outil qui compte les visites n’en pose pas non plus.',
-          'C’est pour cela qu’on ne t’a rien demandé d’accepter en arrivant.',
+          'Hanveon ne dépose aucun cookie qui lui soit propre. Il n’y a pas de compte, donc pas de cookie de connexion ; il n’y a pas de publicité, donc pas de cookie publicitaire. L’outil utilisé pour compter les visites n’utilise pas de cookies non plus.',
+          'C’est pourquoi aucun bandeau ne te demande d’accepter des cookies quand tu arrives sur le site.',
         ],
       },
       {
-        h: 'Ce que nous utilisons à la place',
+        h: 'Ce qui est enregistré à la place',
         p: [
-          'Ton navigateur enregistre deux petites choses sur ton appareil. Ce ne sont pas des cookies : elles ne sont jamais jointes à une requête et n’atteignent aucun serveur.',
+          'Le navigateur enregistre deux petites informations sur ton appareil. Ce ne sont pas des cookies : elles ne sont pas jointes aux requêtes web et ne sont envoyées à aucun serveur.',
         ],
         list: [
-          'La langue que tu as choisie, pour que le site s’ouvre dedans la prochaine fois.',
-          'Ton record dans chaque jeu — un petit nombre par jeu.',
+          'La langue choisie, afin que Hanveon s’ouvre dans la même langue la prochaine fois.',
+          'Ton meilleur score dans chaque jeu — une petite valeur par jeu.',
         ],
       },
       {
-        h: 'Pour les effacer',
+        h: 'Comment les supprimer',
         p: [
-          'Effacer les données de navigation pour hanveon.com supprime les deux, tout de suite et définitivement. Tes records partent avec, et rien ne peut être récupéré, car il n’en existe aucune copie ailleurs.',
+          'Si tu effaces les données du site hanveon.com dans ton navigateur, les deux sont supprimées. Tes records disparaissent également et ne peuvent pas être restaurés, car aucune copie n’existe ailleurs.',
         ],
       },
       {
         h: 'Cloudflare',
         p: [
-          'Le site est servi par Cloudflare. Pour que les sites tiennent face aux abus automatisés, Cloudflare peut poser un cookie technique qui lui est propre sur certaines requêtes. Il ne dit rien de toi en tant que personne et ne sert pas à la publicité.',
-          'Cloudflare Web Analytics, qui nous sert à compter les visites, ne pose aucun cookie.',
+          'Hanveon est distribué par Cloudflare. Pour protéger les sites contre les abus automatisés, Cloudflare peut utiliser l’un de ses propres cookies techniques sur certaines requêtes. Ce cookie n’est pas utilisé à des fins publicitaires.',
+          'Cloudflare Web Analytics, que nous utilisons pour compter les visites, n’utilise pas de cookies.',
         ],
       },
       {
-        h: 'Si la publicité arrive',
+        h: 'Si de la publicité est ajoutée plus tard',
         p: [
-          'Nous mettrons peut-être de la publicité sur Hanveon plus tard. La publicité utilise généralement des cookies. Si ce jour vient, cette page le dira avant que les annonces ne soient en ligne, et ton consentement sera demandé là où la loi l’exige.',
-          `Une question là-dessus : ${M}.`,
+          'Hanveon pourra éventuellement afficher de la publicité à l’avenir. Les services publicitaires utilisent souvent des cookies. Si cela arrive, cette page sera mise à jour avant la mise en ligne des annonces et ton consentement sera demandé lorsque la loi l’exige.',
+          `Pour toute question sur les cookies ou le stockage local : ${M}.`,
         ],
       },
     ],
@@ -244,43 +244,46 @@ export const COOKIES: TextCopy = {
 
   zh: {
     h1: 'Cookie',
-    lede: 'Hanveon 不放 Cookie。所以这里没有 Cookie 同意横幅。',
+    lede: 'Hanveon 不使用自己的 Cookie，所以进入网站时不会弹出 Cookie 同意横幅。',
     metaTitle: 'Cookie | Hanveon',
     metaDesc:
-      'Hanveon 不放任何自己的 Cookie — 没有登录用的，没有广告用的，也没有统计用的。下面写了它改用什么。',
+      'Hanveon 不使用自己的登录、广告或访问统计 Cookie。这里说明浏览器会在你的设备上保存什么，以及 Cloudflare 可能使用什么。',
     blocks: [
       {
-        h: '一个也不放',
+        h: 'Hanveon 不使用自己的 Cookie',
         p: [
-          'Hanveon 不放任何一个 Cookie。没有可登录的东西，所以没有登录 Cookie；没有广告，所以没有广告 Cookie。我们用来统计访问次数的工具也不放。',
-          '所以你进来的时候没有被要求同意什么。',
+          'Hanveon 本身不会设置 Cookie。网站没有账号系统，所以不需要登录 Cookie；目前没有广告，所以也没有广告 Cookie。用于统计访问次数的工具同样不使用 Cookie。',
+          '因此进入网站时不会看到要求你接受 Cookie 的提示。',
         ],
       },
       {
-        h: '改用什么',
+        h: '浏览器会保存什么',
         p: [
-          '浏览器在你的设备上保存两样很小的东西。它们不是 Cookie：不会附在请求上发出去，也到不了任何服务器。',
+          '浏览器会在你的设备上保存两项很小的信息。它们不是 Cookie，不会附在网页请求中发送，也不会传到服务器。',
         ],
-        list: ['你选的语言，下次打开时就用这个语言。', '每个游戏的最高分 — 一个游戏一个小数字。'],
+        list: [
+          '你选择的语言 — 下次打开 Hanveon 时继续使用同一种语言。',
+          '每个游戏的最高分 — 每个游戏保存一个很小的数值。',
+        ],
       },
       {
-        h: '想清掉的话',
+        h: '如何删除',
         p: [
-          '在浏览器里清除 hanveon.com 的网站数据，这两样会立刻、彻底消失。最高分也一起没了，而且无法恢复，因为别处没有副本。',
+          '在浏览器中清除 hanveon.com 的网站数据后，这两项信息都会被删除。最高分也会一起消失，而且因为其他地方没有副本，所以无法恢复。',
         ],
       },
       {
         h: 'Cloudflare',
         p: [
-          '这个网站由 Cloudflare 提供。为了让网站在自动化滥用下还能正常运行，Cloudflare 可能会在部分请求上放一个它自己的技术性 Cookie。它不包含关于你这个人的任何信息，也不用于广告。',
-          '我们用来统计访问次数的 Cloudflare Web Analytics 完全不放 Cookie。',
+          'Hanveon 通过 Cloudflare 提供服务。为了保护网站免受自动化攻击或滥用，Cloudflare 可能会在部分请求中使用自己的技术性 Cookie。该 Cookie 不用于广告。',
+          '我们用于统计访问次数的 Cloudflare Web Analytics 不使用 Cookie。',
         ],
       },
       {
-        h: '如果以后有广告',
+        h: '如果以后加入广告',
         p: [
-          '以后我们可能会在 Hanveon 上放广告。广告通常会使用 Cookie。真到那一天，会在广告上线之前先写在这一页，并在法律要求的地区征求你的同意。',
-          `关于这些有疑问，写信到 ${M}。`,
+          '未来 Hanveon 可能会加入广告。广告服务通常会使用 Cookie。如果真的加入广告，我们会在广告上线前先更新本页，并在法律要求的地区征求你的同意。',
+          `如果对 Cookie 或本地存储有疑问，请写信到 ${M}。`,
         ],
       },
     ],

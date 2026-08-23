@@ -36,7 +36,7 @@ export type TextCopy = Record<import('../i18n').Lang, TextPage>;
  * 법적 쪽을 마지막으로 고친 날. 쪽 맨 위에 나온다.
  * **글을 고치면 이 날짜도 같이 고친다.** 안 고치면 거짓말이 된다.
  */
-export const TEXT_UPDATED = '2026-08-23';
+export const TEXT_UPDATED = '2026-08-24';
 
 /** 연락 주소. 두 곳에 적지 않으려고 여기 한 번만 둔다. */
 export const CONTACT_EMAIL = 'hello@hanveon.com';

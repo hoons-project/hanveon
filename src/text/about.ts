@@ -10,47 +10,47 @@ const M = `<a href="mailto:${CONTACT_EMAIL}">${CONTACT_EMAIL}</a>`;
 export const ABOUT: TextCopy = {
   en: {
     h1: 'About Hanveon',
-    lede: 'Small games you can start in ten seconds, with nothing in the way.',
-    metaTitle: 'About Hanveon — small browser games, nothing in the way',
+    lede: 'Small games you can start in ten seconds, with nothing getting in the way.',
+    metaTitle: 'About Hanveon — small browser games with no extra steps',
     metaDesc:
-      'Hanveon is a small set of browser games made by one person in Seoul. No install, no account, no ads — you open a page and you are playing. Here is why.',
+      'Hanveon is a small collection of browser games made by one person in Seoul. No install, no account, no ads — open a page and you are already playing. Here is why.',
     blocks: [
       {
         h: 'The idea',
         p: [
-          'Most game sites want something from you before you play. An install. An account. An email address. A banner to click away. By the time you are actually playing, the ten spare minutes you had are half gone.',
-          'Hanveon asks for none of it. You open a page and you are playing. Every other decision on this site follows from that one.',
+          'Most game sites want something from you before you play. An install. An account. An email address. A banner to dismiss. By the time you are actually playing, half of the ten spare minutes you had may already be gone.',
+          'Hanveon asks for none of that. Open a page and you are playing. Every other decision on this site follows from that one.',
         ],
       },
       {
         h: 'Where the name comes from',
         p: [
-          'It comes from the Korean word 한번 (han-beon). It is what you say when you are about to try something without making a thing of it — <em>let’s have a go</em>. That is the feeling the site is after: a game you start because it costs you nothing to start it.',
+          'It comes from the Korean word 한번 (han-beon). It is something you say when you are about to try something without making a big deal of it — <em>let’s give it a go</em>. That is the feeling Hanveon is after: a game you start simply because there is nothing stopping you.',
         ],
       },
       {
         h: 'How the games are made',
         p: [
-          'Every game is written by hand for the browser and drawn on a canvas. No game engine, no advertising libraries, no code from anywhere else.',
-          'That is why a game loads in a moment even on an old phone, why it works the same on a laptop and on a bus, and why the whole site can honestly say it sends nothing about you anywhere.',
+          'Every game is written for the browser and drawn on a canvas. No game engine, no advertising libraries, no code pulled in from somewhere else.',
+          'That is why a game loads quickly even on an old phone, works just as well on a laptop as it does on a phone on the bus, and lets the site honestly say that your gameplay stays on your device.',
         ],
       },
       {
         h: 'Six languages, six addresses',
         p: [
-          'Hanveon is written in English, Korean, Japanese, Spanish, French and Chinese. Each language has its own address rather than a switch that swaps the words on one page, so you can send someone a link in the language they actually read.',
+          'Hanveon is available in English, Korean, Japanese, Spanish, French and Chinese. Each language has its own address instead of simply swapping the words on one page, so you can share a link in the language the other person actually reads.',
         ],
       },
       {
         h: 'Who makes it',
         p: [
-          'One person in Seoul, South Korea, in their own time. New games arrive when they are ready rather than on a schedule, and old ones get fixed when someone points out that something is off.',
+          'One person in Seoul, South Korea, working on it in their own time. New games arrive when they are ready rather than on a fixed schedule, and older ones get fixed when someone points out that something is off.',
         ],
       },
       {
         h: 'Say hello',
         p: [
-          `Found a bug, or want a game that does not exist yet? ${M}. It is read by that same person.`,
+          `Found a bug, or have an idea for a game that is not here yet? Write to ${M}. The same person who makes the site reads it.`,
         ],
       },
     ],
@@ -58,47 +58,47 @@ export const ABOUT: TextCopy = {
 
   ko: {
     h1: 'Hanveon 소개',
-    lede: '십 초면 시작하는 작은 게임들. 앞을 막는 것이 없습니다.',
-    metaTitle: 'Hanveon 소개 — 앞을 막는 것 없는 작은 브라우저 게임',
+    lede: '10초면 시작하는 작은 게임들. 설치도 가입도, 번거로운 단계도 없어요.',
+    metaTitle: 'Hanveon 소개 — 설치 없이 바로 하는 작은 브라우저 게임',
     metaDesc:
-      'Hanveon 은 서울에서 한 사람이 만드는 작은 브라우저 게임 모음입니다. 설치도 가입도 광고도 없이, 페이지를 열면 바로 시작합니다. 왜 그렇게 만드는지 적었습니다.',
+      'Hanveon은 서울에서 한 사람이 만드는 작은 브라우저 게임 모음입니다. 설치도 가입도 광고도 없이 페이지를 열면 바로 시작합니다. 왜 이렇게 만드는지 소개합니다.',
     blocks: [
       {
         h: '이렇게 만든 이유',
         p: [
-          '게임 사이트들은 게임을 하기 전에 뭔가를 먼저 요구합니다. 설치, 가입, 이메일 주소, 눌러서 없애야 하는 창. 정작 게임을 시작할 때쯤이면 잠깐 난 십 분이 반은 날아가 있습니다.',
-          'Hanveon 은 아무것도 요구하지 않습니다. 페이지를 열면 바로 하는 중입니다. 이 사이트의 나머지 결정은 전부 여기서 따라 나옵니다.',
+          '게임을 하기 전에 이것저것 요구하는 사이트가 많습니다. 설치하고, 가입하고, 이메일을 넣고, 안내창도 닫아야 하죠. 잠깐 비는 10분에 게임 한 판 하려다가 시작도 전에 시간이 꽤 지나가 버립니다.',
+          'Hanveon은 그런 걸 요구하지 않습니다. 페이지를 열면 바로 게임을 시작할 수 있어요. 이 사이트의 다른 원칙들도 전부 여기에서 출발합니다.',
         ],
       },
       {
         h: '이름은 어디서 왔나',
         p: [
-          '한국말 <em>한번</em>에서 왔습니다. 크게 마음먹지 않고 뭔가 해보려 할 때 하는 말이지요 — <em>한번 해볼까</em>. 이 사이트가 노리는 느낌이 그겁니다. 시작하는 데 드는 것이 없어서 그냥 시작하게 되는 게임.',
+          '한국말 <em>한번</em>에서 왔습니다. 거창하게 마음먹지 않고 뭔가 가볍게 해보려 할 때 쓰는 말이죠 — <em>한번 해볼까?</em> Hanveon이 원하는 느낌도 그겁니다. 시작하는 데 드는 게 없어서 그냥 한번 해보게 되는 게임.',
         ],
       },
       {
         h: '게임은 어떻게 만드나',
         p: [
-          '게임마다 브라우저용으로 직접 손으로 짜고 캔버스에 그립니다. 게임 엔진도, 광고 꾸러미도, 남의 코드도 안 씁니다.',
-          '그래서 오래된 폰에서도 금방 열리고, 노트북에서든 버스에서든 똑같이 돌아가고, 무엇보다 「여러분에 관한 것을 어디로도 안 보낸다」고 떳떳하게 말할 수 있습니다.',
+          '게임마다 브라우저에서 바로 돌아가도록 직접 만들고 캔버스에 그립니다. 게임 엔진이나 광고용 라이브러리, 외부에서 불러오는 게임 코드도 쓰지 않습니다.',
+          '그래서 오래된 폰에서도 금방 열리고, 노트북에서도 이동 중인 휴대폰에서도 가볍게 돌아갑니다. 게임 안에서 무엇을 했는지도 기기 밖으로 보내지 않습니다.',
         ],
       },
       {
-        h: '여섯 나라말, 여섯 주소',
+        h: '여섯 언어, 여섯 주소',
         p: [
-          'Hanveon 은 영어·한국어·일본어·스페인어·프랑스어·중국어로 쓰여 있습니다. 한 페이지에서 글자만 갈아 끼우는 것이 아니라 나라말마다 주소가 따로 있습니다. 그래야 상대가 읽는 말로 된 링크를 보낼 수 있으니까요.',
+          'Hanveon은 영어·한국어·일본어·스페인어·프랑스어·중국어로 제공합니다. 한 페이지에서 글자만 바꾸는 방식이 아니라 언어마다 주소가 따로 있어서, 상대가 실제로 읽는 언어의 링크를 그대로 보낼 수 있습니다.',
         ],
       },
       {
         h: '누가 만드나',
         p: [
-          '한국 서울에 사는 한 사람이 자기 시간에 만듭니다. 새 게임은 정해진 날짜가 아니라 준비되면 올라오고, 이상한 데를 누가 알려주면 고칩니다.',
+          '한국 서울에서 한 사람이 자기 시간에 만들고 있습니다. 새 게임은 정해진 날짜보다 준비가 끝났을 때 올리고, 이상한 점을 알려주시면 기존 게임도 계속 고칩니다.',
         ],
       },
       {
-        h: '인사 주세요',
+        h: '이야기해 주세요',
         p: [
-          `이상한 데를 찾으셨거나, 아직 없는 게임이 하고 싶으시면 ${M} 으로 보내주세요. 같은 사람이 읽습니다.`,
+          `이상한 점을 찾으셨거나 아직 없는 게임 아이디어가 있으시면 ${M}으로 보내주세요. 사이트를 만드는 사람이 직접 읽습니다.`,
         ],
       },
     ],
@@ -106,47 +106,47 @@ export const ABOUT: TextCopy = {
 
   ja: {
     h1: 'Hanveon について',
-    lede: '十秒で始められる小さなゲーム。前をふさぐものがありません。',
-    metaTitle: 'Hanveon について — 前をふさぐもののない小さなブラウザゲーム',
+    lede: '10秒で始められる小さなゲーム。インストールも登録も、余計な手順もありません。',
+    metaTitle: 'Hanveon について — すぐ遊べる小さなブラウザゲーム',
     metaDesc:
-      'Hanveon はソウルに住む一人が作っている小さなブラウザゲームの集まりです。インストールも登録も広告もなく、ページを開けばすぐ遊べます。その理由を書いています。',
+      'Hanveon は、ソウルに住む一人が作っている小さなブラウザゲーム集です。インストールも登録も広告もなく、ページを開けばすぐ遊べます。ここでは、その理由を紹介します。',
     blocks: [
       {
         h: 'こう作っている理由',
         p: [
-          'たいていのゲームサイトは、遊ぶ前に何かを求めてきます。インストール、アカウント、メールアドレス、消すために押すバナー。ようやく遊び始めるころには、空いていた十分の半分が消えています。',
-          'Hanveon は何も求めません。ページを開けば、もう遊んでいます。このサイトのほかの決めごとは、すべてここから出ています。',
+          'ゲームを始める前に、いろいろ求めてくるサイトは少なくありません。インストール、アカウント作成、メールアドレスの入力、閉じる必要のある案内。ちょっと空いた10分で遊ぶつもりが、始める前に時間を使ってしまいます。',
+          'Hanveon では、そうしたものを求めません。ページを開けばすぐ遊べます。このサイトのほかの方針も、すべてそこから決まっています。',
         ],
       },
       {
         h: '名前の由来',
         p: [
-          '韓国語の <em>한번</em>（ハンボン）から来ています。大げさに構えず何かをやってみようとするときに言う言葉です — <em>ちょっとやってみようか</em>。このサイトが狙っているのはその感じです。始めるのに何もいらないから、つい始めてしまうゲーム。',
+          '韓国語の <em>한번</em>（han-beon）から来ています。大げさに構えず、何かを軽く試してみるときに使う言葉です — <em>ちょっとやってみようか</em>。Hanveon が目指しているのも、その気軽さです。始めるための面倒がないから、つい遊んでみたくなるゲーム。',
         ],
       },
       {
         h: 'ゲームの作り方',
         p: [
-          'どのゲームもブラウザ用に手で書き、キャンバスに描いています。ゲームエンジンも、広告用のライブラリも、よそのコードも使っていません。',
-          'だから古いスマホでもすぐ開き、ノートパソコンでもバスの中でも同じように動き、そして「あなたに関するものをどこにも送っていない」と正直に言えます。',
+          'どのゲームもブラウザでそのまま動くように作り、キャンバスに描いています。ゲームエンジンや広告用ライブラリ、外部から読み込むゲームコードは使っていません。',
+          'そのため古いスマホでもすぐ開き、ノートパソコンでも移動中のスマホでも軽く動きます。ゲーム内での操作やスコアも端末の外へ送りません。',
         ],
       },
       {
-        h: '六つの言語、六つのアドレス',
+        h: '6つの言語、6つのアドレス',
         p: [
-          'Hanveon は英語・韓国語・日本語・スペイン語・フランス語・中国語で書かれています。一つのページで文字を差し替えるのではなく、言語ごとにアドレスがあります。相手が読む言葉のリンクを送れるようにするためです。',
+          'Hanveon は英語・韓国語・日本語・スペイン語・フランス語・中国語に対応しています。同じページの文字だけを切り替えるのではなく、言語ごとに専用のアドレスがあります。相手が実際に読む言語のページを、そのまま共有できます。',
         ],
       },
       {
         h: '作っている人',
         p: [
-          '韓国・ソウルに住む一人が、自分の時間で作っています。新しいゲームは日程ではなく、できたときに出ます。おかしいところを教えてもらえれば直します。',
+          '韓国・ソウルで、一人が自分の時間を使って作っています。新しいゲームは決まった日程ではなく、準備ができたときに公開します。おかしいところを教えてもらえれば、既存のゲームも直していきます。',
         ],
       },
       {
-        h: 'ひとこと下さい',
+        h: '気軽にどうぞ',
         p: [
-          `おかしいところを見つけた、まだないゲームで遊びたい — そんなときは ${M} までどうぞ。同じ本人が読みます。`,
+          `不具合を見つけたときや、まだないゲームのアイデアがあるときは ${M} までどうぞ。サイトを作っている本人が読みます。`,
         ],
       },
     ],
@@ -154,47 +154,47 @@ export const ABOUT: TextCopy = {
 
   es: {
     h1: 'Sobre Hanveon',
-    lede: 'Juegos pequeños que empiezas en diez segundos, sin nada por medio.',
-    metaTitle: 'Sobre Hanveon — juegos pequeños de navegador, sin nada por medio',
+    lede: 'Juegos pequeños que empiezas en diez segundos, sin instalaciones ni pasos de más.',
+    metaTitle: 'Sobre Hanveon — juegos pequeños de navegador, sin pasos de más',
     metaDesc:
-      'Hanveon es un pequeño conjunto de juegos de navegador hechos por una persona en Seúl. Sin instalar, sin cuenta, sin anuncios: abres una página y ya estás jugando. Aquí está el porqué.',
+      'Hanveon es una pequeña colección de juegos de navegador hecha por una sola persona en Seúl. Sin instalaciones, sin cuenta y sin anuncios: abres una página y ya estás jugando. Aquí te contamos por qué.',
     blocks: [
       {
         h: 'La idea',
         p: [
-          'Casi todas las webs de juegos te piden algo antes de jugar. Una instalación. Una cuenta. Un correo. Un aviso que hay que quitar. Cuando por fin estás jugando, los diez minutos libres que tenías ya van por la mitad.',
-          'Hanveon no pide nada de eso. Abres una página y ya estás jugando. Todas las demás decisiones de este sitio salen de ahí.',
+          'Muchas webs de juegos te piden algo antes de dejarte jugar: instalar algo, crear una cuenta, dar tu correo o cerrar algún aviso. Cuando por fin llegas al juego, parte de esos diez minutos libres que tenías ya se ha ido.',
+          'Hanveon no te pide nada de eso. Abres una página y empiezas a jugar. El resto de decisiones del sitio parten de esa idea.',
         ],
       },
       {
         h: 'De dónde viene el nombre',
         p: [
-          'Viene de la palabra coreana <em>한번</em> (han-beon). Es lo que se dice cuando vas a probar algo sin darle importancia: <em>venga, una vez</em>. Esa es la sensación que busca el sitio: un juego que empiezas porque empezarlo no te cuesta nada.',
+          'Viene de la palabra coreana <em>한번</em> (han-beon). Se usa cuando vas a probar algo sin darle demasiadas vueltas, algo parecido a <em>vamos a probar</em>. Esa es la sensación que busca Hanveon: un juego que empiezas simplemente porque empezar no da trabajo.',
         ],
       },
       {
         h: 'Cómo están hechos los juegos',
         p: [
-          'Cada juego está escrito a mano para el navegador y dibujado sobre un canvas. Sin motor de juego, sin librerías de publicidad, sin código de ninguna otra parte.',
-          'Por eso un juego carga en un momento incluso en un móvil viejo, funciona igual en un portátil que en el autobús, y por eso el sitio puede decir con sinceridad que no envía nada sobre ti a ninguna parte.',
+          'Cada juego está hecho para funcionar directamente en el navegador y se dibuja sobre un canvas. No usamos motores de juego, librerías publicitarias ni código de juego cargado desde otros sitios.',
+          'Por eso cargan rápido incluso en móviles antiguos, funcionan igual de bien en un portátil que en el móvil durante un trayecto y, además, lo que haces dentro del juego se queda en tu dispositivo.',
         ],
       },
       {
         h: 'Seis idiomas, seis direcciones',
         p: [
-          'Hanveon está escrito en inglés, coreano, japonés, español, francés y chino. Cada idioma tiene su propia dirección, en vez de un botón que cambia las palabras de una misma página, para que puedas mandarle a alguien un enlace en el idioma que de verdad lee.',
+          'Hanveon está disponible en inglés, coreano, japonés, español, francés y chino. Cada idioma tiene su propia dirección, en lugar de limitarse a cambiar las palabras de una misma página, así puedes compartir directamente el enlace en el idioma que la otra persona utiliza.',
         ],
       },
       {
         h: 'Quién lo hace',
         p: [
-          'Una persona en Seúl, Corea del Sur, en su propio tiempo. Los juegos nuevos salen cuando están listos, no según un calendario, y los viejos se arreglan cuando alguien avisa de que algo falla.',
+          'Una sola persona en Seúl, Corea del Sur, trabajando en el proyecto en su tiempo libre. Los juegos nuevos salen cuando están listos, no según un calendario fijo, y los anteriores se corrigen cuando alguien avisa de que algo no va bien.',
         ],
       },
       {
-        h: 'Escribe',
+        h: 'Escríbenos',
         p: [
-          `¿Has encontrado un fallo, o quieres un juego que todavía no existe? ${M}. Lo lee esa misma persona.`,
+          `¿Has encontrado un fallo o tienes una idea para un juego que todavía no existe? Escribe a ${M}. Lo lee la misma persona que hace el sitio.`,
         ],
       },
     ],
@@ -202,47 +202,47 @@ export const ABOUT: TextCopy = {
 
   fr: {
     h1: 'À propos de Hanveon',
-    lede: 'De petits jeux qu’on lance en dix secondes, sans rien en travers.',
-    metaTitle: 'À propos de Hanveon — de petits jeux de navigateur, sans rien en travers',
+    lede: 'De petits jeux à lancer en dix secondes, sans installation ni étape inutile.',
+    metaTitle: 'À propos de Hanveon — de petits jeux de navigateur, sans étape inutile',
     metaDesc:
-      'Hanveon est un petit ensemble de jeux de navigateur faits par une seule personne à Séoul. Rien à installer, pas de compte, pas de publicité : tu ouvres une page et tu joues. Voici pourquoi.',
+      'Hanveon est une petite collection de jeux de navigateur créée par une seule personne à Séoul. Rien à installer, pas de compte, pas de publicité : tu ouvres une page et tu joues. Voici pourquoi.',
     blocks: [
       {
         h: 'L’idée',
         p: [
-          'La plupart des sites de jeux te demandent quelque chose avant de jouer. Une installation. Un compte. Une adresse e-mail. Un bandeau à faire disparaître. Le temps d’arriver au jeu, les dix minutes que tu avais sont à moitié parties.',
-          'Hanveon ne demande rien de tout cela. Tu ouvres une page et tu joues déjà. Toutes les autres décisions de ce site découlent de celle-là.',
+          'Beaucoup de sites de jeux te demandent quelque chose avant de te laisser jouer : installer quelque chose, créer un compte, donner ton adresse e-mail ou fermer un bandeau. Le temps d’arriver au jeu, une partie de tes dix minutes de libre est déjà partie.',
+          'Hanveon ne demande rien de tout cela. Tu ouvres une page et tu joues. Toutes les autres décisions du site partent de cette idée.',
         ],
       },
       {
         h: 'D’où vient le nom',
         p: [
-          'Il vient du mot coréen <em>한번</em> (han-beon). C’est ce qu’on dit quand on va essayer quelque chose sans en faire toute une affaire : <em>allez, on essaie</em>. C’est la sensation que vise le site : un jeu qu’on lance parce que le lancer ne coûte rien.',
+          'Le nom vient du mot coréen <em>한번</em> (han-beon), qu’on emploie quand on essaie quelque chose sans en faire toute une histoire — un peu comme <em>allez, on essaie</em>. C’est l’esprit recherché par Hanveon : un jeu qu’on lance simplement parce que rien ne complique le départ.',
         ],
       },
       {
         h: 'Comment les jeux sont faits',
         p: [
-          'Chaque jeu est écrit à la main pour le navigateur et dessiné sur un canvas. Pas de moteur de jeu, pas de bibliothèque publicitaire, aucun code venu d’ailleurs.',
-          'C’est pour cela qu’un jeu se charge en un instant même sur un vieux téléphone, qu’il marche pareil sur un portable et dans le bus, et que le site peut dire honnêtement qu’il n’envoie rien te concernant nulle part.',
+          'Chaque jeu est conçu pour fonctionner directement dans le navigateur et dessiné sur un canvas. Pas de moteur de jeu, pas de bibliothèque publicitaire, pas de code de jeu chargé depuis un service extérieur.',
+          'C’est pour cela qu’ils se chargent vite même sur un vieux téléphone, fonctionnent aussi bien sur un ordinateur que sur un mobile dans les transports, et que ce que tu fais dans le jeu reste sur ton appareil.',
         ],
       },
       {
         h: 'Six langues, six adresses',
         p: [
-          'Hanveon est écrit en anglais, coréen, japonais, espagnol, français et chinois. Chaque langue a sa propre adresse, plutôt qu’un bouton qui remplace les mots d’une seule page, pour que tu puisses envoyer à quelqu’un un lien dans la langue qu’il lit vraiment.',
+          'Hanveon est disponible en anglais, coréen, japonais, espagnol, français et chinois. Chaque langue possède sa propre adresse, au lieu de simplement remplacer les mots sur une même page. Tu peux ainsi partager directement la version que l’autre personne lit.',
         ],
       },
       {
         h: 'Qui le fait',
         p: [
-          'Une personne à Séoul, en Corée du Sud, sur son temps libre. Les nouveaux jeux sortent quand ils sont prêts, pas selon un calendrier, et les anciens sont corrigés quand quelqu’un signale que quelque chose cloche.',
+          'Une seule personne à Séoul, en Corée du Sud, qui travaille sur le projet pendant son temps libre. Les nouveaux jeux sortent quand ils sont prêts, sans calendrier fixe, et les anciens sont corrigés quand quelqu’un signale un problème.',
         ],
       },
       {
-        h: 'Dis bonjour',
+        h: 'Écris-nous',
         p: [
-          `Tu as trouvé un bug, ou tu veux un jeu qui n’existe pas encore ? ${M}. C’est cette même personne qui lit.`,
+          `Tu as trouvé un bug ou tu as une idée pour un jeu qui n’existe pas encore ? Écris à ${M}. C’est la personne qui fait le site qui lit les messages.`,
         ],
       },
     ],
@@ -250,46 +250,46 @@ export const ABOUT: TextCopy = {
 
   zh: {
     h1: '关于 Hanveon',
-    lede: '十秒就能开始的小游戏，中间没有任何拦路的东西。',
-    metaTitle: '关于 Hanveon — 没有拦路东西的浏览器小游戏',
+    lede: '十秒就能开始的小游戏，不用安装，不用注册，也没有多余步骤。',
+    metaTitle: '关于 Hanveon — 打开就能玩的浏览器小游戏',
     metaDesc:
-      'Hanveon 是住在首尔的一个人做的一组浏览器小游戏。不用安装、不用账号、没有广告 — 打开页面就在玩了。这里写了为什么这样做。',
+      'Hanveon 是由一位住在首尔的人制作的浏览器小游戏合集。不用安装、不用账号、没有广告，打开页面就能玩。这里介绍为什么要这样做。',
     blocks: [
       {
-        h: '想法',
+        h: '我们的想法',
         p: [
-          '大多数游戏网站在你玩之前先要点什么。安装、账号、邮箱地址、一个要点掉的横幅。等你真正开始玩，原本空出来的十分钟已经过去一半了。',
-          'Hanveon 什么都不要。打开页面，你就已经在玩了。这个网站其他所有的决定，都是从这一条来的。',
+          '很多游戏网站在你开始玩之前，会先要求你安装东西、注册账号、填写邮箱，或者关闭各种提示。原本只想利用空出来的十分钟玩一局，真正开始时已经花掉了不少时间。',
+          'Hanveon 不要求这些。打开页面就能开始玩。网站其他所有设计，也都从这个想法出发。',
         ],
       },
       {
         h: '名字的由来',
         p: [
-          '来自韩语的 <em>한번</em>（han-beon）。它是人们打算随手试一下时说的话 — <em>要不试一次</em>。这就是本站想要的感觉：因为开始不花什么力气，所以就开始了的游戏。',
+          'Hanveon 来自韩语 <em>한번</em>（han-beon）。人们想轻松试试某件事时会用这个词，感觉有点像 <em>要不试试看？</em> Hanveon 想要的就是这种轻松感：因为开始没有负担，所以顺手就玩一局。',
         ],
       },
       {
         h: '游戏是怎么做的',
         p: [
-          '每个游戏都是为浏览器手写的，画在 canvas 上。没有游戏引擎，没有广告库，也没有任何别处来的代码。',
-          '所以旧手机上也能一下打开，笔记本上和公交车上表现一样，而且整个网站可以坦然地说：不把关于你的任何东西送到任何地方。',
+          '每个游戏都直接为浏览器制作，并绘制在 canvas 上。不使用游戏引擎、广告库，也不从外部服务加载游戏代码。',
+          '所以即使在旧手机上也能很快打开，在电脑上或出门时用手机玩都很轻便，而且游戏里的操作和分数都留在你的设备上。',
         ],
       },
       {
         h: '六种语言，六个地址',
         p: [
-          'Hanveon 用英语、韩语、日语、西班牙语、法语和中文写成。不是在同一个页面上换文字，而是每种语言都有自己的地址，这样你就能把对方真正读得懂的那个语言的链接发过去。',
+          'Hanveon 提供英语、韩语、日语、西班牙语、法语和中文版本。每种语言都有自己的地址，而不是只在同一个页面上替换文字。这样你可以直接把对方真正使用的语言版本发给他。',
         ],
       },
       {
         h: '谁在做',
         p: [
-          '韩国首尔的一个人，用自己的时间做的。新游戏不按日程，做好了就上；有人指出哪里不对，旧的就修。',
+          '由一位住在韩国首尔的人利用自己的时间制作。新游戏准备好就会发布，不按固定日程；如果有人指出旧游戏哪里不对，也会继续修正。',
         ],
       },
       {
-        h: '打个招呼',
-        p: [`发现了问题，或者想玩还不存在的游戏？写信到 ${M}，就是那个人在看。`],
+        h: '欢迎来信',
+        p: [`发现了问题，或者有还没出现的游戏点子？写信到 ${M}。做这个网站的人会亲自看。`],
       },
     ],
   },

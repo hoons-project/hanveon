@@ -17,33 +17,33 @@ export type NotFound = {
 
 export const NOTFOUND: Record<Lang, NotFound> = {
   en: {
-    h1: 'Nothing at this address',
-    lede: 'The link may be old, or there may be a typo in it. Every game is one tap away.',
+    h1: 'Nothing here',
+    lede: 'The link may be old, or there may be a typo in the address. Head back to the games and pick one.',
     metaTitle: 'Page not found | Hanveon',
   },
   ko: {
     h1: '이 주소에는 아무것도 없어요',
-    lede: '오래된 링크이거나, 주소에 오타가 있는 것 같아요. 게임은 한 번만 누르면 됩니다.',
-    metaTitle: '없는 쪽 | Hanveon',
+    lede: '오래된 링크이거나 주소를 잘못 입력한 것 같아요. 게임 목록으로 돌아가서 하나 골라보세요.',
+    metaTitle: '페이지를 찾을 수 없음 | Hanveon',
   },
   ja: {
-    h1: 'このアドレスには何もありません',
-    lede: '古いリンクか、アドレスの打ち間違いのようです。ゲームはワンタップで開きます。',
+    h1: 'ページが見つかりません',
+    lede: '古いリンクか、アドレスの入力間違いかもしれません。ゲーム一覧に戻って、気になるものを選んでみてください。',
     metaTitle: 'ページが見つかりません | Hanveon',
   },
   es: {
     h1: 'Aquí no hay nada',
-    lede: 'El enlace puede ser viejo, o puede haber una errata en la dirección. Los juegos están a un toque.',
+    lede: 'Puede que el enlace sea antiguo o que haya un error en la dirección. Vuelve a los juegos y elige uno.',
     metaTitle: 'Página no encontrada | Hanveon',
   },
   fr: {
-    h1: 'Il n’y a rien à cette adresse',
-    lede: 'Le lien est peut-être ancien, ou l’adresse contient une faute de frappe. Les jeux sont à un doigt.',
+    h1: 'Cette page n’existe pas',
+    lede: 'Le lien est peut-être ancien ou l’adresse contient une erreur. Retourne à la liste des jeux et choisis-en un.',
     metaTitle: 'Page introuvable | Hanveon',
   },
   zh: {
-    h1: '这个地址上什么都没有',
-    lede: '可能是旧链接，也可能是地址打错了。游戏点一下就能打开。',
+    h1: '这个页面不存在',
+    lede: '可能是旧链接，也可能是地址输错了。回到游戏列表，挑一个玩吧。',
     metaTitle: '页面不存在 | Hanveon',
   },
 };

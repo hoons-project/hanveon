@@ -9,352 +9,353 @@ const M = `<a href="mailto:${CONTACT_EMAIL}">${CONTACT_EMAIL}</a>`;
 export const TERMS: TextCopy = {
   en: {
     h1: 'Terms',
-    lede: 'The short rules for using Hanveon.',
+    lede: 'The short version of the rules for using Hanveon.',
     metaTitle: 'Terms | Hanveon',
     metaDesc:
-      'The terms for using Hanveon: free to play, nothing to install, no account. What you may do, what you may not, and what is not promised.',
+      'Hanveon terms of use: free to play, nothing to install, no account. What you may do, what you may not do, and what the site does not promise.',
     blocks: [
       {
-        h: 'What this is',
+        h: 'What Hanveon is',
         p: [
-          'Hanveon is a small collection of browser games. They are free, there is nothing to install, and there is no account. Using the site means you accept what is on this page.',
+          'Hanveon is a small collection of browser games. They are free, there is nothing to install, and there is no account. By using the site, you agree to the terms on this page.',
         ],
       },
       {
         h: 'What you may do',
         p: [
-          'Play as much as you like, on any device, for free. Send the links to anyone. You do not need permission to link to a game or to the site.',
+          'Play as much as you like, on any device, for free. Share the links with anyone. You do not need permission to link to a game or to the site.',
         ],
       },
       {
         h: 'What you may not do',
         p: [
-          'Do not copy the games and put them on another site as your own. The games, the artwork and the writing on Hanveon belong to the person who made them.',
+          'Do not copy the games and republish them on another site as your own. The games, artwork and writing on Hanveon belong to the person who made them.',
           'Do not try to break the site, overload it, or interfere with anyone else using it.',
         ],
       },
       {
         h: 'About scores',
         p: [
-          'Best scores are kept by your own browser on your own device. They are not a record we hold and they are not verified by anyone.',
-          'They disappear if you clear your browser data, and they do not follow you to another device or another browser. Nothing can be restored.',
+          'Your best scores are stored by your browser on your own device. They are not records held by Hanveon and they are not verified by anyone.',
+          'They disappear if you clear your browser data, and they do not follow you to another device or browser. There is no backup, so they cannot be restored.',
         ],
       },
       {
-        h: 'No promise that it keeps working',
+        h: 'No guarantee that the site will always be available',
         p: [
-          'Hanveon is run by one person alongside other work. It is offered as it is. Games may be added or removed, pages may change, and the site may be unavailable at times — without notice.',
+          'Hanveon is run by one person alongside other work and is provided as is. Games may be added or removed, pages may change, and the site may sometimes be unavailable without notice.',
         ],
       },
       {
-        h: 'Limits',
+        h: 'Limits of liability',
         p: [
-          'As far as the law allows, the person who makes Hanveon is not liable for any loss arising from using the site.',
-          'Some countries give you rights that cannot be signed away. Nothing on this page takes those away from you.',
+          'To the extent allowed by law, the person who makes Hanveon is not liable for losses arising from use of the site.',
+          'Some countries give you rights that cannot be waived. Nothing on this page takes those rights away.',
         ],
       },
       {
         h: 'Which law applies',
-        p: ['These terms follow the law of the Republic of Korea.'],
+        p: ['These terms are governed by the laws of the Republic of Korea.'],
       },
       {
         h: 'Changes',
-        p: ['If these terms change, the date at the top changes with them.'],
+        p: ['If these terms change, the date at the top of the page changes with them.'],
       },
       {
         h: 'Contact',
-        p: [`Anything about this page: ${M}.`],
+        p: [`Questions about these terms: ${M}.`],
       },
     ],
   },
 
   ko: {
     h1: '이용 약관',
-    lede: 'Hanveon 을 쓸 때의 짧은 규칙입니다.',
+    lede: 'Hanveon을 이용할 때 알아두실 짧은 규칙입니다.',
     metaTitle: '이용 약관 | Hanveon',
     metaDesc:
-      'Hanveon 이용 약관 — 무료, 설치 없음, 가입 없음. 해도 되는 것, 하면 안 되는 것, 그리고 약속하지 않는 것.',
+      'Hanveon 이용 약관입니다. 무료로 이용할 수 있고 설치나 가입은 필요하지 않습니다. 할 수 있는 것, 하면 안 되는 것, 그리고 사이트가 보장하지 않는 내용을 안내합니다.',
     blocks: [
       {
-        h: '이게 무엇인가',
+        h: 'Hanveon은 어떤 서비스인가',
         p: [
-          'Hanveon 은 브라우저에서 하는 작은 게임 모음입니다. 무료이고, 받을 것이 없고, 가입도 없습니다. 이 사이트를 쓰신다는 것은 이 쪽에 적힌 것에 동의하신다는 뜻입니다.',
+          'Hanveon은 브라우저에서 바로 즐기는 작은 게임 모음입니다. 무료이고, 설치할 것도 가입할 것도 없습니다. 사이트를 이용하면 이 페이지의 약관에 동의한 것으로 봅니다.',
         ],
       },
       {
         h: '해도 되는 것',
         p: [
-          '어느 기기에서든 얼마든지 무료로 하셔도 됩니다. 링크를 누구에게든 보내셔도 됩니다. 게임이나 사이트로 링크를 거는 데 저희 허락은 필요 없습니다.',
+          '어떤 기기에서든 원하는 만큼 무료로 이용하셔도 됩니다. 링크도 자유롭게 공유하셔도 됩니다. 게임이나 Hanveon으로 연결되는 링크를 만드는 데 별도 허락은 필요하지 않습니다.',
         ],
       },
       {
         h: '하면 안 되는 것',
         p: [
-          '게임을 복사해서 다른 사이트에 자기 것처럼 올리지 마세요. Hanveon 의 게임과 그림과 글은 만든 사람의 것입니다.',
-          '사이트를 망가뜨리거나, 감당 못 할 만큼 몰아붙이거나, 다른 사람이 쓰는 것을 방해하지 마세요.',
+          '게임을 복사해 다른 사이트에 자기 콘텐츠처럼 다시 올리면 안 됩니다. Hanveon의 게임, 그림, 글은 이를 만든 사람에게 권리가 있습니다.',
+          '사이트를 고의로 망가뜨리거나 과도한 부하를 주거나, 다른 사람의 이용을 방해하면 안 됩니다.',
         ],
       },
       {
         h: '최고 기록에 대해',
         p: [
-          '최고 기록은 여러분 브라우저가 여러분 기기에 갖고 있습니다. 저희가 갖고 있는 기록이 아니고, 누가 확인해 준 것도 아닙니다.',
-          '브라우저 자료를 지우면 사라지고, 다른 기기나 다른 브라우저로 따라오지 않습니다. 되살릴 수 없습니다.',
+          '최고 기록은 사용 중인 브라우저가 해당 기기에 저장합니다. Hanveon 서버가 보관하는 기록이 아니며, 누군가가 공식적으로 확인한 기록도 아닙니다.',
+          '브라우저 데이터를 지우면 기록도 사라지고, 다른 기기나 브라우저로 자동으로 옮겨지지 않습니다. 별도 사본이 없기 때문에 복구할 수 없습니다.',
         ],
       },
       {
-        h: '계속 돌아간다고 약속하지 않습니다',
+        h: '항상 이용할 수 있다고 보장하지 않습니다',
         p: [
-          'Hanveon 은 한 사람이 다른 일과 함께 하는 프로젝트입니다. 있는 그대로 내놓습니다. 게임이 늘거나 빠질 수 있고, 쪽이 바뀔 수 있고, 사이트가 안 열리는 때가 있을 수 있습니다 — 미리 알리지 않고요.',
+          'Hanveon은 한 사람이 다른 일과 함께 운영하는 프로젝트이며 현재 상태 그대로 제공됩니다. 게임이 추가되거나 없어질 수 있고, 페이지 내용이 바뀔 수 있으며, 별도 안내 없이 사이트를 이용할 수 없는 시간이 생길 수도 있습니다.',
         ],
       },
       {
         h: '책임의 한계',
         p: [
-          '법이 허용하는 한, Hanveon 을 만든 사람은 이 사이트를 써서 생긴 손해에 책임을 지지 않습니다.',
-          '나라에 따라 포기할 수 없는 권리가 있습니다. 이 쪽의 어떤 것도 그 권리를 빼앗지 않습니다.',
+          '법이 허용하는 범위에서, Hanveon을 만든 사람은 이 사이트 이용으로 발생한 손해에 대해 책임을 지지 않습니다.',
+          '국가나 지역에 따라 포기할 수 없는 법적 권리가 있을 수 있습니다. 이 약관의 어떤 내용도 그런 권리를 제한하지 않습니다.',
         ],
       },
       {
-        h: '어느 나라 법을 따르나',
-        p: ['이 약관은 대한민국 법을 따릅니다.'],
+        h: '적용 법률',
+        p: ['이 약관에는 대한민국 법률이 적용됩니다.'],
       },
       {
-        h: '바뀌면',
-        p: ['이 약관이 바뀌면 맨 위 날짜도 같이 바뀝니다.'],
+        h: '약관이 바뀌면',
+        p: ['약관 내용이 바뀌면 페이지 맨 위의 수정일도 함께 바뀝니다.'],
       },
       {
         h: '연락',
-        p: [`이 쪽에 대해 궁금한 것은 ${M} 으로 보내주세요.`],
+        p: [`이 약관에 관한 질문은 ${M}으로 보내주세요.`],
       },
     ],
   },
 
   ja: {
     h1: '利用規約',
-    lede: 'Hanveon を使うときの短い決まりです。',
+    lede: 'Hanveon を利用するための、短くまとめたルールです。',
     metaTitle: '利用規約 | Hanveon',
     metaDesc:
-      'Hanveon の利用規約 — 無料、インストール不要、登録なし。していいこと、してはいけないこと、そして約束していないこと。',
+      'Hanveon の利用規約です。無料で遊べて、インストールやアカウント登録は不要です。できること、してはいけないこと、保証していないことを説明します。',
     blocks: [
       {
-        h: 'これは何か',
+        h: 'Hanveon について',
         p: [
-          'Hanveon はブラウザで遊ぶ小さなゲームの集まりです。無料で、インストールするものがなく、アカウントもありません。このサイトを使うことは、このページに書かれていることに同意することを意味します。',
+          'Hanveon はブラウザですぐ遊べる小さなゲーム集です。無料で、インストールもアカウント登録も必要ありません。サイトを利用すると、このページの規約に同意したものとみなされます。',
         ],
       },
       {
-        h: 'していいこと',
+        h: 'できること',
         p: [
-          'どの端末でも、好きなだけ、無料で遊んでください。リンクを誰に送ってもかまいません。ゲームやサイトへリンクを張るのに、こちらの許可はいりません。',
+          'どの端末でも、好きなだけ無料で遊べます。リンクも自由に共有できます。ゲームや Hanveon へのリンクを張るために、事前の許可は必要ありません。',
         ],
       },
       {
         h: 'してはいけないこと',
         p: [
-          'ゲームをコピーして、ほかのサイトに自分のものとして置かないでください。Hanveon のゲーム、絵、文章は作った本人のものです。',
-          'サイトを壊そうとしたり、耐えられないほど負荷をかけたり、ほかの人の利用を妨げたりしないでください。',
+          'ゲームをコピーし、別のサイトで自分のものとして公開しないでください。Hanveon のゲーム、イラスト、文章の権利は、それらを作った人にあります。',
+          'サイトを故意に壊そうとしたり、過度な負荷をかけたり、ほかの人の利用を妨げたりしないでください。',
         ],
       },
       {
         h: 'ベスト記録について',
         p: [
-          'ベスト記録はあなたのブラウザが、あなたの端末に持っています。こちらが持っている記録ではなく、誰かが確認したものでもありません。',
-          'ブラウザのデータを消すと消え、ほかの端末やほかのブラウザにはついてきません。元に戻せません。',
+          'ベスト記録は、利用しているブラウザがその端末内に保存します。Hanveon がサーバーで保管している記録ではなく、誰かが公式に確認した記録でもありません。',
+          'ブラウザのデータを削除すると記録も消えます。別の端末やブラウザへ自動で引き継がれることもありません。バックアップがないため復元できません。',
         ],
       },
       {
-        h: '動き続けることは約束しません',
+        h: 'いつでも利用できることは保証しません',
         p: [
-          'Hanveon は一人がほかの仕事と並行して運営しています。あるがままの形で提供します。ゲームが増えたり減ったり、ページが変わったり、サイトが開かない時間があったりします — 予告なしに。',
+          'Hanveon は、一人がほかの仕事と並行して運営しているプロジェクトで、現状のまま提供されています。ゲームが追加・削除されたり、ページの内容が変わったり、予告なく一時的に利用できなくなったりすることがあります。',
         ],
       },
       {
         h: '責任の範囲',
         p: [
-          '法律が認める範囲で、Hanveon を作っている人は、このサイトを使ったことで生じた損害について責任を負いません。',
-          '国によっては放棄できない権利があります。このページのどれも、その権利を奪うものではありません。',
+          '法律で認められる範囲において、Hanveon を作っている人は、このサイトの利用によって生じた損失について責任を負いません。',
+          '国や地域によっては、放棄できない権利が認められています。このページの内容によって、その権利が失われることはありません。',
         ],
       },
       {
-        h: 'どの国の法律によるか',
-        p: ['この規約は大韓民国の法律によります。'],
+        h: '準拠法',
+        p: ['この利用規約には大韓民国の法律が適用されます。'],
       },
       {
         h: '変更',
-        p: ['この規約が変わったときは、上の日付も一緒に変わります。'],
+        p: ['利用規約を変更した場合は、ページ上部の更新日も変更します。'],
       },
       {
-        h: '連絡先',
-        p: [`このページについては ${M} までどうぞ。`],
+        h: 'お問い合わせ',
+        p: [`この利用規約についての質問は ${M} までどうぞ。`],
       },
     ],
   },
 
   es: {
-    h1: 'Términos',
-    lede: 'Las reglas cortas para usar Hanveon.',
-    metaTitle: 'Términos | Hanveon',
+    h1: 'Términos de uso',
+    lede: 'Las reglas básicas para usar Hanveon, explicadas de forma breve.',
+    metaTitle: 'Términos de uso | Hanveon',
     metaDesc:
-      'Términos de uso de Hanveon: gratis, sin instalar nada, sin cuenta. Lo que puedes hacer, lo que no, y lo que no se promete.',
+      'Términos de uso de Hanveon: juegos gratis, sin instalación y sin cuenta. Qué puedes hacer, qué no puedes hacer y qué no garantiza el sitio.',
     blocks: [
       {
-        h: 'Qué es esto',
+        h: 'Qué es Hanveon',
         p: [
-          'Hanveon es una pequeña colección de juegos para el navegador. Son gratis, no hay nada que instalar y no hay cuenta. Usar el sitio significa que aceptas lo que hay en esta página.',
+          'Hanveon es una pequeña colección de juegos para navegador. Son gratuitos, no tienes que instalar nada y no necesitas una cuenta. Al usar el sitio, aceptas los términos de esta página.',
         ],
       },
       {
         h: 'Lo que puedes hacer',
         p: [
-          'Juega todo lo que quieras, en cualquier dispositivo, gratis. Manda los enlaces a quien quieras. No necesitas permiso para enlazar a un juego ni al sitio.',
+          'Puedes jugar todo lo que quieras, gratis y desde cualquier dispositivo. También puedes compartir los enlaces con quien quieras. No necesitas permiso para enlazar a un juego o a Hanveon.',
         ],
       },
       {
         h: 'Lo que no puedes hacer',
         p: [
-          'No copies los juegos ni los pongas en otro sitio como si fueran tuyos. Los juegos, los dibujos y los textos de Hanveon pertenecen a quien los hizo.',
-          'No intentes romper el sitio, sobrecargarlo ni estorbar a quien lo esté usando.',
+          'No copies los juegos ni los publiques en otro sitio como si fueran tuyos. Los juegos, las ilustraciones y los textos de Hanveon pertenecen a la persona que los creó.',
+          'No intentes dañar el sitio, sobrecargarlo ni impedir que otras personas lo utilicen.',
         ],
       },
       {
         h: 'Sobre los récords',
         p: [
-          'Los récords los guarda tu propio navegador en tu propio dispositivo. No son un registro que tengamos nosotros ni están verificados por nadie.',
-          'Desaparecen si borras los datos del navegador y no te siguen a otro dispositivo ni a otro navegador. No se puede recuperar nada.',
+          'Tus mejores puntuaciones se guardan en tu propio dispositivo mediante el navegador. Hanveon no conserva esos registros en un servidor y nadie los verifica oficialmente.',
+          'Si borras los datos del navegador, también desaparecen los récords. No se trasladan automáticamente a otro dispositivo o navegador y, como no existe una copia de seguridad, no se pueden recuperar.',
         ],
       },
       {
-        h: 'No prometemos que siga funcionando',
+        h: 'No garantizamos que el sitio esté siempre disponible',
         p: [
-          'Hanveon lo lleva una sola persona junto a otro trabajo. Se ofrece tal cual. Puede que se añadan o quiten juegos, que las páginas cambien y que el sitio no esté disponible a ratos, sin aviso.',
+          'Hanveon es un proyecto llevado por una sola persona junto con otros trabajos y se ofrece tal cual. Se pueden añadir o retirar juegos, cambiar páginas o producirse interrupciones temporales sin previo aviso.',
         ],
       },
       {
-        h: 'Límites',
+        h: 'Límites de responsabilidad',
         p: [
-          'En la medida en que la ley lo permita, la persona que hace Hanveon no responde por ninguna pérdida derivada del uso del sitio.',
-          'Algunos países te dan derechos a los que no se puede renunciar. Nada de esta página te los quita.',
+          'En la medida en que lo permita la ley, la persona que hace Hanveon no será responsable de las pérdidas derivadas del uso del sitio.',
+          'En algunos países o regiones existen derechos a los que no se puede renunciar. Nada de esta página elimina ni limita esos derechos.',
         ],
       },
       {
-        h: 'Qué ley se aplica',
-        p: ['Estos términos se rigen por la ley de la República de Corea.'],
+        h: 'Ley aplicable',
+        p: ['Estos términos se rigen por las leyes de la República de Corea.'],
       },
       {
         h: 'Cambios',
-        p: ['Si estos términos cambian, la fecha de arriba cambia con ellos.'],
+        p: ['Si estos términos cambian, también se actualizará la fecha que aparece en la parte superior de la página.'],
       },
       {
         h: 'Contacto',
-        p: [`Cualquier cosa sobre esta página: ${M}.`],
+        p: [`Si tienes alguna pregunta sobre estos términos, escribe a ${M}.`],
       },
     ],
   },
 
   fr: {
-    h1: 'Conditions',
-    lede: 'Les règles courtes pour utiliser Hanveon.',
-    metaTitle: 'Conditions | Hanveon',
+    h1: 'Conditions d’utilisation',
+    lede: 'Les règles essentielles pour utiliser Hanveon, en version courte.',
+    metaTitle: 'Conditions d’utilisation | Hanveon',
     metaDesc:
-      'Conditions d’utilisation de Hanveon : gratuit, rien à installer, pas de compte. Ce que tu peux faire, ce que tu ne peux pas, et ce qui n’est pas promis.',
+      'Conditions d’utilisation de Hanveon : jeux gratuits, sans installation ni compte. Ce que tu peux faire, ce qui est interdit et ce que le site ne garantit pas.',
     blocks: [
       {
-        h: 'De quoi il s’agit',
+        h: 'Ce qu’est Hanveon',
         p: [
-          'Hanveon est une petite collection de jeux pour le navigateur. Ils sont gratuits, il n’y a rien à installer et pas de compte. Utiliser le site signifie que tu acceptes ce qui est écrit sur cette page.',
+          'Hanveon est une petite collection de jeux à lancer dans le navigateur. Ils sont gratuits, ne demandent aucune installation et ne nécessitent aucun compte. En utilisant le site, tu acceptes les conditions de cette page.',
         ],
       },
       {
         h: 'Ce que tu peux faire',
         p: [
-          'Joue autant que tu veux, sur n’importe quel appareil, gratuitement. Envoie les liens à qui tu veux. Aucune autorisation n’est nécessaire pour créer un lien vers un jeu ou vers le site.',
+          'Tu peux jouer autant que tu veux, gratuitement et sur n’importe quel appareil. Tu peux aussi partager les liens librement. Aucune autorisation n’est nécessaire pour créer un lien vers un jeu ou vers Hanveon.',
         ],
       },
       {
         h: 'Ce que tu ne peux pas faire',
         p: [
-          'Ne copie pas les jeux pour les mettre sur un autre site comme s’ils étaient les tiens. Les jeux, les dessins et les textes de Hanveon appartiennent à la personne qui les a faits.',
-          'N’essaie pas de casser le site, de le surcharger, ni de gêner ceux qui l’utilisent.',
+          'Ne copie pas les jeux pour les publier sur un autre site comme s’ils étaient les tiens. Les jeux, les illustrations et les textes de Hanveon appartiennent à la personne qui les a créés.',
+          'N’essaie pas d’endommager le site, de le surcharger ou d’empêcher d’autres personnes de l’utiliser.',
         ],
       },
       {
         h: 'À propos des records',
         p: [
-          'Les records sont conservés par ton propre navigateur, sur ton propre appareil. Ce n’est pas un registre que nous détenons et personne ne les vérifie.',
-          'Ils disparaissent si tu effaces les données de ton navigateur, et ils ne te suivent pas sur un autre appareil ni un autre navigateur. Rien ne peut être récupéré.',
+          'Tes meilleurs scores sont enregistrés par ton navigateur sur ton propre appareil. Hanveon ne les conserve pas sur un serveur et personne ne les vérifie officiellement.',
+          'Ils disparaissent si tu effaces les données du navigateur. Ils ne sont pas transférés automatiquement vers un autre appareil ou navigateur et, puisqu’il n’existe aucune sauvegarde, ils ne peuvent pas être restaurés.',
         ],
       },
       {
-        h: 'Aucune promesse de continuité',
+        h: 'Aucune garantie de disponibilité permanente',
         p: [
-          'Hanveon est tenu par une seule personne, à côté d’un autre travail. Le site est proposé tel quel. Des jeux peuvent être ajoutés ou retirés, des pages peuvent changer, et le site peut être indisponible par moments — sans préavis.',
+          'Hanveon est un projet géré par une seule personne en parallèle d’autres activités et il est fourni tel quel. Des jeux peuvent être ajoutés ou retirés, des pages peuvent changer et le site peut parfois être indisponible sans préavis.',
         ],
       },
       {
-        h: 'Limites',
+        h: 'Limites de responsabilité',
         p: [
-          'Dans la mesure permise par la loi, la personne qui fait Hanveon n’est pas responsable des pertes résultant de l’utilisation du site.',
-          'Certains pays accordent des droits auxquels on ne peut pas renoncer. Rien sur cette page ne t’en prive.',
+          'Dans la mesure permise par la loi, la personne qui fait Hanveon n’est pas responsable des pertes liées à l’utilisation du site.',
+          'Dans certains pays ou régions, certains droits ne peuvent pas être abandonnés. Rien sur cette page ne supprime ni ne limite ces droits.',
         ],
       },
       {
-        h: 'Loi applicable',
-        p: ['Ces conditions relèvent du droit de la République de Corée.'],
+        h: 'Droit applicable',
+        p: ['Ces conditions sont régies par les lois de la République de Corée.'],
       },
       {
         h: 'Modifications',
-        p: ['Si ces conditions changent, la date en haut change avec elles.'],
+        p: ['Si ces conditions changent, la date affichée en haut de la page sera mise à jour elle aussi.'],
       },
       {
         h: 'Contact',
-        p: [`Pour tout ce qui concerne cette page : ${M}.`],
+        p: [`Pour toute question sur ces conditions, écris à ${M}.`],
       },
     ],
   },
 
   zh: {
     h1: '使用条款',
-    lede: '使用 Hanveon 的简短规则。',
+    lede: '使用 Hanveon 时需要了解的基本规则。',
     metaTitle: '使用条款 | Hanveon',
-    metaDesc: 'Hanveon 使用条款：免费、无需安装、无需账号。可以做什么、不可以做什么，以及不作出的承诺。',
+    metaDesc:
+      'Hanveon 使用条款：游戏免费，无需安装，也无需账号。这里说明你可以做什么、不可以做什么，以及本站不作哪些保证。',
     blocks: [
       {
-        h: '这是什么',
+        h: 'Hanveon 是什么',
         p: [
-          'Hanveon 是一组在浏览器里玩的小游戏。免费，不用安装，也没有账号。使用本站即表示你接受这一页上的内容。',
+          'Hanveon 是一组直接在浏览器里玩的小游戏。游戏免费，不用安装，也不用注册账号。使用本站即表示你接受本页列出的条款。',
         ],
       },
       {
-        h: '可以做的',
+        h: '你可以做什么',
         p: [
-          '在任何设备上随便玩，免费。把链接发给任何人都可以。链接到某个游戏或本站，不需要我们许可。',
+          '你可以在任何设备上免费游玩，次数不限，也可以把链接分享给任何人。链接到某个游戏或 Hanveon 本身，不需要事先获得许可。',
         ],
       },
       {
-        h: '不可以做的',
+        h: '你不可以做什么',
         p: [
-          '不要复制这些游戏，放到别的网站上当作自己的。Hanveon 的游戏、画面和文字属于制作它们的人。',
-          '不要试图破坏本站、让它超载，或妨碍别人使用。',
+          '请不要复制这些游戏，再放到其他网站上当作自己的内容发布。Hanveon 的游戏、插图和文字属于制作它们的人。',
+          '请不要故意破坏网站、让网站过载，或妨碍其他人正常使用。',
         ],
       },
       {
         h: '关于最高分',
         p: [
-          '最高分由你自己的浏览器保存在你自己的设备上。它不是我们持有的记录，也没有任何人核实过。',
-          '清除浏览器数据它就没了，也不会跟着你到另一台设备或另一个浏览器。无法恢复。',
+          '最高分由你的浏览器保存在你自己的设备上。Hanveon 不会把这些记录保存在服务器上，也没有任何人对这些成绩进行官方验证。',
+          '如果你清除浏览器数据，最高分也会消失。它们不会自动转移到其他设备或浏览器，而且没有备份，因此无法恢复。',
         ],
       },
       {
-        h: '不保证一直能用',
+        h: '不保证网站始终可用',
         p: [
-          'Hanveon 由一个人在其他工作之余维护，按现状提供。游戏可能增加或下架，页面可能改动，网站也可能有时打不开 — 恕不预先通知。',
+          'Hanveon 是由一个人在其他工作之余维护的项目，按现状提供。游戏可能增加或下架，页面内容可能调整，网站也可能在没有提前通知的情况下暂时无法访问。',
         ],
       },
       {
-        h: '责任范围',
+        h: '责任限制',
         p: [
-          '在法律允许的范围内，制作 Hanveon 的人不对因使用本站而产生的任何损失负责。',
-          '有些国家赋予你不可放弃的权利。这一页上的任何内容都不会剥夺这些权利。',
+          '在法律允许的范围内，制作 Hanveon 的人不对因使用本站而产生的损失承担责任。',
+          '某些国家或地区会赋予你不能放弃的法定权利。本页任何内容都不会取消或限制这些权利。',
         ],
       },
       {
@@ -362,12 +363,12 @@ export const TERMS: TextCopy = {
         p: ['本条款适用大韩民国法律。'],
       },
       {
-        h: '变更',
-        p: ['本条款有变动时，上面的日期也会跟着改。'],
+        h: '条款变更',
+        p: ['如果条款内容发生变化，页面顶部的更新日期也会同步修改。'],
       },
       {
         h: '联系',
-        p: [`关于这一页的任何事：${M}。`],
+        p: [`如果对这些条款有疑问，请写信到 ${M}。`],
       },
     ],
   },
