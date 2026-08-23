@@ -35,7 +35,7 @@ export function nameSep(lang: Lang): string {
 /** 두 조각을 이어 붙인 게임 이름. 대문 목록과 페이지 제목에 쓴다. */
 export function fullName(g: Game, lang: Lang): string {
   const [a, b] = g.name[lang];
-  return a + nameSep(lang) + b;
+  return a + nameSep(lang);
 }
 
 export const GAMES: Game[] = [
@@ -46,17 +46,17 @@ export const GAMES: Game[] = [
       en: ['Hoppy', 'Jump'],
       ko: ['폴짝', '점프'],
       ja: ['ぴょん', 'ジャンプ'],
-      es: ['Salto', 'Saltarín'],
-      fr: ['Saut', 'Sautillant'],
+      es: ['Salta', 'Alto'],
+      fr: ['Saute', 'Haut'],
       zh: ['蹦蹦', '跳跳'],
     },
     desc: {
-      en: 'Bounce up the platforms. Just steer left and right.',
-      ko: '발판을 밟고 위로. 왼쪽 오른쪽만 맞춰 주면 돼요.',
-      ja: '足場を踏んで上へ。左右を合わせるだけ。',
-      es: 'Rebota por las plataformas. Solo muévete a los lados.',
-      fr: 'Rebondis de plateforme en plateforme. Juste gauche-droite.',
-      zh: '踩着踏板往上跳。只要控制左右。',
+      en: 'Bounce from platform to platform. You only need to steer.',
+      ko: '자동으로 뛰는 캐릭터를 좌우로 움직여 발판을 계속 밟아보세요.',
+      ja: '自動で跳ねるキャラクターを左右に動かして、足場を登ろう。',
+      es: 'Salta de plataforma en plataforma. Tú solo controlas izquierda y derecha.',
+      fr: 'Saute de plateforme en plateforme. Tu n’as qu’à gérer la gauche et la droite.',
+      zh: '角色会自动跳跃，你只要控制左右，一路踩着平台往上。',
     },
     art: `<svg viewBox="0 0 60 60" aria-hidden="true"><rect width="60" height="60" fill="#BFE8FF"/>
       <circle cx="14" cy="12" r="2" fill="#fff"/><circle cx="46" cy="20" r="2.2" fill="#fff"/>
@@ -74,17 +74,17 @@ export const GAMES: Game[] = [
       en: ['Zoom', 'Drive'],
       ko: ['붕붕', '드라이브'],
       ja: ['ブンブン', 'ドライブ'],
-      es: ['Carrera', 'Vroom'],
-      fr: ['Balade', 'Vroum'],
+      es: ['Ruta', 'Rápida'],
+      fr: ['Course', 'Éclair'],
       zh: ['嗡嗡', '兜风'],
     },
     desc: {
-      en: 'Dodge the traffic and grab the coins.',
-      ko: '차 피하고 동전 줍기.',
-      ja: '車をよけてコインを集めよう。',
-      es: 'Esquiva los coches y recoge monedas.',
-      fr: 'Évite les voitures et ramasse les pièces.',
-      zh: '躲开车子，捡起金币。',
+      en: 'Dodge oncoming traffic and collect coins along the way.',
+      ko: '마주 오는 차를 피하면서 길에 있는 동전을 모아보세요.',
+      ja: '対向車をよけながら、道に並ぶコインを集めよう。',
+      es: 'Esquiva el tráfico que viene de frente y recoge monedas por el camino.',
+      fr: 'Évite les voitures qui arrivent en face et ramasse les pièces sur la route.',
+      zh: '躲开迎面而来的车辆，顺路收集金币。',
     },
     art: `<svg viewBox="0 0 60 60" aria-hidden="true"><rect width="60" height="60" fill="#8FD9A8"/>
       <rect x="12" y="0" width="36" height="60" fill="#59637A"/>
@@ -103,16 +103,16 @@ export const GAMES: Game[] = [
       ko: ['몽글', '과일'],
       ja: ['もぐもぐ', 'フルーツ'],
       es: ['Fusión', 'Frutal'],
-      fr: ['Fusion', 'Fruitée'],
+      fr: ['Fruits', 'Fusion'],
       zh: ['圆滚', '水果'],
     },
     desc: {
-      en: 'Drop fruit. Two of a kind become one bigger one.',
-      ko: '과일을 떨어뜨려요. 같은 것끼리 닿으면 커져요.',
-      ja: 'フルーツを落とす。同じもの同士がくっつくと大きくなる。',
-      es: 'Suelta fruta. Dos iguales se juntan en una mayor.',
-      fr: 'Fais tomber des fruits. Deux pareils fusionnent.',
-      zh: '放下水果。相同的碰到一起就会变大。',
+      en: 'Drop fruit into the jar. Matching fruits merge into something bigger.',
+      ko: '과일을 떨어뜨리고 같은 과일끼리 합쳐 더 크게 만들어보세요.',
+      ja: 'フルーツを落として、同じもの同士を合体させて大きくしよう。',
+      es: 'Deja caer la fruta. Dos frutas iguales se fusionan en una más grande.',
+      fr: 'Fais tomber les fruits. Deux fruits identiques fusionnent en un plus gros.',
+      zh: '放下水果，让两个相同的水果合成一个更大的。',
     },
     art: `<svg viewBox="0 0 60 60" aria-hidden="true"><rect width="60" height="60" fill="#FFE8D2"/>
       <path d="M11 12 V44 a6 6 0 0 0 6 6 h26 a6 6 0 0 0 6 -6 V12" fill="#FFFBF2" stroke="#2A3145" stroke-width="3" stroke-linecap="round"/>
@@ -129,16 +129,16 @@ export const GAMES: Game[] = [
       ko: ['슝슝', '비행기'],
       ja: ['シュン', 'ひこうき'],
       es: ['Avión', 'Veloz'],
-      fr: ['Avion', 'Filant'],
+      fr: ['Avion', 'Express'],
       zh: ['咻咻', '飞机'],
     },
     desc: {
-      en: 'It fires by itself. All you do is dodge.',
-      ko: '총은 알아서 나가요. 피하기만 하면 돼요.',
-      ja: '弾は勝手に出ます。よけるだけ。',
-      es: 'Dispara solo. Tú solo esquiva.',
-      fr: 'Il tire tout seul. Toi, tu esquives.',
-      zh: '子弹会自己发射，你只要闪避。',
+      en: 'Your weapons fire automatically. Dodge bullets and line up your shots.',
+      ko: '총은 자동으로 나가요. 적 총알을 피하면서 위치만 맞춰주세요.',
+      ja: '攻撃は自動。敵弾をよけながら、敵と位置を合わせよう。',
+      es: 'El arma dispara sola. Esquiva las balas y colócate frente a los enemigos.',
+      fr: 'Le tir est automatique. Esquive les balles et aligne-toi sur les ennemis.',
+      zh: '武器会自动开火，你只要躲开子弹并对准敌人。',
     },
     art: `<svg viewBox="0 0 60 60" aria-hidden="true"><rect width="60" height="60" fill="#2E3460"/>
       <circle cx="12" cy="12" r="1.6" fill="#FFF7EA"/><circle cx="46" cy="9" r="1.3" fill="#FFF7EA"/>
@@ -160,12 +160,12 @@ export const GAMES: Game[] = [
       zh: ['砰砰', '射击'],
     },
     desc: {
-      en: 'They come from every side. Aim and hold to fire.',
-      ko: '사방에서 몰려와요. 겨누고 누르고 있으면 나가요.',
-      ja: '四方から来ます。ねらって押しっぱなしで撃つ。',
-      es: 'Vienen por todos lados. Apunta y mantén pulsado.',
-      fr: 'Ils arrivent de partout. Vise et maintiens pour tirer.',
-      zh: '四面八方都来。瞄准后按住就会开火。',
+      en: 'Enemies close in from every direction. Aim and hold to keep firing.',
+      ko: '사방에서 적이 몰려와요. 방향을 겨누고 누르고 있으면 계속 발사됩니다.',
+      ja: '四方から敵が迫ってくる。方向を狙って押し続けると連射。',
+      es: 'Los enemigos llegan de todas partes. Apunta y mantén pulsado para seguir disparando.',
+      fr: 'Les ennemis arrivent de tous les côtés. Vise et maintiens appuyé pour tirer en continu.',
+      zh: '敌人从四面八方逼近。瞄准方向，按住就会连续开火。',
     },
     art: `<svg viewBox="0 0 60 60" aria-hidden="true"><rect width="60" height="60" fill="#FFF1DC"/>
       <circle cx="30" cy="30" r="19" fill="none" stroke="#F0D9C0" stroke-width="2.4"/>
@@ -188,12 +188,12 @@ export const GAMES: Game[] = [
       zh: ['连连', '珠子'],
     },
     desc: {
-      en: 'Drag across same-colour dots. Close a loop to clear the whole colour.',
-      ko: '같은 색 구슬을 이어 그어요. 고리를 만들면 그 색이 다 사라져요.',
-      ja: '同じ色のビーズをなぞる。輪を作るとその色が全部消える。',
-      es: 'Arrastra por bolitas del mismo color. Cierra un lazo y ese color desaparece.',
-      fr: 'Relie les perles de même couleur. Ferme une boucle et toute la couleur part.',
-      zh: '把同色珠子连起来。围成一圈，那个颜色全部消失。',
+      en: 'Link matching beads. Close a loop to clear every bead of that colour.',
+      ko: '같은 색 구슬을 길게 이어요. 고리를 만들면 그 색 구슬이 전부 사라져요.',
+      ja: '同じ色のビーズをつなごう。輪を作ると、その色が全部消える。',
+      es: 'Une bolitas del mismo color. Cierra un bucle para eliminar todo ese color.',
+      fr: 'Relie les perles de même couleur. Ferme une boucle pour effacer toute cette couleur.',
+      zh: '把同色珠子连起来。围成一圈，就能消掉这个颜色的所有珠子。',
     },
     art: `<svg viewBox="0 0 60 60" aria-hidden="true"><rect width="60" height="60" fill="#2F3B4A"/>
       <path d="M16 18 L44 18 L44 42 L16 42 Z" fill="none" stroke="#3BAF8F" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
