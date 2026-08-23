@@ -1,0 +1,12 @@
+---
+import TextLayout from '../../layouts/TextLayout.astro';
+import { SUB_LANGS, type Lang } from '../../i18n';
+import { CONTACT } from '../../text/contact';
+
+export function getStaticPaths() {
+  return SUB_LANGS.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Lang;
+---
+<TextLayout lang={lang} slug="contact" copy={CONTACT[lang]} />

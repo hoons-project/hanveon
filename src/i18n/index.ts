@@ -48,20 +48,37 @@ export function gamePath(lang: Lang, slug: string): string {
 /**
  * 대표 그림 주소. 카톡·트위터에 링크를 붙일 때 나오는 1200×630 그림이다.
  * 그림은 `scripts/make-og.mjs` 가 `public/og/` 에 만들어 둔다.
+ *
+ * **읽는 쪽은 대문 그림을 같이 쓴다.** 쪽마다 그림을 새로 만들지 않는다 —
+ * 지금도 42장인데 30장이 더 늘고, 글만 있는 쪽에 그림을 따로 줄 이유가 없다.
  */
-export function ogPath(kind: 'home' | 'game', lang: Lang, slug?: string): string {
-  return kind === 'home' ? `/og/home-${lang}.png` : `/og/${slug}-${lang}.png`;
+export function ogPath(kind: PageKind, lang: Lang, slug?: string): string {
+  return kind === 'game' ? `/og/${slug}-${lang}.png` : `/og/home-${lang}.png`;
 }
 
 /**
  * 같은 페이지의 여섯 나라말 주소를 다 만든다.
- * `hreflang` 을 넣을 때 쓴다. `kind` 가 'home' 이면 대문, 아니면 게임.
+ * `hreflang` 을 넣을 때 쓴다.
  */
-export function altPaths(kind: 'home' | 'game', slug?: string): { lang: Lang; path: string }[] {
+export function altPaths(kind: PageKind, slug?: string): { lang: Lang; path: string }[] {
   return LANGS.map((lang) => ({
     lang,
-    path: kind === 'home' ? homePath(lang) : gamePath(lang, slug!),
+    path:
+      kind === 'home' ? homePath(lang)
+      : kind === 'game' ? gamePath(lang, slug!)
+      : textPath(lang, slug!),
   }));
+}
+
+/** 쪽의 갈래. 대표 그림과 hreflang 을 만드는 데 쓴다. */
+export type PageKind = 'home' | 'game' | 'text';
+
+/**
+ * 읽는 쪽 주소. 영어는 `/about/`, 나머지는 `/ko/about/`.
+ * `slug` 는 `about` `legal/privacy` 처럼 앞뒤 빗금 없이 준다.
+ */
+export function textPath(lang: Lang, slug: string): string {
+  return lang === BASE_LANG ? `/${slug}/` : `/${lang}/${slug}/`;
 }
 
 /** 주소에서 받은 값이 우리가 아는 나라말인지 확인한다. */

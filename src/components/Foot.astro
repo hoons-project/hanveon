@@ -1,18 +1,30 @@
 ---
-/* 모든 쪽 맨 아래. 지금은 안내 한 줄과 해 표시뿐이다.
-   단계 6에서 개인정보·쿠키·약관 링크가 여기 들어간다. */
-import { type Lang } from '../i18n';
+/* 모든 쪽 맨 아래. 링크 다섯 줄과 안내 한 줄, 해 표시.
+   링크 차례는 `TEXT_SLUGS` 가 정한다 — 햄버거 목차와 같은 차례다. */
+import { textPath, type Lang } from '../i18n';
 import { ui } from '../i18n/ui';
+import { TEXT_SLUGS, type TextSlug } from '../text';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 const t = ui(lang);
 const year = 2026;
+
+const NAV: Record<TextSlug, string> = {
+  about: t.navAbout,
+  contact: t.navContact,
+  'legal/privacy': t.navPrivacy,
+  'legal/cookies': t.navCookies,
+  'legal/terms': t.navTerms,
+};
 ---
 
 <footer class="foot">
   <div class="foot-in">
-    <span>{t.footer}</span>
-    <span>© {year} Hanveon</span>
+    <nav class="footnav" aria-label="Hanveon">
+      {TEXT_SLUGS.map((s) => <a href={textPath(lang, s)}>{NAV[s]}</a>)}
+    </nav>
+    <p class="footnote">{t.footer}</p>
+    <p class="footmark">© {year} Hanveon</p>
   </div>
 </footer>

@@ -1,12 +1,15 @@
 ---
-/* 모든 쪽 맨 위. 왼쪽에 로고, 오른쪽에 나라말 칸과 목차. */
+/* 모든 쪽 맨 위. 왼쪽에 목차와 로고, 오른쪽에 나라말 칸.
+
+   2026-08-23에 햄버거를 오른쪽에서 **왼쪽**으로 옮겼다.
+   목차가 왼쪽 위에 있는 것이 앱에서 익숙한 자리라는 훈쓰 판단이다. */
 import LangPicker from './LangPicker.astro';
 import Menu from './Menu.astro';
-import { homePath, type Lang } from '../i18n';
+import { homePath, type Lang, type PageKind } from '../i18n';
 
 interface Props {
   lang: Lang;
-  kind: 'home' | 'game';
+  kind: PageKind;
   slug?: string;
 }
 const { lang, kind, slug } = Astro.props;
@@ -14,10 +17,10 @@ const { lang, kind, slug } = Astro.props;
 
 <header class="topbar">
   <div class="topbar-in">
-    <a class="logo" href={homePath(lang)}>Han<span>veon</span></a>
-    <div class="topright">
-      <LangPicker lang={lang} kind={kind} slug={slug} />
+    <div class="topleft">
       <Menu lang={lang} slug={slug} />
+      <a class="logo" href={homePath(lang)}>Han<span>veon</span></a>
     </div>
+    <LangPicker lang={lang} kind={kind} slug={slug} />
   </div>
 </header>

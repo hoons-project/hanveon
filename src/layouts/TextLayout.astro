@@ -1,0 +1,58 @@
+---
+/*
+  글이 본체인 쪽 — 소개·연락·개인정보·쿠키·약관.
+
+  게임 쪽과 달리 캔버스도 HUD 도 없다. 읽기 좋은 한 칸뿐이다.
+  글은 `src/text/` 에 있고 여기는 그리기만 한다.
+
+  글월 안에 링크가 들어가서 `set:html` 로 그린다.
+  **넣는 글이 우리가 쓴 것뿐이라 안전하다.** 바깥에서 받은 글을 여기 넣지 않는다.
+*/
+import BaseLayout from './BaseLayout.astro';
+import TopBar from '../components/TopBar.astro';
+import Foot from '../components/Foot.astro';
+import '../styles/text.css';
+import { type Lang } from '../i18n';
+import { ui } from '../i18n/ui';
+import { TEXT_UPDATED, type TextPage, type TextSlug } from '../text';
+
+interface Props {
+  lang: Lang;
+  slug: TextSlug;
+  copy: TextPage;
+  /** 참이면 「마지막으로 고친 날」을 보여준다. 법적 쪽 셋에만 쓴다. */
+  dated?: boolean;
+}
+const { lang, slug, copy, dated = false } = Astro.props;
+const t = ui(lang);
+---
+
+<BaseLayout
+  lang={lang}
+  kind="text"
+  slug={slug}
+  title={copy.metaTitle}
+  description={copy.metaDesc}
+>
+  <TopBar lang={lang} kind="text" slug={slug} />
+
+  <main class="page textpage">
+    <h1 class="pagetitle">{copy.h1}</h1>
+    <p class="lede">{copy.lede}</p>
+    {dated && (
+      <p class="updated">{t.updatedLabel} — <time datetime={TEXT_UPDATED}>{TEXT_UPDATED}</time></p>
+    )}
+
+    <div class="prose">
+      {copy.blocks.map((b) => (
+        <section>
+          <h2>{b.h}</h2>
+          {b.p.map((s) => <p set:html={s} />)}
+          {b.list && <ul>{b.list.map((s) => <li set:html={s} />)}</ul>}
+        </section>
+      ))}
+    </div>
+  </main>
+
+  <Foot lang={lang} />
+</BaseLayout>

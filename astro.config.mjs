@@ -10,5 +10,10 @@ export default defineConfig({
   trailingSlash: 'always',
   // 게임도 이제 Astro 페이지라 사이트맵이 알아서 다 찾는다.
   // (단계 3 전에는 게임이 public/ 에 있어서 customPages 로 직접 넣어 줘야 했다.)
-  integrations: [sitemap()],
+  integrations: [
+    sitemap({
+      /* 404 쪽은 사이트맵에서 뺀다. 색인해 달라고 할 주소가 아니다 */
+      filter: (page) => !/\/404\/?$/.test(page),
+    }),
+  ],
 });

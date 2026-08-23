@@ -1,0 +1,26 @@
+---
+/* 영어 아닌 나라말의 법적 쪽 셋. `/ko/legal/privacy/` 꼴. */
+import TextLayout from '../../../layouts/TextLayout.astro';
+import { SUB_LANGS, type Lang } from '../../../i18n';
+import { PRIVACY } from '../../../text/privacy';
+import { COOKIES } from '../../../text/cookies';
+import { TERMS } from '../../../text/terms';
+import type { TextCopy, TextSlug } from '../../../text';
+
+const PAGES: Record<string, { copy: TextCopy; slug: TextSlug }> = {
+  privacy: { copy: PRIVACY, slug: 'legal/privacy' },
+  cookies: { copy: COOKIES, slug: 'legal/cookies' },
+  terms:   { copy: TERMS,   slug: 'legal/terms' },
+};
+
+export function getStaticPaths() {
+  return SUB_LANGS.flatMap((lang) =>
+    ['privacy', 'cookies', 'terms'].map((page) => ({ params: { lang, page } })),
+  );
+}
+
+const lang = Astro.params.lang as Lang;
+const page = Astro.params.page as string;
+const { copy, slug } = PAGES[page]!;
+---
+<TextLayout lang={lang} slug={slug} copy={copy[lang]} dated />

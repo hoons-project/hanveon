@@ -84,8 +84,8 @@ p{margin:0}
 }
 .lang:hover{background-color:var(--bebe)}
 
-/* ── 머리 오른쪽 묶음과 햄버거 목차 ─────────────────── */
-.topright{ display:flex;align-items:center;gap:8px }
+/* ── 머리 왼쪽 묶음과 햄버거 목차 ─────────────────── */
+.topleft{ display:flex;align-items:center;gap:10px }
 
 .menuwrap{ position:relative }
 
@@ -100,7 +100,7 @@ p{margin:0}
 .iconbtn:hover{ background:var(--bebe) }
 
 .menupanel{
-  position:absolute;top:calc(100% + 10px);right:0;z-index:20;
+  position:absolute;top:calc(100% + 10px);left:0;z-index:20;
   min-width:230px;
   background:var(--white);
   border:1px solid var(--bebe);
@@ -121,6 +121,13 @@ p{margin:0}
 }
 .menupanel a:hover{ background:var(--faint) }
 .menupanel a[aria-current="page"]{ background:var(--faint);font-weight:700 }
+
+/* 목차의 두 번째 머리말 — 게임 아닌 쪽들. 줄 하나로 나눈다 */
+.menuhead + ul + .menuhead{
+  margin-top:8px;padding-top:12px;
+  border-top:1px solid var(--bebe);
+}
+.menuplain a{ padding:8px 10px }
 .mthumb{
   flex:none;width:28px;height:28px;
   border:2px solid var(--ink);border-radius:7px;
@@ -226,10 +233,16 @@ button.ghost:hover{ background:var(--faint) }
 }
 .foot-in{
   width:100%;max-width:var(--page);margin:0 auto;
-  display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;
+  display:flex;flex-direction:column;gap:14px;
   font-size:14px;color:var(--foggy);
 }
-.foot a:hover{color:var(--hof)}
+.footnav{ display:flex;flex-wrap:wrap;gap:8px 20px }
+.footnav a{ color:var(--hof);font-weight:500 }
+.foot p{ margin:0 }
+.footmark{ font-size:13px }
+@media (hover:hover){
+  .footnav a:hover{ text-decoration:underline }
+}
 
 /* ── 좁은 화면 ─────────────────────────────────────── */
 @media (max-width:600px){

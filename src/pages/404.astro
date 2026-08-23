@@ -1,0 +1,30 @@
+---
+/*
+  없는 주소로 갔을 때 나오는 쪽 — 영어.
+
+  Cloudflare Pages 는 요청한 주소에서 **위로 올라가며** 제일 가까운 `404.html` 을 찾는다.
+  그래서 `/ko/404.html` 이 있으면 `/ko/…` 아래의 없는 주소는 한국말 404 가 나온다.
+  이 파일은 맨 위 `/404.html` 이 되고, 나머지를 다 받는다.
+*/
+import BaseLayout from '../layouts/BaseLayout.astro';
+import TopBar from '../components/TopBar.astro';
+import Foot from '../components/Foot.astro';
+import '../styles/text.css';
+import { homePath } from '../i18n';
+import { ui } from '../i18n/ui';
+import { NOTFOUND } from '../text/notfound';
+
+const lang = 'en' as const;
+const t = ui(lang);
+const c = NOTFOUND[lang];
+---
+<BaseLayout lang={lang} kind="home" title={c.metaTitle} description={c.lede} noindex>
+  <TopBar lang={lang} kind="home" />
+  <main class="page lost">
+    <p class="lostnum">404</p>
+    <h1 class="pagetitle">{c.h1}</h1>
+    <p class="lede">{c.lede}</p>
+    <p class="lostgo"><a href={homePath(lang)}>{t.allGames}</a></p>
+  </main>
+  <Foot lang={lang} />
+</BaseLayout>

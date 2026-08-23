@@ -1,22 +1,24 @@
 ---
 import '@fontsource-variable/inter/wght.css';
 import '../styles/global.css';
-import { altPaths, HREFLANG, ogPath, type Lang } from '../i18n';
+import { altPaths, HREFLANG, ogPath, type Lang, type PageKind } from '../i18n';
 import { ui } from '../i18n/ui';
 
 interface Props {
   lang: Lang;
-  /** 이 페이지가 대문인지 게임인지. hreflang 과 대표 그림을 만드는 데 쓴다. */
-  kind: 'home' | 'game';
-  /** 게임일 때만. */
+  /** 이 페이지가 대문인지 게임인지 읽는 쪽인지. hreflang 과 대표 그림을 만드는 데 쓴다. */
+  kind: PageKind;
+  /** 게임이면 게임 slug, 읽는 쪽이면 `about` `legal/privacy` 같은 것. */
   slug?: string;
   title?: string;
   description?: string;
   /** 검색엔진에 주는 구조화 자료. 그대로 JSON 으로 박힌다. */
   jsonLd?: unknown;
+  /** 참이면 검색에 안 걸리게 한다. 404 쪽에만 쓴다. */
+  noindex?: boolean;
 }
 
-const { lang, kind, slug, title, description, jsonLd } = Astro.props;
+const { lang, kind, slug, title, description, jsonLd, noindex = false } = Astro.props;
 const t = ui(lang);
 
 const docTitle = title ?? t.homeTitle;
@@ -24,7 +26,8 @@ const desc = description ?? t.metaDesc;
 
 /* 크롤러와 SNS는 상대 주소를 못 푼다. astro.config.mjs 의 site 에서 절대 주소를 만든다. */
 const canonical = new URL(Astro.url.pathname, Astro.site);
-const alts = altPaths(kind, slug);
+/* 404 쪽은 주소가 정해져 있지 않다. 나라말 짝을 만들면 거짓말이 된다 */
+const alts = noindex ? [] : altPaths(kind, slug);
 const ogImage = new URL(ogPath(kind, lang, slug), Astro.site);
 ---
 <!doctype html>
@@ -34,7 +37,8 @@ const ogImage = new URL(ogPath(kind, lang, slug), Astro.site);
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="description" content={desc} />
     <title>{docTitle}</title>
-    <link rel="canonical" href={canonical} />
+    {!noindex && <link rel="canonical" href={canonical} />}
+    {noindex && <meta name="robots" content="noindex, follow" />}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 
     {/* 같은 페이지의 다른 나라말이 어디 있는지 검색엔진에 알려준다.
@@ -42,7 +46,9 @@ const ogImage = new URL(ogPath(kind, lang, slug), Astro.site);
     {alts.map((a) => (
       <link rel="alternate" hreflang={HREFLANG[a.lang]} href={new URL(a.path, Astro.site)} />
     ))}
-    <link rel="alternate" hreflang="x-default" href={new URL(alts[0]!.path, Astro.site)} />
+    {alts.length > 0 && (
+      <link rel="alternate" hreflang="x-default" href={new URL(alts[0]!.path, Astro.site)} />
+    )}
 
     <meta name="theme-color" content="#FFFFFF" />
     <meta property="og:site_name" content="Hanveon" />

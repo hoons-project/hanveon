@@ -5,12 +5,12 @@
   화면 글자만 갈아 끼우지 않고 **주소를 바꾼다.**
   그래야 구글이 나라말마다 다른 페이지로 본다.
 */
-import { LANGS, LANG_NAME, homePath, gamePath, type Lang } from '../i18n';
+import { LANGS, LANG_NAME, homePath, gamePath, textPath, type Lang, type PageKind } from '../i18n';
 import { ui } from '../i18n/ui';
 
 interface Props {
   lang: Lang;
-  kind: 'home' | 'game';
+  kind: PageKind;
   slug?: string;
 }
 const { lang, kind, slug } = Astro.props;
@@ -20,7 +20,10 @@ const t = ui(lang);
 const options = LANGS.map((l) => ({
   value: l,
   name: LANG_NAME[l],
-  href: kind === 'home' ? homePath(l) : gamePath(l, slug!),
+  href:
+    kind === 'home' ? homePath(l)
+    : kind === 'game' ? gamePath(l, slug!)
+    : textPath(l, slug!),
 }));
 ---
 

@@ -1,0 +1,28 @@
+---
+/* 영어 아닌 나라말의 404. `/ko/404.html` 꼴로 나온다. */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import TopBar from '../../components/TopBar.astro';
+import Foot from '../../components/Foot.astro';
+import '../../styles/text.css';
+import { SUB_LANGS, homePath, type Lang } from '../../i18n';
+import { ui } from '../../i18n/ui';
+import { NOTFOUND } from '../../text/notfound';
+
+export function getStaticPaths() {
+  return SUB_LANGS.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Lang;
+const t = ui(lang);
+const c = NOTFOUND[lang];
+---
+<BaseLayout lang={lang} kind="home" title={c.metaTitle} description={c.lede} noindex>
+  <TopBar lang={lang} kind="home" />
+  <main class="page lost">
+    <p class="lostnum">404</p>
+    <h1 class="pagetitle">{c.h1}</h1>
+    <p class="lede">{c.lede}</p>
+    <p class="lostgo"><a href={homePath(lang)}>{t.allGames}</a></p>
+  </main>
+  <Foot lang={lang} />
+</BaseLayout>

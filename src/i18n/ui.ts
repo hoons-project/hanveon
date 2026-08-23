@@ -25,7 +25,14 @@ export type UiKey =
   | 'moreLike'     // 게임 쪽 맨 아래 「비슷한 게임」
   | 'kindQuick'    // 갈래 이름 셋. 지금은 화면에 안 나오지만 미리 적어 둔다
   | 'kindThink'
-  | 'kindStack';
+  | 'kindStack'
+  | 'updatedLabel' // 법적 쪽 맨 위 「마지막으로 고친 날」
+  | 'menuMore'     // 목차의 두 번째 머리말 — 게임 아닌 쪽들
+  | 'navAbout'     // 발쪽·목차의 링크 이름 다섯
+  | 'navContact'
+  | 'navPrivacy'
+  | 'navCookies'
+  | 'navTerms';
 
 export const UI: Record<Lang, Record<UiKey, string>> = {
   en: {
@@ -48,6 +55,13 @@ export const UI: Record<Lang, Record<UiKey, string>> = {
     kindQuick: 'Fast hands',
     kindThink: 'Think a bit',
     kindStack: 'Stack them up',
+    updatedLabel: 'Last updated',
+    menuMore: 'More',
+    navAbout: 'About',
+    navContact: 'Contact',
+    navPrivacy: 'Privacy',
+    navCookies: 'Cookies',
+    navTerms: 'Terms',
   },
   ko: {
     tagline: '한번 해볼까? 받을 것도 없어요.',
@@ -69,6 +83,13 @@ export const UI: Record<Lang, Record<UiKey, string>> = {
     kindQuick: '손이 바쁜 것',
     kindThink: '머리 쓰는 것',
     kindStack: '쌓이는 것',
+    updatedLabel: '마지막으로 고친 날',
+    menuMore: '그 밖에',
+    navAbout: '소개',
+    navContact: '연락',
+    navPrivacy: '개인정보',
+    navCookies: '쿠키',
+    navTerms: '이용 약관',
   },
   ja: {
     tagline: '小さなゲーム。インストール不要。',
@@ -90,6 +111,13 @@ export const UI: Record<Lang, Record<UiKey, string>> = {
     kindQuick: '手が忙しい',
     kindThink: 'あたまを使う',
     kindStack: '積んでいく',
+    updatedLabel: '最終更新',
+    menuMore: 'その他',
+    navAbout: 'サイトについて',
+    navContact: 'お問い合わせ',
+    navPrivacy: 'プライバシー',
+    navCookies: 'クッキー',
+    navTerms: '利用規約',
   },
   es: {
     tagline: 'Juegos pequeños. Nada que instalar.',
@@ -111,6 +139,13 @@ export const UI: Record<Lang, Record<UiKey, string>> = {
     kindQuick: 'Manos rápidas',
     kindThink: 'Para pensar',
     kindStack: 'Apilar',
+    updatedLabel: 'Última actualización',
+    menuMore: 'Más',
+    navAbout: 'Sobre Hanveon',
+    navContact: 'Contacto',
+    navPrivacy: 'Privacidad',
+    navCookies: 'Cookies',
+    navTerms: 'Términos',
   },
   fr: {
     tagline: 'Petits jeux. Rien à installer.',
@@ -132,6 +167,13 @@ export const UI: Record<Lang, Record<UiKey, string>> = {
     kindQuick: 'Doigts rapides',
     kindThink: 'Réfléchir',
     kindStack: 'Empiler',
+    updatedLabel: 'Dernière mise à jour',
+    menuMore: 'Plus',
+    navAbout: 'À propos',
+    navContact: 'Contact',
+    navPrivacy: 'Confidentialité',
+    navCookies: 'Cookies',
+    navTerms: 'Conditions',
   },
   zh: {
     tagline: '小游戏，无需安装。',
@@ -153,6 +195,13 @@ export const UI: Record<Lang, Record<UiKey, string>> = {
     kindQuick: '手要快',
     kindThink: '动脑筋',
     kindStack: '堆起来',
+    updatedLabel: '最后更新',
+    menuMore: '更多',
+    navAbout: '关于',
+    navContact: '联系',
+    navPrivacy: '隐私',
+    navCookies: 'Cookie',
+    navTerms: '使用条款',
   },
 };
 

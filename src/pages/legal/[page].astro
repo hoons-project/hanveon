@@ -1,0 +1,22 @@
+---
+/* 법적 쪽 셋. 영어라 앞자리가 안 붙는다 — `/legal/privacy/` 꼴. */
+import TextLayout from '../../layouts/TextLayout.astro';
+import { PRIVACY } from '../../text/privacy';
+import { COOKIES } from '../../text/cookies';
+import { TERMS } from '../../text/terms';
+import type { TextCopy, TextSlug } from '../../text';
+
+const PAGES: Record<string, { copy: TextCopy; slug: TextSlug }> = {
+  privacy: { copy: PRIVACY, slug: 'legal/privacy' },
+  cookies: { copy: COOKIES, slug: 'legal/cookies' },
+  terms:   { copy: TERMS,   slug: 'legal/terms' },
+};
+
+export function getStaticPaths() {
+  return ['privacy', 'cookies', 'terms'].map((page) => ({ params: { page } }));
+}
+
+const page = Astro.params.page as string;
+const { copy, slug } = PAGES[page]!;
+---
+<TextLayout lang="en" slug={slug} copy={copy.en} dated />

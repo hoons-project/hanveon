@@ -1,0 +1,69 @@
+/* ── 글이 본체인 쪽 ─────────────────────────────────
+   읽기가 전부다. 칸을 좁게 세우고 줄 간격을 넉넉히 준다.
+   생김새는 흰 벽 쪽이다 — 오락기 테두리를 쓰지 않는다. */
+
+.textpage{ max-width:720px }
+
+.textpage .updated{
+  margin-top:10px;
+  font-size:13px;color:var(--foggy);
+}
+
+.prose{ margin-top:34px }
+.prose section + section{ margin-top:32px }
+
+.prose h2{
+  font-size:19px;font-weight:600;letter-spacing:-0.01em;
+  color:var(--hof);
+  margin-bottom:10px;
+}
+.prose p{
+  font-size:15.5px;line-height:1.75;color:var(--foggy);
+  margin-bottom:12px;
+}
+.prose p:last-child{ margin-bottom:0 }
+.prose em{ font-style:italic;color:var(--hof) }
+
+.prose a{
+  color:var(--rausch);
+  text-decoration:underline;text-underline-offset:2px;
+}
+
+.prose ul{ margin:12px 0 0;padding-left:20px }
+.prose li{
+  font-size:15.5px;line-height:1.75;color:var(--foggy);
+  list-style:disc;
+  margin-bottom:8px;
+}
+
+/* 연락 쪽의 큰 메일 주소 */
+.prose .bigmail{
+  display:inline-block;
+  font-size:21px;font-weight:600;letter-spacing:-0.01em;
+  text-decoration:none;
+}
+@media (hover:hover){ .prose .bigmail:hover{ text-decoration:underline } }
+
+/* ── 없는 쪽 (404) ─────────────────────────────────── */
+.lost{ max-width:560px }
+.lostnum{
+  font-size:13px;font-weight:700;letter-spacing:.12em;
+  color:var(--rausch);
+  margin-bottom:10px;
+}
+.lostgo{ margin-top:28px }
+.lostgo a{
+  display:inline-flex;align-items:center;
+  color:var(--white);background:var(--hof);
+  border-radius:9999px;
+  padding:13px 26px;
+  font-size:16px;font-weight:500;
+  transition:background-color .12s;
+}
+@media (hover:hover){ .lostgo a:hover{ background:#000 } }
+
+@media (max-width:600px){
+  .prose h2{ font-size:17px }
+  .prose p, .prose li{ font-size:15px }
+  .prose .bigmail{ font-size:18px }
+}
