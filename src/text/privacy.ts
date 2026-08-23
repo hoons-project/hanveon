@@ -368,7 +368,7 @@ export const PRIVACY: TextCopy = {
       {
         h: 'Enfants',
         p: [
-          'Les jeux sont simples et peuvent être utilisés par des personnes de différents âges, mais Hanveon ne s’adresse pas spécifiquement aux enfants. Le site ne collecte volontairement les informations personnelles de personne, y compris des enfants.',
+          'Les jeux sont simples et peuvent être utilisés par des personnes de différents âges, mais Hanveon ne s’adresse pas spécifiquement aux enfants. Le site ne collecte volontairement aucune information personnelle, y compris auprès des enfants.',
         ],
       },
       {
