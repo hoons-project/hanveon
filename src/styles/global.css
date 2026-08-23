@@ -17,9 +17,8 @@
   --faint:#F7F7F7;
   --white:#FFFFFF;
 
-  /* 캔버스 안쪽에서 쓰는 잉크색. 게임 그림에만 쓴다 */
+  /* 오락기 쪽 색. 게임 노는 자리와 대문 목록 카드에 쓴다 */
   --ink:#2A3145;
-  /* 게임 쪽 캐비닛에만 쓴다. 대문에서는 쓰지 않는다 */
   --cream:#FFF7EA;
   --sun:#FFD23F;
 
@@ -95,39 +94,67 @@ p{margin:0}
 .pagetitle{ font-size:28px;font-weight:700;line-height:1.2 }
 .lede{ margin-top:8px;font-size:16px;line-height:1.5;color:var(--foggy);max-width:60ch }
 
-/* ── 게임 격자 ─────────────────────────────────────── */
+/* ── 게임 목록 ─────────────────────────────────────
+   넓으면 작은 오락기 카드, 폰이면 가로 줄. 아래 좁은 화면 칸을 같이 본다. */
 .rowhead{ margin:40px 0 20px }
 .rowhead h2{ font-size:22px;font-weight:500;letter-spacing:-0.02em }
 
 .cards{
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
-  gap:32px 24px;
+  grid-template-columns:repeat(auto-fill,minmax(158px,1fr));
+  gap:18px;
 }
-.gcard{ display:block }
+
+.gcard{
+  display:flex;
+  flex-direction:column;
+  background:var(--white);
+  border:3px solid var(--ink);
+  border-radius:16px;
+  box-shadow:0 5px 0 var(--ink);
+  padding:10px;
+  transition:transform .07s, box-shadow .07s;
+}
+.gcard:active{ transform:translateY(5px); box-shadow:0 0 0 var(--ink) }
+@media (hover:hover){
+  .gcard:hover{ transform:translateY(-2px); box-shadow:0 7px 0 var(--ink) }
+}
+.gcard:focus-visible{ outline:2px solid var(--ink);outline-offset:4px;border-radius:18px }
+
 .thumb{
   display:block;
   aspect-ratio:1/1;
-  border-radius:12px;
+  border:2px solid var(--ink);
+  border-radius:10px;
   overflow:hidden;
   background:var(--faint);
 }
 .thumb svg{display:block;width:100%;height:100%}
+
 .gcard .gname{
   display:block;
-  margin-top:12px;
-  font-size:16px;font-weight:500;line-height:1.25;
+  margin-top:9px;
+  font-size:15px;font-weight:800;line-height:1.25;letter-spacing:-0.02em;
 }
 .gcard .gdesc{
   display:-webkit-box;
-  margin-top:4px;
-  font-size:14px;color:var(--foggy);
+  margin-top:3px;
+  font-size:12px;color:var(--foggy);
   -webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  flex:1;
 }
-@media (hover:hover){
-  .gcard:hover .thumb{ filter:brightness(.96) }
+
+/* 카드마다 붙는 노란 단추. 「여기 눌러」를 말해 주는 조각이다 */
+.go{
+  display:block;
+  margin-top:10px;
+  text-align:center;
+  background:var(--sun);color:var(--ink);
+  border:3px solid var(--ink);
+  border-radius:11px;
+  font-size:13.5px;font-weight:800;
+  padding:7px 0;
 }
-.gcard:focus-visible{ outline:2px solid var(--hof);outline-offset:6px;border-radius:14px }
 
 /* 「게임은 계속 늘어나요」 — 목록 아래 조용한 한 줄 */
 .more{
@@ -178,7 +205,40 @@ button.ghost:hover{ background:var(--faint) }
   .page{padding:28px var(--pad) 48px}
   .pagetitle{font-size:22px}
   .lede{font-size:14px}
-  .cards{grid-template-columns:repeat(2,1fr);gap:24px 16px}
   .rowhead{margin:32px 0 16px}
   .rowhead h2{font-size:20px}
+}
+
+/* ── 폰 — 목록을 가로 줄로 ──────────────────────────
+   카드꼴이면 여섯 개 보는 데 스크롤이 두 번 걸린다. 가로 줄이면 거의 한 화면에 들어온다. */
+@media (max-width:640px){
+  .cards{ grid-template-columns:minmax(0,1fr); gap:12px }
+
+  .gcard{
+    display:grid;
+    align-items:center;
+    grid-template-columns:66px minmax(0,1fr) auto;
+    grid-template-areas:
+      "art name btn"
+      "art desc btn";
+    column-gap:13px;
+    border-radius:18px;
+    padding:11px 13px;
+  }
+  .thumb{
+    grid-area:art;
+    width:66px;height:66px;
+    aspect-ratio:auto;
+    border-width:3px;border-radius:15px;
+  }
+  .gcard .gname{ grid-area:name; margin-top:0; font-size:16.5px }
+  .gcard .gdesc{ grid-area:desc; margin-top:2px; font-size:12.5px; flex:none }
+  .go{
+    grid-area:btn;
+    margin-top:0;
+    border-radius:12px;
+    font-size:14px;
+    padding:7px 11px;
+    white-space:nowrap;
+  }
 }
