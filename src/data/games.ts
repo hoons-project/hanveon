@@ -214,11 +214,31 @@ export function findGame(slug: string): Game | undefined {
 
 /**
  * 「비슷한 게임」 고르기.
- * 같은 갈래를 먼저 담고, 모자라면 다른 갈래에서 채워서 **늘 n 개**를 준다.
+ *
+ * 두 가지를 같이 만족시켜야 한다 —
+ *   1. 되도록 같은 갈래를 보여준다
+ *   2. **모든 게임이 링크를 받는다.** 앞쪽 게임만 뽑히면 안 된다
+ *
+ * 그래서 자기 **다음 차례부터 둥글게** 돌면서 고른다.
+ * 첫 칸은 같은 갈래, 남은 칸은 둥글게 다음 것으로 채운다.
  * 무작위를 쓰지 않는다 — 빌드할 때마다 같은 것이 나와야 한다.
  */
 export function related(g: Game, n = 2): Game[] {
-  const same = GAMES.filter((x) => x.slug !== g.slug && x.kind === g.kind);
-  const rest = GAMES.filter((x) => x.slug !== g.slug && x.kind !== g.kind);
-  return [...same, ...rest].slice(0, n);
+  const i = GAMES.findIndex((x) => x.slug === g.slug);
+  /* 자기 다음부터 둥글게. 자기 자신은 안 들어간다 */
+  const rot = [...GAMES.slice(i + 1), ...GAMES.slice(0, i)];
+
+  const picked: Game[] = [];
+
+  /* 첫 칸 — 같은 갈래 중 둥글게 첫 번째. 같은 갈래가 없으면 건너뛴다 */
+  const same = rot.find((x) => x.kind === g.kind);
+  if (same) picked.push(same);
+
+  /* 남은 칸 — 둥글게 돌면서 아직 안 고른 것으로 채운다 */
+  for (const x of rot) {
+    if (picked.length >= n) break;
+    if (!picked.includes(x)) picked.push(x);
+  }
+
+  return picked.slice(0, n);
 }
