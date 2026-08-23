@@ -1,8 +1,8 @@
 /* ─────────────────────────────────────────────────────────────
    게임 쪽 공통 생김새.
 
-   바깥(HUD·덮개 화면·단추·읽을 글)은 「조용한 흰 벽」을 따른다.
-   캔버스 **안쪽** 그림만 옛 「장난감 오락기」다 — design/README.md 참고.
+   노는 자리(통·HUD·캔버스 테두리·덮개 화면·단추)와 캔버스 **안쪽** 그림은
+   「장난감 오락기」다. 읽을 글은 「조용한 흰 벽」을 따른다 — design/README.md 참고.
    ───────────────────────────────────────────────────────────── */
 
 /* 넓으면 왼쪽에 게임, 오른쪽에 읽을 글. 좁으면 위아래로. */
@@ -17,31 +17,36 @@
   .gamewrap{ grid-template-columns:minmax(0,1fr); gap:36px; max-width:440px }
 }
 
+/* 노는 자리는 오락기다. 대문은 흰 벽 그대로 — design/README.md 참고 */
+.play{
+  background:var(--cream);
+  border:4px solid var(--ink);
+  border-radius:24px;
+  box-shadow:8px 8px 0 var(--ink);
+  padding:14px;
+}
+
 .crumb{
   margin-bottom:10px;
   font-size:14px;color:var(--foggy);
 }
 .crumb a:hover{color:var(--hof)}
 
-/* ── HUD — 상자 없이 얇은 줄로만 나눈다 ─────────────── */
+/* ── HUD — 잉크색 줄로 나눈 세 칸 ──────────────────── */
 .hud{
   display:grid;grid-template-columns:1fr 1fr 1fr;
-  border:1px solid var(--bebe);
-  border-radius:12px;
+  background:#fff;
+  border:3px solid var(--ink);
+  border-radius:14px;
   overflow:hidden;
   margin-bottom:12px;
 }
-.hud div{
-  padding:10px 8px 12px;
-  text-align:center;
-}
-.hud div + div{ border-left:1px solid var(--bebe) }
-.hud b{
-  display:block;font-size:12px;font-weight:400;color:var(--foggy);
-}
+.hud div{ padding:10px 8px 12px;text-align:center }
+.hud div + div{ border-left:3px solid var(--ink) }
+.hud b{ display:block;font-size:12px;font-weight:600;color:var(--foggy) }
 .hud i{
   display:block;font-style:normal;
-  font-size:20px;font-weight:600;line-height:1.2;
+  font-size:20px;font-weight:800;line-height:1.2;
   font-variant-numeric:tabular-nums;letter-spacing:-0.02em;
   margin-top:2px;
 }
@@ -53,7 +58,8 @@ canvas{
   display:block;
   width:100%;
   aspect-ratio:360/620;
-  border-radius:12px;
+  border:4px solid var(--ink);
+  border-radius:16px;
   touch-action:none;
   cursor:pointer;
 }
@@ -68,9 +74,10 @@ canvas{
 .screen.on{display:flex}
 .card{
   width:100%;max-width:290px;
-  background:var(--white);
-  border-radius:12px;
-  box-shadow:0 8px 28px rgba(0,0,0,.28);
+  background:var(--cream);
+  border:4px solid var(--ink);
+  border-radius:20px;
+  box-shadow:6px 6px 0 rgba(0,0,0,.3);
   padding:24px 20px;
   text-align:left;
 }
@@ -96,14 +103,25 @@ canvas{
 .chip.bar{width:24px;height:11px;border-radius:4px}
 .chips{display:flex;gap:3px;flex:none}
 
+/* 게임 쪽 단추만 오락기 노란 단추다 */
+.play button{
+  background:var(--sun);
+  color:var(--ink);
+  border:3px solid var(--ink);
+  box-shadow:0 4px 0 var(--ink);
+  font-weight:700;
+  transition:transform .06s, box-shadow .06s;
+}
+.play button:hover{ background:var(--sun) }
+.play button:active{ transform:translateY(4px); box-shadow:0 0 0 var(--ink) }
+
 /* ── 손가락용 단추. 마우스가 있는 기기에서는 숨긴다 ── */
 .pad{display:flex;gap:8px;margin-top:12px}
 .pad button{
   flex:1;
-  background:var(--faint);color:var(--hof);
+  background:#fff;color:var(--hof);
   font-size:20px;padding:14px 0;
 }
-.pad button:hover{background:var(--bebe)}
 @media (hover:hover){ .pad{display:none} }
 
 /* ── 캐비닛 아래 조작 안내 ─────────────────────────── */
