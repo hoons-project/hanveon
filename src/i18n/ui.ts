@@ -8,7 +8,6 @@ import type { Lang } from './index';
 
 export type UiKey =
   | 'tagline'      // 이름 밑 한 줄
-  | 'more'         // 게임이 계속 늘어난다는 한 줄
   | 'footer'       // 목록 아래 안내
   | 'play'         // 목록의 단추
   | 'allGames'     // 게임에서 목록으로 돌아가는 링크
@@ -31,7 +30,6 @@ export type UiKey =
 export const UI: Record<Lang, Record<UiKey, string>> = {
   en: {
     tagline: 'Tiny games. Nothing to install.',
-    more: 'New games are added regularly.',
     footer: 'Works on phones too. Your best scores stay on this device.',
     play: 'Play',
     allGames: 'All games',
@@ -53,7 +51,6 @@ export const UI: Record<Lang, Record<UiKey, string>> = {
   },
   ko: {
     tagline: '한번 해볼까? 받을 것도 없어요.',
-    more: '게임은 계속 늘어나요.',
     footer: '폰에서도 됩니다. 최고 기록은 이 기기에만 남아요.',
     play: '하기',
     allGames: '게임 목록',
@@ -75,7 +72,6 @@ export const UI: Record<Lang, Record<UiKey, string>> = {
   },
   ja: {
     tagline: '小さなゲーム。インストール不要。',
-    more: 'ゲームは少しずつ増えていきます。',
     footer: 'スマホでも遊べます。ベスト記録はこの端末に残ります。',
     play: 'あそぶ',
     allGames: 'ゲーム一覧',
@@ -97,7 +93,6 @@ export const UI: Record<Lang, Record<UiKey, string>> = {
   },
   es: {
     tagline: 'Juegos pequeños. Nada que instalar.',
-    more: 'Añadimos juegos nuevos cada poco.',
     footer: 'También funciona en el móvil. Tus récords se guardan en este dispositivo.',
     play: 'Jugar',
     allGames: 'Todos los juegos',
@@ -119,7 +114,6 @@ export const UI: Record<Lang, Record<UiKey, string>> = {
   },
   fr: {
     tagline: 'Petits jeux. Rien à installer.',
-    more: 'De nouveaux jeux arrivent régulièrement.',
     footer: 'Fonctionne aussi sur mobile. Tes records restent sur cet appareil.',
     play: 'Jouer',
     allGames: 'Tous les jeux',
@@ -141,7 +135,6 @@ export const UI: Record<Lang, Record<UiKey, string>> = {
   },
   zh: {
     tagline: '小游戏，无需安装。',
-    more: '新游戏会不断加入。',
     footer: '手机上也能玩。最高分只保存在这台设备上。',
     play: '开始玩',
     allGames: '全部游戏',

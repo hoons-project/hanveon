@@ -200,16 +200,6 @@ p{margin:0}
   padding:7px 0;
 }
 
-/* 「게임은 계속 늘어나요」 — 목록 아래 조용한 한 줄 */
-.more{
-  margin-top:32px;
-  display:inline-flex;align-items:center;gap:8px;
-  font-size:14px;font-weight:500;color:var(--hof);
-  background:var(--faint);
-  border-radius:9999px;
-  padding:9px 16px;
-}
-
 /* ── 단추 ──────────────────────────────────────────── */
 button{
   font-family:inherit;

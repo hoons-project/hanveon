@@ -26,11 +26,23 @@
   padding:14px;
 }
 
-.crumb{
-  margin-bottom:10px;
-  font-size:14px;color:var(--foggy);
+/* 게임 목록으로 돌아가는 단추.
+   전에는 작은 흐린 글씨라 눈에 안 띄었다. 대문 카드와 같은 알약 단추로 만든다. */
+.crumb{ margin-bottom:14px }
+.crumb a{
+  display:inline-flex;align-items:center;
+  background:var(--white);color:var(--ink);
+  border:2px solid var(--ink);
+  border-radius:9999px;
+  box-shadow:0 3px 0 var(--ink);
+  padding:8px 16px;
+  font-size:13.5px;font-weight:800;letter-spacing:-0.01em;
+  transition:transform .07s, box-shadow .07s;
 }
-.crumb a:hover{color:var(--hof)}
+.crumb a:active{ transform:translateY(3px); box-shadow:0 0 0 var(--ink) }
+@media (hover:hover){
+  .crumb a:hover{ background:var(--faint) }
+}
 
 /* ── HUD — 잉크색 줄로 나눈 세 칸 ──────────────────── */
 .hud{
