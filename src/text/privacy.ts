@@ -12,450 +12,450 @@ const CF = (t: string) =>
 export const PRIVACY: TextCopy = {
   en: {
     h1: 'Privacy',
-    lede: 'What this site does with your data. It is a short page, because it does very little.',
+    lede: 'What Hanveon does with your data. This page is short because the site collects very little.',
     metaTitle: 'Privacy | Hanveon',
     metaDesc:
-      'Hanveon has no accounts and no server storing your data. Your best scores stay in your own browser. Here is exactly what happens when you open a page.',
+      'Hanveon has no accounts and no server storing your gameplay data. Your best scores stay in your browser. Here is what happens when you open and use the site.',
     blocks: [
       {
-        h: 'Who runs this site',
+        h: 'Who runs Hanveon',
         p: [
-          `Hanveon is made and run by one person in Seoul, South Korea. If anything on this page is unclear, write to ${M} and you will get an answer from that person.`,
+          `Hanveon is made and run by one person in Seoul, South Korea. If anything on this page is unclear, write to ${M}. The person who runs the site will read it.`,
         ],
       },
       {
-        h: 'There is no account, and no server holding your data',
+        h: 'No account and no server storing your gameplay',
         p: [
-          'Hanveon has no sign-up and no login. There is no field anywhere on the site for you to type into.',
-          'The games are files your browser downloads and runs on your own device. What you do inside a game — how you move, what you score, how long you play — is never sent anywhere. It happens on your device and stays there.',
+          'Hanveon has no sign-up or login. There is no form on the site asking you to enter personal information.',
+          'The games are files that your browser downloads and runs on your device. What you do inside a game — how you move, what you score, and how long you play — is not sent to Hanveon. It happens on your device and stays there.',
         ],
       },
       {
         h: 'What stays on your device',
         p: [
-          "Two things are saved by your browser, on your device only: your best score in each game, and the language you picked. They are kept in your browser's own storage, they are never sent to us, and we cannot read them.",
-          'If you clear your browser data for hanveon.com, they are erased. There is no copy anywhere else, so nothing can be restored.',
+          "Your browser saves two things on your device: your best score in each game and the language you selected. They are stored in the browser's local storage, are not sent to us, and cannot be read by us remotely.",
+          'If you clear the site data for hanveon.com in your browser, they are deleted. No copy is kept elsewhere, so they cannot be restored.',
         ],
       },
       {
-        h: 'What our host sees',
+        h: 'What our host receives',
         p: [
-          'The site is served by Cloudflare Pages. As with any web host, Cloudflare receives what your browser has to send in order to fetch a page: your IP address, the page you asked for, your browser and its language, and the page you came from.',
-          `Cloudflare uses this to deliver the site and to block attacks, and keeps it for a limited time. Their ${CF('privacy policy')} explains what they do with it.`,
+          'Hanveon is served by Cloudflare Pages. Like any web host, Cloudflare receives the information your browser must send to request a page, such as your IP address, the page requested, browser information and language, and the referring page when available.',
+          `Cloudflare uses this information to deliver the site and protect it from attacks, and keeps it for a limited period. See Cloudflare's ${CF('privacy policy')} for details.`,
         ],
       },
       {
         h: 'Counting visits',
         p: [
-          'We use Cloudflare Web Analytics to see how many people open each page. It sets no cookies and does not follow you to other sites. Cloudflare states that it does not collect or use visitors’ personal data for this.',
-          'We look at it for one reason: to decide which game to make next.',
+          'Hanveon uses Cloudflare Web Analytics to see how many people open each page. It does not set cookies and does not follow you across other sites. Cloudflare states that it does not collect or use visitors’ personal data for this service.',
+          'We use those counts for one main reason: to understand which games people open and help decide what to make next.',
         ],
       },
       {
-        h: 'No ads, no tracking, nothing sold',
+        h: 'No ads or tracking scripts',
         p: [
-          'There are no ads on Hanveon today, and no advertising or tracking scripts of any kind. Nothing about you is sold or passed to anyone.',
-          'We may add ads later. If that happens, this page changes first and this section changes with it.',
+          'Hanveon currently has no ads and no advertising or tracking scripts. We do not sell information about you or pass it to advertisers.',
+          'Advertising may be added in the future. If that happens, this privacy page will be updated before the change goes live.',
         ],
       },
       {
-        h: 'Where the files come from',
+        h: 'Where site files come from',
         p: [
-          'Every font, image and script on this site is served from hanveon.com itself. Nothing is fetched from Google Fonts or any other outside address.',
-          'The visit counting described above is the only request your browser makes to anywhere other than our host.',
+          'Fonts, images and scripts used by Hanveon are served from hanveon.com itself. The site does not load them from Google Fonts or other outside addresses.',
+          'Apart from the visit counting described above, your browser does not make requests to services outside the hosting used for Hanveon.',
         ],
       },
       {
         h: 'Children',
         p: [
-          'The games are simple and fine for any age, but Hanveon is not aimed at children in particular. It collects nothing from anyone, children included.',
+          'The games are simple and can be played by people of different ages, but Hanveon is not specifically directed at children. The site does not intentionally collect personal information from anyone, including children.',
         ],
       },
       {
         h: 'Your rights',
         p: [
-          'Because there is no account and no personal data stored, there is nothing for us to hand over, correct or delete.',
-          `If you are in the EU, the UK or Korea and want to ask about this anyway, write to ${M}.`,
+          'Because Hanveon has no account system and does not store your gameplay data or profile, there is normally no personal account data for us to provide, correct or delete.',
+          `If you are in the EU, the UK or Korea and still have a privacy question or request, write to ${M}.`,
         ],
       },
       {
         h: 'Changes',
-        p: ['If this page changes, the date at the top changes with it.'],
+        p: ['If this page changes, the date at the top of the page changes with it.'],
       },
     ],
   },
 
   ko: {
     h1: '개인정보',
-    lede: '이 사이트가 여러분 자료로 무엇을 하는지. 하는 것이 거의 없어서 짧습니다.',
+    lede: 'Hanveon이 여러분의 데이터를 어떻게 다루는지 설명합니다. 수집하는 것이 거의 없어 내용도 짧습니다.',
     metaTitle: '개인정보 | Hanveon',
     metaDesc:
-      'Hanveon 은 계정도 없고 자료를 담아 두는 서버도 없습니다. 최고 기록은 여러분 브라우저에만 남습니다. 페이지를 열 때 무슨 일이 일어나는지 그대로 적었습니다.',
+      'Hanveon에는 계정이 없고 게임 이용 데이터를 저장하는 서버도 없습니다. 최고 기록은 브라우저에만 남습니다. 사이트를 열고 이용할 때 어떤 정보가 처리되는지 안내합니다.',
     blocks: [
       {
-        h: '이 사이트는 누가 운영하나',
+        h: '누가 운영하나요',
         p: [
-          `Hanveon 은 한국 서울에서 한 사람이 만들고 운영합니다. 이 쪽에 적힌 것이 잘 모르겠으면 ${M} 으로 보내주세요. 그 사람이 답을 드립니다.`,
+          `Hanveon은 한국 서울에서 한 사람이 만들고 운영합니다. 이 페이지에서 이해하기 어려운 부분이 있으면 ${M}으로 보내주세요. 사이트를 운영하는 사람이 직접 확인합니다.`,
         ],
       },
       {
-        h: '계정이 없고, 자료를 담아 두는 서버도 없습니다',
+        h: '계정도 없고 게임 이용 데이터를 저장하는 서버도 없습니다',
         p: [
-          'Hanveon 에는 가입도 로그인도 없습니다. 사이트 어디에도 여러분이 적어 넣을 칸이 없습니다.',
-          '게임은 브라우저가 내려받아 여러분 기기에서 돌리는 파일입니다. 게임 안에서 한 일 — 어떻게 움직였는지, 몇 점을 냈는지, 얼마나 했는지 — 은 어디로도 보내지지 않습니다. 여러분 기기에서 일어나고 거기 그대로 있습니다.',
+          'Hanveon에는 회원가입이나 로그인이 없습니다. 사이트에서 개인정보를 입력하도록 요구하는 양식도 없습니다.',
+          '게임은 브라우저가 내려받아 여러분의 기기에서 실행하는 파일입니다. 게임 안에서 어떻게 움직였는지, 몇 점을 냈는지, 얼마나 오래 플레이했는지 같은 정보는 Hanveon으로 전송되지 않습니다. 기기에서 처리되고 그 안에 머뭅니다.',
         ],
       },
       {
-        h: '기기에만 남는 것',
+        h: '기기에 저장되는 것',
         p: [
-          '브라우저가 여러분 기기에만 저장하는 것이 둘 있습니다. 게임마다의 최고 기록과, 고른 언어입니다. 브라우저 저장 공간에 들어 있고, 저희에게 보내지지 않으며, 저희는 읽을 수 없습니다.',
-          '브라우저에서 hanveon.com 의 사이트 자료를 지우면 같이 지워집니다. 다른 곳에 사본이 없어서 되살릴 수 없습니다.',
+          '브라우저는 기기에 두 가지 정보를 저장합니다. 게임별 최고 기록과 선택한 언어입니다. 브라우저의 로컬 저장 공간에만 보관되고 Hanveon으로 전송되지 않으며, 저희가 원격으로 읽을 수도 없습니다.',
+          '브라우저에서 hanveon.com의 사이트 데이터를 지우면 이 정보도 함께 삭제됩니다. 다른 곳에 사본을 보관하지 않기 때문에 복구할 수 없습니다.',
         ],
       },
       {
-        h: '사이트를 보내주는 곳이 보는 것',
+        h: '호스팅 업체가 받는 정보',
         p: [
-          '이 사이트는 Cloudflare Pages 가 보내줍니다. 어느 웹 호스팅이든 마찬가지로, 브라우저가 페이지를 받으려면 보내야 하는 것들을 Cloudflare 가 받습니다 — IP 주소, 요청한 페이지, 브라우저 종류와 언어, 눌러서 들어온 페이지입니다.',
-          `Cloudflare 는 이것을 사이트를 보내주고 공격을 막는 데 쓰고, 정해진 기간만 갖고 있습니다. 무엇을 하는지는 ${CF('Cloudflare 개인정보처리방침')}에 적혀 있습니다.`,
+          'Hanveon은 Cloudflare Pages를 통해 제공됩니다. 다른 웹 호스팅 서비스와 마찬가지로, 페이지를 요청하려면 브라우저가 보내야 하는 정보가 Cloudflare에 전달됩니다. 예를 들면 IP 주소, 요청한 페이지, 브라우저 정보와 언어, 가능한 경우 이전 페이지 정보 등이 있습니다.',
+          `Cloudflare는 사이트를 제공하고 공격을 막기 위해 이 정보를 사용하며 일정 기간 보관합니다. 자세한 내용은 ${CF('Cloudflare 개인정보처리방침')}을 확인해 주세요.`,
         ],
       },
       {
-        h: '방문 수를 세는 것',
+        h: '방문 수 확인',
         p: [
-          '어느 쪽이 몇 번 열렸는지 보려고 Cloudflare 웹 애널리틱스를 씁니다. 쿠키를 심지 않고, 다른 사이트까지 따라다니지 않습니다. Cloudflare 는 이것으로 방문자 개인 자료를 모으거나 쓰지 않는다고 밝히고 있습니다.',
-          '저희가 이걸 보는 이유는 하나입니다. 다음에 어떤 게임을 만들지 정하려고요.',
+          'Hanveon은 각 페이지가 얼마나 열리는지 보기 위해 Cloudflare Web Analytics를 사용합니다. 이 도구는 쿠키를 사용하지 않고 다른 사이트까지 따라가며 추적하지 않습니다. Cloudflare는 이 서비스에서 방문자의 개인 데이터를 수집하거나 사용하지 않는다고 밝히고 있습니다.',
+          '이 수치는 어떤 게임을 사람들이 많이 찾는지 살펴보고 다음에 무엇을 만들지 정하는 데 참고합니다.',
         ],
       },
       {
-        h: '광고도 추적도 없고, 팔지도 않습니다',
+        h: '광고·추적 스크립트가 없습니다',
         p: [
-          '지금 Hanveon 에는 광고가 없고, 광고나 추적을 하는 스크립트도 없습니다. 여러분에 관한 무엇도 팔거나 넘기지 않습니다.',
-          '나중에 광고를 붙일 수도 있습니다. 그렇게 되면 이 쪽을 먼저 고치고, 이 덩어리도 같이 바뀝니다.',
+          '현재 Hanveon에는 광고가 없고 광고용 또는 추적용 스크립트도 없습니다. 여러분에 관한 정보를 판매하거나 광고주에게 넘기지 않습니다.',
+          '앞으로 광고가 추가될 수는 있습니다. 그렇게 되면 실제 적용 전에 이 개인정보 페이지부터 수정합니다.',
         ],
       },
       {
-        h: '파일이 어디서 오나',
+        h: '사이트 파일은 어디서 오나요',
         p: [
-          '이 사이트의 글꼴·그림·스크립트는 모두 hanveon.com 에서 보냅니다. 구글 글꼴을 비롯해 바깥 주소에서 받아오는 것이 없습니다.',
-          '브라우저가 저희 호스팅 말고 다른 곳으로 보내는 요청은, 위에 적은 방문 세기 하나뿐입니다.',
+          'Hanveon에서 사용하는 글꼴, 이미지, 스크립트는 hanveon.com 자체에서 제공합니다. Google Fonts 같은 외부 주소에서 불러오지 않습니다.',
+          '위에서 설명한 방문 수 확인을 제외하면, 브라우저가 Hanveon의 호스팅 외 다른 서비스로 요청을 보내지 않습니다.',
         ],
       },
       {
         h: '어린이',
         p: [
-          '게임은 단순해서 나이에 상관없이 할 수 있지만, Hanveon 이 특별히 어린이를 겨냥한 곳은 아닙니다. 어린이를 포함해 누구에게서도 아무것도 모으지 않습니다.',
+          '게임은 단순해서 여러 연령대가 이용할 수 있지만 Hanveon은 특별히 어린이를 대상으로 만든 서비스는 아닙니다. 어린이를 포함해 누구에게서도 개인정보를 의도적으로 수집하지 않습니다.',
         ],
       },
       {
         h: '여러분의 권리',
         p: [
-          '계정도 없고 저장해 둔 개인 자료도 없어서, 저희가 내어 주거나 고치거나 지울 것이 없습니다.',
-          `유럽·영국·한국에 계시고 그래도 물어볼 것이 있으면 ${M} 으로 보내주세요.`,
+          'Hanveon에는 계정 기능이 없고 개인 프로필이나 게임 이용 데이터를 서버에 저장하지 않기 때문에, 일반적으로 저희가 제공·수정·삭제할 개인 계정 데이터가 없습니다.',
+          `유럽연합, 영국 또는 한국에서 개인정보와 관련해 확인하거나 요청할 사항이 있다면 ${M}으로 보내주세요.`,
         ],
       },
       {
-        h: '바뀌면',
-        p: ['이 쪽이 바뀌면 맨 위 날짜도 같이 바뀝니다.'],
+        h: '변경',
+        p: ['이 페이지의 내용이 바뀌면 맨 위의 수정일도 함께 바뀝니다.'],
       },
     ],
   },
 
   ja: {
     h1: 'プライバシー',
-    lede: 'このサイトがあなたのデータに何をするか。ほとんど何もしないので、短いページです。',
+    lede: 'Hanveon があなたのデータをどのように扱うかを説明します。収集するものがほとんどないため、内容もシンプルです。',
     metaTitle: 'プライバシー | Hanveon',
     metaDesc:
-      'Hanveon にはアカウントも、データを保存するサーバーもありません。ベスト記録はあなたのブラウザにだけ残ります。ページを開いたとき何が起きるかをそのまま書いています。',
+      'Hanveon にはアカウントがなく、ゲームの利用データを保存するサーバーもありません。ベスト記録はブラウザ内にだけ残ります。サイトを開いて利用するときに何が処理されるかを説明します。',
     blocks: [
       {
-        h: 'このサイトの運営者',
+        h: '運営者について',
         p: [
-          `Hanveon は韓国・ソウルに住む一人の人間が作り、運営しています。このページでわからないことがあれば ${M} までどうぞ。その本人がお返事します。`,
+          `Hanveon は韓国・ソウルで一人が作り、運営しています。このページでわかりにくい点があれば ${M} までご連絡ください。サイトを運営している本人が確認します。`,
         ],
       },
       {
-        h: 'アカウントも、データを持つサーバーもありません',
+        h: 'アカウントも、ゲーム利用データを保存するサーバーもありません',
         p: [
-          'Hanveon に登録もログインもありません。サイトのどこにも入力する欄がありません。',
-          'ゲームはブラウザがダウンロードして、あなたの端末で動かすファイルです。ゲームの中でしたこと — どう動いたか、何点だったか、どれだけ遊んだか — はどこにも送られません。あなたの端末で起きて、そこに留まります。',
+          'Hanveon には会員登録やログインがありません。個人情報の入力を求めるフォームもありません。',
+          'ゲームはブラウザがダウンロードし、あなたの端末上で実行するファイルです。ゲーム内での動き、スコア、プレイ時間などは Hanveon へ送信されません。端末上で処理され、そのまま端末に残ります。',
         ],
       },
       {
-        h: '端末にだけ残るもの',
+        h: '端末に保存されるもの',
         p: [
-          'ブラウザがあなたの端末にだけ保存するものが二つあります。ゲームごとのベスト記録と、選んだ言語です。ブラウザ自身の保存領域にあり、こちらには送られず、こちらから読むこともできません。',
-          'ブラウザで hanveon.com のサイトデータを消すと、一緒に消えます。ほかにコピーがないので元に戻せません。',
+          'ブラウザは端末内に二つの情報を保存します。ゲームごとのベスト記録と、選択した言語です。ブラウザのローカル保存領域だけに保管され、Hanveon へ送信されず、こちらから遠隔で読み取ることもできません。',
+          'ブラウザで hanveon.com のサイトデータを削除すると、これらも一緒に削除されます。ほかにコピーを保存していないため復元できません。',
         ],
       },
       {
-        h: 'サイトを配信する側が見るもの',
+        h: 'ホスティング事業者が受け取る情報',
         p: [
-          'このサイトは Cloudflare Pages が配信しています。どのウェブホスティングでも同じですが、ブラウザがページを受け取るために送らざるをえないものを Cloudflare が受け取ります — IP アドレス、要求したページ、ブラウザの種類と言語、どのページから来たかです。',
-          `Cloudflare はこれをサイトの配信と攻撃の遮断に使い、限られた期間だけ保持します。詳しくは ${CF('Cloudflare のプライバシーポリシー')}に書かれています。`,
+          'Hanveon は Cloudflare Pages を通じて配信されています。ほかのウェブホスティングと同様に、ページを取得するためブラウザが送る必要のある情報が Cloudflare に届きます。たとえば IP アドレス、要求したページ、ブラウザ情報と言語、取得できる場合は参照元ページなどです。',
+          `Cloudflare はサイトの配信と攻撃対策のためにこれらを使用し、一定期間保持します。詳しくは ${CF('Cloudflare のプライバシーポリシー')}をご確認ください。`,
         ],
       },
       {
-        h: '訪問数を数えること',
+        h: '訪問数の確認',
         p: [
-          'どのページが何回開かれたかを見るために Cloudflare Web Analytics を使っています。クッキーを置かず、ほかのサイトまで追いかけません。Cloudflare は、これで訪問者の個人データを集めたり使ったりしないと明言しています。',
-          '見ている理由は一つだけです。次にどのゲームを作るかを決めるためです。',
+          'Hanveon は各ページがどれくらい開かれているかを見るために Cloudflare Web Analytics を利用しています。このツールはクッキーを使用せず、ほかのサイトをまたいで追跡しません。Cloudflare は、このサービスで訪問者の個人データを収集・利用しないと説明しています。',
+          'この数字は、どのゲームがよく遊ばれているかを見て、次に何を作るか考えるために使います。',
         ],
       },
       {
-        h: '広告も追跡もなく、売りもしません',
+        h: '広告・追跡スクリプトはありません',
         p: [
-          '今の Hanveon に広告はなく、広告や追跡のスクリプトもありません。あなたに関するものを売ったり誰かに渡したりしません。',
-          'あとから広告を入れることはあるかもしれません。そのときはこのページを先に直し、この部分も一緒に変わります。',
+          '現在の Hanveon には広告がなく、広告用・追跡用のスクリプトもありません。あなたに関する情報を販売したり広告主へ渡したりすることもありません。',
+          '将来広告を追加する可能性はあります。その場合は、実際に変更する前にこのプライバシーページを更新します。',
         ],
       },
       {
-        h: 'ファイルはどこから来るか',
+        h: 'サイトのファイルはどこから読み込まれるか',
         p: [
-          'このサイトのフォント・画像・スクリプトはすべて hanveon.com から配信しています。Google Fonts をはじめ、外のアドレスから取ってくるものはありません。',
-          'ブラウザがこちらのホスティング以外に出す通信は、上に書いた訪問数の集計だけです。',
+          'Hanveon で使うフォント、画像、スクリプトは hanveon.com 自体から配信されます。Google Fonts などの外部アドレスから読み込むことはありません。',
+          '上で説明した訪問数の確認を除き、ブラウザが Hanveon のホスティング以外のサービスへリクエストを送ることはありません。',
         ],
       },
       {
-        h: '子ども',
+        h: '子どもの利用について',
         p: [
-          'ゲームは単純で年齢を問わず遊べますが、Hanveon はとくに子ども向けに作られたものではありません。子どもを含め、誰からも何も集めません。',
+          'ゲームはシンプルでさまざまな年齢の方が遊べますが、Hanveon は特に子どもを対象として作られたサービスではありません。子どもを含め、誰からも個人情報を意図的に収集しません。',
         ],
       },
       {
         h: 'あなたの権利',
         p: [
-          'アカウントもなく、保存している個人データもないため、お渡しするもの、訂正するもの、削除するものがありません。',
-          `EU・英国・韓国にお住まいで、それでも確認したいことがあれば ${M} までどうぞ。`,
+          'Hanveon にはアカウント機能がなく、個人プロフィールやゲーム利用データをサーバーに保存していないため、通常こちらから提供・訂正・削除できる個人アカウントデータはありません。',
+          `EU、英国、韓国にお住まいで、プライバシーについて確認・依頼したいことがある場合は ${M} までご連絡ください。`,
         ],
       },
       {
         h: '変更',
-        p: ['このページが変わったときは、上の日付も一緒に変わります。'],
+        p: ['このページの内容を変更した場合は、ページ上部の更新日も変更します。'],
       },
     ],
   },
 
   es: {
     h1: 'Privacidad',
-    lede: 'Qué hace este sitio con tus datos. Es una página corta, porque hace muy poco.',
+    lede: 'Qué hace Hanveon con tus datos. La página es breve porque el sitio recoge muy poca información.',
     metaTitle: 'Privacidad | Hanveon',
     metaDesc:
-      'Hanveon no tiene cuentas ni un servidor que guarde tus datos. Tus récords se quedan en tu propio navegador. Aquí está exactamente lo que pasa cuando abres una página.',
+      'Hanveon no tiene cuentas ni un servidor que guarde tus datos de juego. Tus mejores puntuaciones se quedan en el navegador. Aquí explicamos qué ocurre al abrir y usar el sitio.',
     blocks: [
       {
-        h: 'Quién lleva este sitio',
+        h: 'Quién gestiona Hanveon',
         p: [
-          `Hanveon lo hace y lo lleva una sola persona en Seúl, Corea del Sur. Si algo de esta página no queda claro, escribe a ${M} y esa misma persona te responderá.`,
+          `Hanveon lo crea y mantiene una sola persona en Seúl, Corea del Sur. Si algo de esta página no queda claro, escribe a ${M}. Lo leerá la persona que gestiona el sitio.`,
         ],
       },
       {
-        h: 'No hay cuenta ni servidor que guarde tus datos',
+        h: 'Sin cuentas ni servidor que guarde tu actividad de juego',
         p: [
-          'Hanveon no tiene registro ni inicio de sesión. No hay ningún campo en todo el sitio donde escribir nada.',
-          'Los juegos son archivos que tu navegador descarga y ejecuta en tu propio dispositivo. Lo que haces dentro de un juego — cómo te mueves, cuánto puntúas, cuánto rato juegas — no se envía a ninguna parte. Ocurre en tu dispositivo y ahí se queda.',
+          'Hanveon no tiene registro ni inicio de sesión. Tampoco hay formularios que te pidan introducir información personal.',
+          'Los juegos son archivos que el navegador descarga y ejecuta en tu dispositivo. Lo que haces dentro de un juego — cómo te mueves, qué puntuación consigues o cuánto tiempo juegas — no se envía a Hanveon. Se procesa en tu dispositivo y se queda ahí.',
         ],
       },
       {
-        h: 'Lo que se queda en tu dispositivo',
+        h: 'Qué se queda en tu dispositivo',
         p: [
-          'Tu navegador guarda dos cosas, solo en tu dispositivo: tu récord en cada juego y el idioma que elegiste. Están en el almacenamiento del propio navegador, nunca se nos envían y no podemos leerlas.',
-          'Si borras los datos del navegador para hanveon.com, desaparecen. No hay copia en ningún otro sitio, así que no se pueden recuperar.',
+          'El navegador guarda dos cosas en tu dispositivo: tu mejor puntuación en cada juego y el idioma que elegiste. Se almacenan de forma local en el navegador, no se nos envían y no podemos consultarlas de forma remota.',
+          'Si borras los datos del sitio hanveon.com en el navegador, también se eliminan. No conservamos ninguna copia en otro lugar, así que no se pueden recuperar.',
         ],
       },
       {
-        h: 'Lo que ve quien aloja el sitio',
+        h: 'Qué recibe nuestro proveedor de alojamiento',
         p: [
-          'El sitio lo sirve Cloudflare Pages. Como con cualquier alojamiento web, Cloudflare recibe lo que tu navegador tiene que enviar para pedir una página: tu dirección IP, la página que pediste, tu navegador y su idioma, y la página desde la que llegaste.',
-          `Cloudflare lo usa para servir el sitio y bloquear ataques, y lo conserva durante un tiempo limitado. Su ${CF('política de privacidad')} explica qué hacen con ello.`,
+          'Hanveon se sirve mediante Cloudflare Pages. Como cualquier proveedor de alojamiento web, Cloudflare recibe la información que el navegador necesita enviar para solicitar una página, como tu dirección IP, la página solicitada, datos del navegador y su idioma y, cuando está disponible, la página de procedencia.',
+          `Cloudflare utiliza esa información para entregar el sitio y protegerlo frente a ataques, y la conserva durante un periodo limitado. Consulta su ${CF('política de privacidad')} para más información.`,
         ],
       },
       {
         h: 'Contar visitas',
         p: [
-          'Usamos Cloudflare Web Analytics para ver cuánta gente abre cada página. No pone cookies y no te sigue a otros sitios. Cloudflare afirma que con esto no recoge ni usa datos personales de los visitantes.',
-          'Lo miramos por un solo motivo: decidir qué juego hacer a continuación.',
+          'Hanveon utiliza Cloudflare Web Analytics para saber cuántas personas abren cada página. No utiliza cookies ni te sigue por otros sitios. Cloudflare afirma que este servicio no recopila ni utiliza datos personales de los visitantes.',
+          'Usamos esos datos principalmente para entender qué juegos se abren más y decidir qué crear después.',
         ],
       },
       {
-        h: 'Sin anuncios, sin rastreo, nada vendido',
+        h: 'Sin anuncios ni scripts de seguimiento',
         p: [
-          'Hoy no hay anuncios en Hanveon, ni ningún script de publicidad o rastreo. Nada sobre ti se vende ni se pasa a nadie.',
-          'Puede que añadamos anuncios más adelante. Si pasa, esta página cambia primero y esta sección cambia con ella.',
+          'Actualmente Hanveon no tiene anuncios ni scripts publicitarios o de seguimiento. No vendemos información sobre ti ni se la entregamos a anunciantes.',
+          'Es posible que añadamos publicidad en el futuro. Si ocurre, actualizaremos esta página antes de aplicar el cambio.',
         ],
       },
       {
-        h: 'De dónde vienen los archivos',
+        h: 'De dónde se cargan los archivos del sitio',
         p: [
-          'Todas las fuentes, imágenes y scripts de este sitio se sirven desde el propio hanveon.com. No se trae nada de Google Fonts ni de ninguna otra dirección externa.',
-          'El recuento de visitas descrito arriba es la única petición que tu navegador hace a algún sitio que no sea nuestro alojamiento.',
+          'Las fuentes, imágenes y scripts utilizados por Hanveon se sirven desde hanveon.com. No se cargan desde Google Fonts ni desde otras direcciones externas.',
+          'Aparte del recuento de visitas explicado arriba, el navegador no realiza solicitudes a servicios externos al alojamiento utilizado por Hanveon.',
         ],
       },
       {
         h: 'Menores',
         p: [
-          'Los juegos son sencillos y valen para cualquier edad, pero Hanveon no está dirigido especialmente a menores. No recoge nada de nadie, menores incluidos.',
+          'Los juegos son sencillos y pueden jugar personas de distintas edades, pero Hanveon no está dirigido específicamente a menores. El sitio no recopila de forma intencionada información personal de nadie, incluidos los menores.',
         ],
       },
       {
         h: 'Tus derechos',
         p: [
-          'Como no hay cuenta ni datos personales guardados, no hay nada que entregar, corregir ni borrar.',
-          `Si estás en la UE, el Reino Unido o Corea y aun así quieres preguntar, escribe a ${M}.`,
+          'Como Hanveon no tiene cuentas y no guarda perfiles personales ni datos de juego en un servidor, normalmente no tenemos datos de una cuenta personal que podamos entregar, corregir o eliminar.',
+          `Si estás en la Unión Europea, el Reino Unido o Corea y tienes alguna pregunta o solicitud sobre privacidad, escribe a ${M}.`,
         ],
       },
       {
         h: 'Cambios',
-        p: ['Si esta página cambia, la fecha de arriba cambia con ella.'],
+        p: ['Si esta página cambia, también se actualizará la fecha que aparece en la parte superior.'],
       },
     ],
   },
 
   fr: {
     h1: 'Confidentialité',
-    lede: 'Ce que ce site fait de tes données. La page est courte, parce qu’il en fait très peu.',
+    lede: 'Ce que Hanveon fait de tes données. La page est courte, car le site collecte très peu d’informations.',
     metaTitle: 'Confidentialité | Hanveon',
     metaDesc:
-      'Hanveon n’a ni compte ni serveur qui stocke tes données. Tes records restent dans ton propre navigateur. Voici exactement ce qui se passe quand tu ouvres une page.',
+      'Hanveon n’a pas de compte et aucun serveur ne stocke tes données de jeu. Tes meilleurs scores restent dans ton navigateur. Voici ce qui se passe lorsque tu ouvres et utilises le site.',
     blocks: [
       {
-        h: 'Qui tient ce site',
+        h: 'Qui gère Hanveon',
         p: [
-          `Hanveon est fait et tenu par une seule personne à Séoul, en Corée du Sud. Si quelque chose sur cette page n’est pas clair, écris à ${M} : c’est cette personne qui répond.`,
+          `Hanveon est créé et géré par une seule personne à Séoul, en Corée du Sud. Si quelque chose n’est pas clair sur cette page, écris à ${M}. C’est la personne qui gère le site qui lira ton message.`,
         ],
       },
       {
-        h: 'Pas de compte, pas de serveur qui garde tes données',
+        h: 'Pas de compte ni de serveur qui stocke ton activité de jeu',
         p: [
-          'Hanveon n’a ni inscription ni connexion. Il n’y a nulle part sur le site un champ où écrire quoi que ce soit.',
-          'Les jeux sont des fichiers que ton navigateur télécharge et fait tourner sur ton propre appareil. Ce que tu fais dans un jeu — comment tu bouges, ton score, le temps que tu joues — n’est envoyé nulle part. Cela se passe sur ton appareil et y reste.',
+          'Hanveon ne propose ni inscription ni connexion. Il n’y a pas non plus de formulaire te demandant de saisir des informations personnelles.',
+          'Les jeux sont des fichiers que ton navigateur télécharge et exécute sur ton appareil. Ce que tu fais dans un jeu — tes déplacements, ton score ou la durée de ta partie — n’est pas envoyé à Hanveon. Tout est traité sur ton appareil et y reste.',
         ],
       },
       {
         h: 'Ce qui reste sur ton appareil',
         p: [
-          'Ton navigateur enregistre deux choses, sur ton appareil seulement : ton record dans chaque jeu et la langue que tu as choisie. Elles sont dans le stockage du navigateur lui-même, ne nous sont jamais envoyées, et nous ne pouvons pas les lire.',
-          'Si tu effaces les données de navigation pour hanveon.com, elles disparaissent. Il n’en existe aucune copie ailleurs, donc rien ne peut être récupéré.',
+          'Ton navigateur enregistre deux informations sur ton appareil : ton meilleur score dans chaque jeu et la langue choisie. Elles sont stockées localement dans le navigateur, ne nous sont pas envoyées et nous ne pouvons pas les consulter à distance.',
+          'Si tu effaces les données du site hanveon.com dans ton navigateur, elles sont supprimées. Aucune copie n’est conservée ailleurs, elles ne peuvent donc pas être restaurées.',
         ],
       },
       {
-        h: 'Ce que voit notre hébergeur',
+        h: 'Ce que reçoit notre hébergeur',
         p: [
-          'Le site est servi par Cloudflare Pages. Comme chez n’importe quel hébergeur, Cloudflare reçoit ce que ton navigateur doit envoyer pour demander une page : ton adresse IP, la page demandée, ton navigateur et sa langue, et la page d’où tu viens.',
-          `Cloudflare s’en sert pour servir le site et bloquer les attaques, et le conserve pendant une durée limitée. Leur ${CF('politique de confidentialité')} explique ce qu’ils en font.`,
+          'Hanveon est distribué via Cloudflare Pages. Comme tout hébergeur web, Cloudflare reçoit les informations que ton navigateur doit envoyer pour demander une page, par exemple ton adresse IP, la page demandée, des informations sur le navigateur et sa langue et, lorsqu’elle est disponible, la page d’origine.',
+          `Cloudflare utilise ces informations pour distribuer le site et le protéger contre les attaques, et les conserve pendant une durée limitée. Consulte sa ${CF('politique de confidentialité')} pour en savoir plus.`,
         ],
       },
       {
-        h: 'Compter les visites',
+        h: 'Mesure des visites',
         p: [
-          'Nous utilisons Cloudflare Web Analytics pour voir combien de personnes ouvrent chaque page. Cela ne pose aucun cookie et ne te suit pas sur d’autres sites. Cloudflare indique ne pas collecter ni utiliser de données personnelles des visiteurs pour cela.',
-          'Nous le regardons pour une seule raison : décider quel jeu faire ensuite.',
+          'Hanveon utilise Cloudflare Web Analytics pour savoir combien de personnes ouvrent chaque page. Cet outil n’utilise pas de cookies et ne te suit pas d’un site à l’autre. Cloudflare indique que ce service ne collecte ni n’utilise les données personnelles des visiteurs.',
+          'Ces statistiques servent principalement à comprendre quels jeux sont le plus ouverts et à décider quoi créer ensuite.',
         ],
       },
       {
-        h: 'Pas de publicité, pas de pistage, rien de vendu',
+        h: 'Pas de publicité ni de scripts de suivi',
         p: [
-          'Il n’y a aujourd’hui aucune publicité sur Hanveon, ni aucun script publicitaire ou de pistage. Rien te concernant n’est vendu ni transmis à qui que ce soit.',
-          'Nous ajouterons peut-être de la publicité plus tard. Si cela arrive, cette page changera d’abord, et cette partie changera avec elle.',
+          'Hanveon n’affiche actuellement aucune publicité et n’utilise aucun script publicitaire ou de suivi. Nous ne vendons pas d’informations te concernant et ne les transmettons pas à des annonceurs.',
+          'De la publicité pourra éventuellement être ajoutée plus tard. Si cela arrive, cette page sera mise à jour avant la mise en place du changement.',
         ],
       },
       {
-        h: 'D’où viennent les fichiers',
+        h: 'D’où viennent les fichiers du site',
         p: [
-          'Toutes les polices, images et scripts de ce site sont servis depuis hanveon.com. Rien n’est récupéré chez Google Fonts ni à aucune autre adresse extérieure.',
-          'Le comptage de visites décrit plus haut est la seule requête que ton navigateur envoie ailleurs que chez notre hébergeur.',
+          'Les polices, images et scripts utilisés par Hanveon sont servis depuis hanveon.com. Ils ne sont pas chargés depuis Google Fonts ou d’autres adresses extérieures.',
+          'En dehors de la mesure des visites décrite plus haut, ton navigateur n’envoie pas de requêtes à des services extérieurs à l’hébergement utilisé par Hanveon.',
         ],
       },
       {
         h: 'Enfants',
         p: [
-          'Les jeux sont simples et conviennent à tout âge, mais Hanveon ne vise pas particulièrement les enfants. Le site ne collecte rien de personne, enfants compris.',
+          'Les jeux sont simples et peuvent être utilisés par des personnes de différents âges, mais Hanveon ne s’adresse pas spécifiquement aux enfants. Le site ne collecte volontairement les informations personnelles de personne, y compris des enfants.',
         ],
       },
       {
         h: 'Tes droits',
         p: [
-          'Comme il n’y a ni compte ni donnée personnelle conservée, il n’y a rien à transmettre, corriger ou supprimer.',
-          `Si tu es dans l’Union européenne, au Royaume-Uni ou en Corée et que tu veux quand même poser la question, écris à ${M}.`,
+          'Comme Hanveon ne propose pas de compte et ne stocke ni profil personnel ni données de jeu sur un serveur, nous n’avons normalement pas de données de compte personnel à fournir, corriger ou supprimer.',
+          `Si tu te trouves dans l’Union européenne, au Royaume-Uni ou en Corée et que tu as une question ou une demande concernant la confidentialité, écris à ${M}.`,
         ],
       },
       {
         h: 'Modifications',
-        p: ['Si cette page change, la date en haut change avec elle.'],
+        p: ['Si cette page change, la date affichée en haut sera mise à jour elle aussi.'],
       },
     ],
   },
 
   zh: {
     h1: '隐私',
-    lede: '这个网站拿你的数据做什么。做得很少，所以这页很短。',
+    lede: '这里说明 Hanveon 如何处理你的数据。因为网站收集的信息很少，所以内容也比较简单。',
     metaTitle: '隐私 | Hanveon',
     metaDesc:
-      'Hanveon 没有账号，也没有保存你数据的服务器。最高分只留在你自己的浏览器里。下面写清楚了你打开一个页面时到底发生了什么。',
+      'Hanveon 没有账号系统，也没有服务器保存你的游戏数据。最高分只留在浏览器里。这里说明你打开和使用网站时会处理哪些信息。',
     blocks: [
       {
-        h: '谁在做这个网站',
+        h: '谁在运营 Hanveon',
         p: [
-          `Hanveon 由住在韩国首尔的一个人制作和维护。这页上有看不明白的地方，写信到 ${M}，就是那个人回复你。`,
+          `Hanveon 由一位住在韩国首尔的人制作和维护。如果这页有任何地方不清楚，可以写信到 ${M}，网站运营者会亲自查看。`,
         ],
       },
       {
-        h: '没有账号，也没有存放你数据的服务器',
+        h: '没有账号，也没有服务器保存你的游戏数据',
         p: [
-          'Hanveon 没有注册，也没有登录。整个网站没有任何一处让你填写内容的地方。',
-          '游戏是浏览器下载后在你自己设备上运行的文件。你在游戏里做的事 — 怎么操作、得了多少分、玩了多久 — 不会发到任何地方。它发生在你的设备上，也就留在那里。',
+          'Hanveon 没有注册和登录功能，也没有要求你填写个人信息的表单。',
+          '游戏是由浏览器下载并在你的设备上运行的文件。你在游戏中的操作、分数和游玩时间不会发送给 Hanveon，而是在你的设备上处理并留在那里。',
         ],
       },
       {
-        h: '只留在你设备上的东西',
+        h: '只保存在你设备上的信息',
         p: [
-          '浏览器只在你的设备上保存两样东西：每个游戏的最高分，以及你选的语言。它们放在浏览器自己的存储里，不会发给我们，我们也读不到。',
-          '如果你清除浏览器中 hanveon.com 的网站数据，它们就没了。别处没有副本，无法恢复。',
+          '浏览器会在你的设备上保存两项信息：每个游戏的最高分，以及你选择的语言。它们只保存在浏览器的本地存储中，不会发送给我们，我们也无法远程读取。',
+          '如果你在浏览器中清除 hanveon.com 的网站数据，这些信息也会被删除。其他地方没有保存副本，因此无法恢复。',
         ],
       },
       {
-        h: '托管方能看到什么',
+        h: '托管服务会收到什么',
         p: [
-          '这个网站由 Cloudflare Pages 提供。和任何网站托管一样，浏览器为了取到页面必须发送的内容会被 Cloudflare 收到：你的 IP 地址、你请求的页面、浏览器种类和语言，以及你是从哪个页面过来的。',
-          `Cloudflare 用这些来提供网站和拦截攻击，并且只保留有限的时间。具体做法写在 ${CF('Cloudflare 隐私政策')}里。`,
+          'Hanveon 通过 Cloudflare Pages 提供服务。和其他网站托管服务一样，Cloudflare 会收到浏览器为了请求页面而必须发送的信息，例如 IP 地址、请求的页面、浏览器信息和语言，以及在能够获取时的来源页面。',
+          `Cloudflare 会利用这些信息提供网站并抵御攻击，并在有限时间内保存。详情请查看 ${CF('Cloudflare 隐私政策')}。`,
         ],
       },
       {
-        h: '统计访问次数',
+        h: '访问统计',
         p: [
-          '我们用 Cloudflare Web Analytics 看每个页面被打开了多少次。它不放 Cookie，也不会跟着你到别的网站。Cloudflare 声明这项服务不收集也不使用访客的个人数据。',
-          '我们看它只有一个用途：决定接下来做哪个游戏。',
+          'Hanveon 使用 Cloudflare Web Analytics 查看各页面被打开的次数。它不使用 Cookie，也不会跨网站跟踪你。Cloudflare 表示，这项服务不会收集或使用访客的个人数据。',
+          '这些统计主要用于了解哪些游戏更常被打开，并帮助决定接下来做什么。',
         ],
       },
       {
-        h: '没有广告、没有追踪，也不出售',
+        h: '没有广告，也没有追踪脚本',
         p: [
-          '现在 Hanveon 上没有广告，也没有任何广告或追踪脚本。关于你的任何东西都不会被出售或转交给别人。',
-          '以后我们可能会加广告。真到那时，会先改这一页，这一段也会跟着改。',
+          '目前 Hanveon 没有广告，也没有广告或追踪脚本。我们不会出售关于你的信息，也不会把这些信息交给广告商。',
+          '未来可能会加入广告。如果真的这样做，会在上线前先更新本隐私页面。',
         ],
       },
       {
-        h: '文件从哪里来',
+        h: '网站文件从哪里加载',
         p: [
-          '本站的字体、图片和脚本全部由 hanveon.com 自己提供。不从 Google Fonts 或任何其他外部地址取用。',
-          '除了上面说的访问统计，浏览器不会向我们托管方以外的任何地方发出请求。',
+          'Hanveon 使用的字体、图片和脚本都由 hanveon.com 自己提供，不会从 Google Fonts 或其他外部地址加载。',
+          '除上面说明的访问统计外，浏览器不会向 Hanveon 所用托管服务之外的其他服务发送请求。',
         ],
       },
       {
         h: '儿童',
         p: [
-          '游戏很简单，任何年龄都能玩，但 Hanveon 并不是专门面向儿童的。它不从任何人那里收集任何信息，包括儿童。',
+          '游戏比较简单，不同年龄的人都可以玩，但 Hanveon 并不是专门面向儿童的服务。网站不会主动收集任何人的个人信息，包括儿童。',
         ],
       },
       {
         h: '你的权利',
         p: [
-          '因为没有账号，也没有保存的个人数据，所以我们没有什么可以提供、更正或删除的。',
-          `如果你在欧盟、英国或韩国，仍然想问，写信到 ${M}。`,
+          '由于 Hanveon 没有账号系统，也不在服务器上保存个人资料或游戏数据，因此通常没有可由我们提供、更正或删除的个人账号数据。',
+          `如果你位于欧盟、英国或韩国，并对隐私有任何问题或请求，可以写信到 ${M}。`,
         ],
       },
       {
         h: '变更',
-        p: ['这一页有变动时，上面的日期也会跟着改。'],
+        p: ['如果本页内容发生变化，页面顶部的更新日期也会同步修改。'],
       },
     ],
   },
