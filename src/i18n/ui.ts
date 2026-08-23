@@ -125,7 +125,7 @@ export const UI: Record<Lang, Record<UiKey, string>> = {
     play: 'Jugar',
     allGames: 'Todos los juegos',
     langLabel: 'Idioma',
-    metaDesc: 'Juegos pequeños para el navegador. Sin instalar, sin registro. Añadimos juegos nuevos cada poco.',
+    metaDesc: 'Juegos pequeños para el navegador. Sin instalar, sin registro. Añadimos juegos nuevos con regularidad.',
     homeTitle: 'Hanveon — Juegos pequeños gratis, sin instalar',
     gameTitle: '{name} — Juego online gratis | Hanveon',
     gameDescTail: 'Juega gratis en el navegador, sin descargas ni registro.',
