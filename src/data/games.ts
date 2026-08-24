@@ -103,7 +103,7 @@ export const GAMES: Game[] = [
       ko: ['몽글', '과일'],
       ja: ['もぐもぐ', 'フルーツ'],
       es: ['Fusión', 'Frutal'],
-      fr: ['Fruits', 'Fusion'],
+      fr: ['Fusion', 'Fruitée'],
       zh: ['圆滚', '水果'],
     },
     desc: {

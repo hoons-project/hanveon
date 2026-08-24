@@ -99,7 +99,7 @@ export const STR: Record<Lang, S> = {
     ],
   },
   ja: {
-    tagline: '足場をつないで、どこまで高く行ける？',
+    tagline: '足場を跳びついで、どこまで高く行ける？',
     height: '高さ', star: '星', best: 'ベスト',
     readyTitle: 'もっと上へ！',
     readyBody: 'キャラクターは自動で跳ねます。<br>左右に動かすだけでOK。',

@@ -61,14 +61,14 @@ export const PRIVACY: TextCopy = {
       {
         h: 'Where site files come from',
         p: [
-          'Fonts, images and scripts used by Hanveon are served from hanveon.com itself. The site does not load them from Google Fonts or other outside addresses.',
-          'Apart from the visit counting described above, your browser does not make requests to services outside the hosting used for Hanveon.',
+          'Fonts, game images and Hanveon’s own site scripts are served from hanveon.com. Cloudflare Web Analytics is the exception: its analytics beacon may be loaded from a Cloudflare address.',
+          'Apart from the hosting and visit counting described above, Hanveon does not intentionally load advertising or tracking services from other providers.',
         ],
       },
       {
         h: 'Children',
         p: [
-          'The games are simple and can be played by people of different ages, but Hanveon is not specifically directed at children. The site does not intentionally collect personal information from anyone, including children.',
+          'The games are simple and can be played by people of different ages, but Hanveon is not specifically directed at children. Hanveon does not ask children, or anyone else, to submit personal information. Technical information needed for hosting and visit counting may still be processed by Cloudflare as described above.',
         ],
       },
       {
@@ -136,14 +136,14 @@ export const PRIVACY: TextCopy = {
       {
         h: '사이트 파일은 어디서 오나요',
         p: [
-          'Hanveon에서 사용하는 글꼴, 이미지, 스크립트는 hanveon.com 자체에서 제공합니다. Google Fonts 같은 외부 주소에서 불러오지 않습니다.',
-          '위에서 설명한 방문 수 확인을 제외하면, 브라우저가 Hanveon의 호스팅 외 다른 서비스로 요청을 보내지 않습니다.',
+          'Hanveon의 글꼴, 게임 이미지, 자체 사이트 스크립트는 hanveon.com에서 제공합니다. 다만 Cloudflare Web Analytics의 분석용 비콘은 Cloudflare 주소에서 불러올 수 있습니다.',
+          '위에서 설명한 호스팅과 방문 수 확인을 제외하면, Hanveon이 다른 업체의 광고·추적 서비스를 의도적으로 불러오지는 않습니다.',
         ],
       },
       {
         h: '어린이',
         p: [
-          '게임은 단순해서 여러 연령대가 이용할 수 있지만 Hanveon은 특별히 어린이를 대상으로 만든 서비스는 아닙니다. 어린이를 포함해 누구에게서도 개인정보를 의도적으로 수집하지 않습니다.',
+          '게임은 단순해서 여러 연령대가 이용할 수 있지만 Hanveon은 특별히 어린이를 대상으로 만든 서비스는 아닙니다. 어린이를 포함해 누구에게도 개인정보 입력을 요구하지 않습니다. 다만 호스팅과 방문 수 확인에 필요한 기술 정보는 위에서 설명한 것처럼 Cloudflare가 처리할 수 있습니다.',
         ],
       },
       {
@@ -211,14 +211,14 @@ export const PRIVACY: TextCopy = {
       {
         h: 'サイトのファイルはどこから読み込まれるか',
         p: [
-          'Hanveon で使うフォント、画像、スクリプトは hanveon.com 自体から配信されます。Google Fonts などの外部アドレスから読み込むことはありません。',
-          '上で説明した訪問数の確認を除き、ブラウザが Hanveon のホスティング以外のサービスへリクエストを送ることはありません。',
+          'Hanveon のフォント、ゲーム画像、サイト独自のスクリプトは hanveon.com から配信されます。ただし Cloudflare Web Analytics の解析用ビーコンは Cloudflare のアドレスから読み込まれる場合があります。',
+          '上で説明したホスティングと訪問数の計測を除き、Hanveon が他社の広告・追跡サービスを意図的に読み込むことはありません。',
         ],
       },
       {
         h: '子どもの利用について',
         p: [
-          'ゲームはシンプルでさまざまな年齢の方が遊べますが、Hanveon は特に子どもを対象として作られたサービスではありません。子どもを含め、誰からも個人情報を意図的に収集しません。',
+          'ゲームはシンプルでさまざまな年齢の方が遊べますが、Hanveon は特に子どもを対象としたサービスではありません。子どもを含め、誰に対しても個人情報の入力を求めません。ただし、ホスティングや訪問数の計測に必要な技術情報は、上で説明したとおり Cloudflare が処理する場合があります。',
         ],
       },
       {
@@ -286,14 +286,14 @@ export const PRIVACY: TextCopy = {
       {
         h: 'De dónde se cargan los archivos del sitio',
         p: [
-          'Las fuentes, imágenes y scripts utilizados por Hanveon se sirven desde hanveon.com. No se cargan desde Google Fonts ni desde otras direcciones externas.',
-          'Aparte del recuento de visitas explicado arriba, el navegador no realiza solicitudes a servicios externos al alojamiento utilizado por Hanveon.',
+          'Las fuentes, las imágenes de los juegos y los scripts propios de Hanveon se sirven desde hanveon.com. La excepción es Cloudflare Web Analytics: su baliza de análisis puede cargarse desde una dirección de Cloudflare.',
+          'Aparte del alojamiento y del recuento de visitas explicados arriba, Hanveon no carga de forma intencionada servicios publicitarios o de seguimiento de otros proveedores.',
         ],
       },
       {
         h: 'Menores',
         p: [
-          'Los juegos son sencillos y pueden jugar personas de distintas edades, pero Hanveon no está dirigido específicamente a menores. El sitio no recopila de forma intencionada información personal de nadie, incluidos los menores.',
+          'Los juegos son sencillos y pueden jugar personas de distintas edades, pero Hanveon no está dirigido específicamente a menores. Hanveon no pide a los menores, ni a nadie, que envíen información personal. Cloudflare puede seguir procesando la información técnica necesaria para el alojamiento y el recuento de visitas, tal como se explica arriba.',
         ],
       },
       {
@@ -361,14 +361,14 @@ export const PRIVACY: TextCopy = {
       {
         h: 'D’où viennent les fichiers du site',
         p: [
-          'Les polices, images et scripts utilisés par Hanveon sont servis depuis hanveon.com. Ils ne sont pas chargés depuis Google Fonts ou d’autres adresses extérieures.',
-          'En dehors de la mesure des visites décrite plus haut, ton navigateur n’envoie pas de requêtes à des services extérieurs à l’hébergement utilisé par Hanveon.',
+          'Les polices, les images des jeux et les scripts propres à Hanveon sont servis depuis hanveon.com. Cloudflare Web Analytics fait exception : sa balise d’analyse peut être chargée depuis une adresse Cloudflare.',
+          'En dehors de l’hébergement et de la mesure des visites décrits plus haut, Hanveon ne charge pas volontairement de services publicitaires ou de suivi provenant d’autres fournisseurs.',
         ],
       },
       {
         h: 'Enfants',
         p: [
-          'Les jeux sont simples et peuvent être utilisés par des personnes de différents âges, mais Hanveon ne s’adresse pas spécifiquement aux enfants. Le site ne collecte volontairement aucune information personnelle, y compris auprès des enfants.',
+          'Les jeux sont simples et peuvent être utilisés par des personnes de différents âges, mais Hanveon ne s’adresse pas spécifiquement aux enfants. Hanveon ne demande à personne, y compris aux enfants, de fournir des informations personnelles. Les informations techniques nécessaires à l’hébergement et à la mesure des visites peuvent néanmoins être traitées par Cloudflare comme expliqué plus haut.',
         ],
       },
       {
@@ -436,14 +436,14 @@ export const PRIVACY: TextCopy = {
       {
         h: '网站文件从哪里加载',
         p: [
-          'Hanveon 使用的字体、图片和脚本都由 hanveon.com 自己提供，不会从 Google Fonts 或其他外部地址加载。',
-          '除上面说明的访问统计外，浏览器不会向 Hanveon 所用托管服务之外的其他服务发送请求。',
+          'Hanveon 的字体、游戏图片和网站自身脚本都由 hanveon.com 提供。Cloudflare Web Analytics 是例外：它的分析信标可能会从 Cloudflare 的地址加载。',
+          '除上面说明的托管和访问统计外，Hanveon 不会主动加载其他服务商的广告或追踪服务。',
         ],
       },
       {
         h: '儿童',
         p: [
-          '游戏比较简单，不同年龄的人都可以玩，但 Hanveon 并不是专门面向儿童的服务。网站不会主动收集任何人的个人信息，包括儿童。',
+          '游戏比较简单，不同年龄的人都可以玩，但 Hanveon 并不是专门面向儿童的服务。Hanveon 不会要求儿童或其他任何人提交个人信息。不过，托管和访问统计所需的技术信息仍可能由 Cloudflare 按照上面的说明进行处理。',
         ],
       },
       {
