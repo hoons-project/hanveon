@@ -266,6 +266,37 @@ export const GAMES: Game[] = [
       <circle cx="44.5" cy="27.4" r="3.5" fill="#FFF7EA" stroke="#2A3145" stroke-width="2.2"/>
       <circle cx="43.3" cy="27.6" r=".9" fill="#2A3145"/><circle cx="45.7" cy="27.6" r=".9" fill="#2A3145"/></svg>`,
   },
+  {
+    slug: 'tidy-tubes',
+    kind: 'think',
+    name: {
+      en: ['Tidy', 'Tubes'],
+      ko: ['톡톡', '정리'],
+      ja: ['トントン', 'そろえ'],
+      es: ['Tubos', 'Ordenados'],
+      fr: ['Tubes', 'Rangés'],
+      zh: ['分色', '归位'],
+    },
+    desc: {
+      en: 'Sort the balls until each tube holds one colour. No clock.',
+      ko: '한 병에 한 색깔만 남게 정리해요. 시간에 안 쫓겨요.',
+      ja: '一本に一色になるまで玉をそろえよう。時間制限なし。',
+      es: 'Ordena las bolas hasta que cada tubo tenga un color. Sin reloj.',
+      fr: 'Range les billes jusqu’à une seule couleur par tube. Sans chrono.',
+      zh: '把小球理到每瓶只剩一种颜色。不计时。',
+    },
+    art: `<svg viewBox="0 0 60 60" aria-hidden="true">
+      <rect width="60" height="60" fill="#FFF7EA"/>
+      <rect x="7" y="14" width="14" height="34" rx="6" fill="#fff" stroke="#2A3145" stroke-width="2.6"/>
+      <rect x="23" y="14" width="14" height="34" rx="6" fill="#fff" stroke="#2A3145" stroke-width="2.6"/>
+      <rect x="39" y="14" width="14" height="34" rx="6" fill="#fff" stroke="#2A3145" stroke-width="2.6"/>
+      <circle cx="14" cy="42" r="4.6" fill="#FF385C" stroke="#2A3145" stroke-width="2"/>
+      <circle cx="14" cy="33" r="4.6" fill="#FF385C" stroke="#2A3145" stroke-width="2"/>
+      <circle cx="30" cy="42" r="4.6" fill="#3BB78F" stroke="#2A3145" stroke-width="2"/>
+      <circle cx="30" cy="33" r="4.6" fill="#FFD23F" stroke="#2A3145" stroke-width="2"/>
+      <circle cx="46" cy="42" r="4.6" fill="#FFD23F" stroke="#2A3145" stroke-width="2"/>
+      <circle cx="46" cy="20" r="4.6" fill="#3BB78F" stroke="#2A3145" stroke-width="2"/></svg>`,
+  },
 ];
 
 /** 주소 조각으로 게임을 찾는다. 없으면 undefined. */

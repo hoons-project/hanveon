@@ -1,0 +1,487 @@
+---
+/*
+  톡톡 정리 — 색 알을 병에 정리한다.
+
+  지금 여덟 게임 중 여섯이 순발력 게임이라, **손을 전혀 안 바쁘게 하는 첫 게임**으로 넣었다.
+  시간 제한도 없고 쫓아오는 것도 없다. 잘못 눌러서 죽는 일이 없다.
+
+  제일 조심한 곳은 **섞기**다. 아무렇게나 섞으면 못 푸는 판이 나온다.
+  그래서 다 맞춰 놓은 판에서 **거꾸로 옮겨 가며** 섞는다 — 섞은 차례를 되짚는 것이
+  곧 답이라 반드시 풀린다. 자세한 것은 아래 `deal()` 에 적어 뒀다.
+*/
+import GameLayout from '../../layouts/GameLayout.astro';
+import { findGame } from '../../data/games';
+import type { Lang } from '../../i18n';
+import { STR } from './strings';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+
+const game = findGame('tidy-tubes')!;
+const T = STR[lang];
+---
+
+<GameLayout
+  lang={lang}
+  game={game}
+  tag={T.tagline}
+  help={T.help}
+  about={T.about}
+  how={T.how}
+  tips={T.tips}
+>
+  <div class="hud">
+    <div><b>{T.level}</b><i id="hLevel">1</i></div>
+    <div><b>{T.undo}</b><i id="hUndo">5</i></div>
+    <div><b>{T.best}</b><i id="hBest">0</i></div>
+  </div>
+
+  <div class="stage">
+    <canvas id="game"></canvas>
+
+    <div class="screen on" id="scReady">
+      <div class="card">
+        <h2>{T.readyTitle}</h2>
+        <p set:html={T.readyBody} />
+        <div class="legend">
+          <div><i class="chip" style="background:#3BB78F"></i><span>{T.legend1}</span></div>
+          <div><i class="chip" style="background:#FFF7EA"></i><span>{T.legend2}</span></div>
+          <div><i class="chip" style="background:#FF385C"></i><span>{T.legend3}</span></div>
+        </div>
+        <button id="btnStart">{T.start}</button>
+      </div>
+    </div>
+
+    <div class="screen" id="scOver">
+      <div class="card">
+        <h2>{T.overTitle}</h2>
+        <div class="result">
+          <div><span>{T.level}</span><strong id="rLevel">1</strong></div>
+          <div><span>{T.best}</span><strong id="rBest">0</strong></div>
+        </div>
+        <button id="btnRetry">{T.retry}</button>
+      </div>
+    </div>
+
+    <div class="screen" id="scPause">
+      <div class="card">
+        <h2>{T.paused}</h2>
+        <p>{T.pausedHint}</p>
+        <button id="btnResume">{T.resume}</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="pad">
+    <button id="btnUndo">{T.undoBtn} · <span id="uLeft">5</span></button>
+  </div>
+
+  <style>
+    /* 이 게임만 쓰는 것 — 크림색 책상. 잔디도 하늘도 없다.
+       나머지는 src/styles/game.css 에 있다. */
+    canvas{ background:#FFF7EA }
+  </style>
+
+  <script define:vars={{ T }}>
+(() => {
+  const W = 360, H = 620;
+  const cv = document.getElementById('game');
+  const ctx = cv.getContext('2d');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function fit(){
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    cv.width = W * dpr; cv.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  fit();
+  addEventListener('resize', fit);
+
+  const INK = '#2A3145';
+  const CREAM = '#FFF7EA';
+  const CORAL = '#FF385C';
+
+  /* 알 색 여덟. 색맹인 사람도 갈리게 밝기를 벌려 놓았다.
+     일곱 번째는 테두리와 같은 잉크색이라 테두리를 크림색으로 뒤집어 그린다 */
+  const BALL = ['#FF385C','#3BB78F','#FFD23F','#7FB8FF','#C58BE8','#FF9F43','#2A3145','#8FD9C4'];
+
+  /* ── 규칙. 여기를 바꾸면 「잘하는 요령」이 거짓말이 된다 ── */
+  const CAP = 4;
+  const colors  = (level) => Math.min(8, 3 + level);      // 1단계 4색 … 5단계 8색
+  const empties = (level) => (level <= 5 ? 2 : 1);        // 6단계부터 빈 병 하나
+  const tubes   = (level) => colors(level) + empties(level);
+  const UNDOS   = 5;                                      // 한 판 내내. 단계가 넘어가도 안 채운다
+
+  /* ── 자리 ─────────────────────────────────────────── */
+  const TUBE_W = 46, SLOT_H = 38, BALL_R = 17;
+  const TUBE_H = CAP * SLOT_H + 8;                        // 160
+  const GAP = 22;
+  const ROW_Y = [123, 337];
+  const CLEAR_T = 0.9;
+
+  const el = (id) => document.getElementById(id);
+  const scReady = el('scReady'), scOver = el('scOver'), scPause = el('scPause');
+  const hLevel = el('hLevel'), hUndo = el('hUndo'), hBest = el('hBest');
+  const rLevel = el('rLevel'), rBest = el('rBest'), uLeft = el('uLeft');
+
+  let state = 'ready';
+  let paused = null;
+  const eff = () => (state === 'pause' ? paused : state);
+
+  let level, cleared, undosLeft, board, spots, history;
+  let held, cursor, keyMode, stuck, bob;
+  let clearT, tagT, shakeT, shakeI, parts;
+  let best = 0;
+
+  const pick = (a) => a[Math.floor(Math.random() * a.length)];
+
+  function canMove(from, to){
+    if (from === to) return false;
+    if (from.length === 0) return false;
+    if (to.length >= CAP) return false;
+    if (to.length === 0) return true;
+    return to[to.length - 1] === from[from.length - 1];
+  }
+
+  /*
+    섞기 — **다 맞춰 놓은 상태에서 거꾸로 옮겨 가며** 섞는다.
+    그러면 섞은 차례를 되짚는 것이 곧 답이라 반드시 풀린다.
+
+    `ok` 조건이 알맹이다 — 되짚으려면 「to 의 맨 위를 from 으로 옮기기」가
+    `canMove` 를 통과해야 하고, 그건 알을 뺀 뒤 from 이 비었거나
+    from 의 새 맨 위가 그 알과 같은 색일 때만 참이다.
+  */
+  function deal(lv){
+    const nC = colors(lv), nT = tubes(lv);
+    const t = [];
+    for (let c = 0; c < nC; c++) t.push([c, c, c, c]);
+    for (let e = nC; e < nT; e++) t.push([]);
+
+    const STEPS = nC * 40;
+    for (let s = 0; s < STEPS; s++) {
+      const from = pick(t.filter((x) => x.length > 0));
+      const ball = from[from.length - 1];
+      const rest = from.length - 1;
+      const ok = rest === 0 || from[rest - 1] === ball;
+      if (!ok) continue;
+      const cand = t.filter((x) => x !== from && x.length < CAP);
+      if (!cand.length) continue;
+      const to = pick(cand);
+      to.push(from.pop());
+    }
+    return t;
+  }
+
+  const tubeDone = (x) => x.length === CAP && x.every((c) => c === x[0]);
+  const solved = (t) => t.every((x) => x.length === 0 || tubeDone(x));
+
+  function hasMove(){
+    for (let a = 0; a < board.length; a++)
+      for (let b = 0; b < board.length; b++)
+        if (canMove(board[a], board[b])) return true;
+    return false;
+  }
+
+  /** 병 자리를 잡는다. 한 줄에 최대 5개, 두 줄로 고르게 나눈다 */
+  function layout(n){
+    const rows = Math.ceil(n / 5);
+    const per = Math.ceil(n / rows);
+    const out = [];
+    let idx = 0;
+    for (let r = 0; r < rows; r++) {
+      const cnt = Math.min(per, n - idx);
+      const total = cnt * TUBE_W + (cnt - 1) * GAP;
+      const x0 = (W - total) / 2;
+      for (let i = 0; i < cnt; i++) out.push({ x: x0 + i * (TUBE_W + GAP), y: ROW_Y[r] });
+      idx += cnt;
+    }
+    return out;
+  }
+
+  function startLevel(lv){
+    level = lv;
+    do { board = deal(lv); } while (solved(board));   // 섞자마자 다 맞으면 다시 섞는다
+    spots = layout(board.length);
+    history = [];                                     // 단계가 넘어가면 기록은 비운다
+    held = -1; cursor = 0; stuck = false;
+    hLevel.textContent = level;
+  }
+
+  function reset(){
+    cleared = 0; undosLeft = UNDOS;
+    parts = []; clearT = 0; tagT = 0; shakeT = 0; shakeI = -1; bob = 0;
+    keyMode = false;
+    startLevel(1);
+    showUndo();
+  }
+
+  function showUndo(){
+    hUndo.textContent = undosLeft;
+    uLeft.textContent = undosLeft;
+  }
+
+  // ── 옮기기 ──────────────────────────────────────────
+  function tryDrop(to){
+    if (held < 0) return;
+    if (to === held) { held = -1; return; }             // 다시 누르면 내려놓는다
+    if (!canMove(board[held], board[to])) {
+      shakeI = to; shakeT = 1;                          // 못 놓는 자리는 흔들어 알려 준다
+      return;
+    }
+    board[to].push(board[held].pop());
+    history.push([held, to]);
+    held = -1;
+
+    if (solved(board)) {
+      cleared++;
+      if (cleared > best) { best = cleared; hBest.textContent = best; saveBest(best); }
+      puff();
+      state = 'clear'; clearT = 0;
+      return;
+    }
+    if (!hasMove()) stuck = true;
+    if (stuck && (undosLeft <= 0 || history.length === 0)) over();
+  }
+
+  function undo(){
+    if (state !== 'play') return;
+    if (undosLeft <= 0 || history.length === 0) return;
+    const [from, to] = history.pop();
+    board[from].push(board[to].pop());
+    undosLeft--;
+    held = -1; stuck = false;
+    showUndo();
+  }
+
+  function over(){
+    state = 'over';
+    rLevel.textContent = level;
+    rBest.textContent = best;
+    show('scOver');
+  }
+
+  function puff(){
+    if (reduce) return;
+    for (const s of spots) {
+      for (let i = 0; i < 4; i++)
+        parts.push({ x: s.x + TUBE_W/2, y: s.y + 40,
+                     vx:(Math.random()-.5)*180, vy:-40 - Math.random()*160,
+                     r: 2.4 + Math.random()*4.5, life:.5 + Math.random()*.4, max:.9,
+                     c: BALL[Math.floor(Math.random()*BALL.length)] });
+    }
+  }
+
+  // ── 그리기 ──────────────────────────────────────────
+  /* `plain` 이면 잉크 테두리 없이 글자만 그린다.
+     잉크색 글자에 잉크 테두리를 두르면 한글 획이 메워져 덩어리로 보인다 —
+     크림색 바탕에 올리는 작은 글씨는 테두리가 필요 없다 */
+  function label(txt, x, y, size, color, plain){
+    ctx.font = `900 ${size}px system-ui, sans-serif`;
+    ctx.textAlign = 'center';
+    if (!plain) {
+      ctx.lineJoin = 'round';
+      ctx.lineWidth = Math.max(4, size * 0.24); ctx.strokeStyle = INK;
+      ctx.strokeText(txt, x, y);
+    }
+    ctx.fillStyle = color; ctx.fillText(txt, x, y);
+  }
+
+  function tubePath(x, y, w, h, r){
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x, y + h - r);
+    ctx.arcTo(x, y + h, x + r, y + h, r);
+    ctx.lineTo(x + w - r, y + h);
+    ctx.arcTo(x + w, y + h, x + w, y + h - r, r);
+    ctx.lineTo(x + w, y);
+  }
+
+  function drawBall(x, y, c, r){
+    const isInk = BALL[c] === INK;
+    ctx.beginPath(); ctx.arc(x, y, r, 0, 6.284);
+    ctx.fillStyle = BALL[c]; ctx.fill();
+    ctx.lineWidth = 2.6; ctx.strokeStyle = isInk ? CREAM : INK; ctx.stroke();
+    const eye = isInk ? CREAM : INK;
+    for (const s of [-1, 1]) {
+      ctx.beginPath(); ctx.arc(x + s * r * 0.31, y - r * 0.09, r * 0.125, 0, 6.284);
+      ctx.fillStyle = eye; ctx.fill();
+    }
+  }
+
+  /** 병 안에서 i번째(0=바닥) 알의 한가운데 y */
+  const slotY = (sy, i) => sy + TUBE_H - 6 - SLOT_H / 2 - i * SLOT_H;
+
+  function draw(){
+    const st = eff();
+
+    ctx.fillStyle = CREAM;
+    ctx.fillRect(-12, -12, W + 24, H + 24);
+
+    const cur = held >= 0 ? held : (keyMode ? cursor : -1);
+
+    for (let i = 0; i < board.length; i++) {
+      const s = spots[i];
+      const wob = (shakeI === i && shakeT > 0 && !reduce)
+        ? Math.sin(shakeT * 34) * shakeT * 7 : 0;
+      const x = s.x + wob, y = s.y;
+      const done = tubeDone(board[i]);
+
+      ctx.save();
+      tubePath(x, y, TUBE_W, TUBE_H, 18);
+      ctx.fillStyle = '#FFFFFF'; ctx.fill();
+      ctx.lineWidth = done ? 5 : 3; ctx.strokeStyle = INK; ctx.stroke();
+      ctx.restore();
+
+      /* 다 채운 병에는 위에 작은 표시 */
+      if (done) {
+        ctx.beginPath();
+        ctx.moveTo(x + TUBE_W/2 - 6, y - 9);
+        ctx.lineTo(x + TUBE_W/2, y - 15);
+        ctx.lineTo(x + TUBE_W/2 + 6, y - 9);
+        ctx.lineWidth = 3.4; ctx.strokeStyle = INK; ctx.lineCap = 'round';
+        ctx.lineJoin = 'round'; ctx.stroke();
+        ctx.lineCap = 'butt';
+      }
+
+      const n = board[i].length;
+      const lifted = held === i ? 1 : 0;          // 든 알은 병 안에 안 그린다
+      for (let k = 0; k < n - lifted; k++)
+        drawBall(x + TUBE_W / 2, slotY(y, k), board[i][k], BALL_R);
+
+      /* 든 알 — 병 위에 살짝 떠 있다 */
+      if (lifted)
+        drawBall(x + TUBE_W / 2, y - 30 + (reduce ? 0 : Math.sin(bob * 4.5) * 3),
+                 board[i][n - 1], BALL_R);
+
+      /* 고른 병 — 아래에 산호색 짧은 줄 */
+      if (cur === i) {
+        ctx.strokeStyle = CORAL; ctx.lineWidth = 4; ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(x + 11, y + TUBE_H + 12);
+        ctx.lineTo(x + TUBE_W - 11, y + TUBE_H + 12);
+        ctx.stroke();
+        ctx.lineCap = 'butt';
+      }
+    }
+
+    for (const q of parts) {
+      const a = Math.max(0, q.life / q.max);
+      ctx.globalAlpha = a;
+      ctx.beginPath(); ctx.arc(q.x, q.y, q.r * a, 0, 6.284);
+      ctx.fillStyle = q.c; ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+
+    if (st === 'clear') label(T.cleared, W / 2, 300, 34, CORAL);
+    else if (tagT > 0)  label(T.levelTag.replace('{n}', level), W / 2, 60, 19, INK, true);
+    if (st === 'play' && stuck) label(T.stuck, W / 2, 570, 19, CORAL);
+  }
+
+  function update(dt){
+    bob += dt;
+    for (let i = parts.length - 1; i >= 0; i--) {
+      const q = parts[i];
+      q.life -= dt; q.x += q.vx*dt; q.y += q.vy*dt; q.vy += 420*dt;
+      if (q.life <= 0) parts.splice(i, 1);
+    }
+    shakeT = Math.max(0, shakeT - dt * 3.2);
+    if (tagT > 0) tagT = Math.max(0, tagT - dt);
+
+    if (state === 'clear') {
+      clearT += dt;
+      if (clearT >= CLEAR_T) { startLevel(level + 1); tagT = 0.9; state = 'play'; }
+    }
+  }
+
+  let last = 0;
+  function frame(t){
+    const dt = Math.min((t - last) / 1000, .04);
+    last = t;
+    update(dt); draw();
+    requestAnimationFrame(frame);
+  }
+
+  // ── 누르기 ──────────────────────────────────────────
+  function show(id){
+    for (const s of [scReady, scOver, scPause]) s.classList.toggle('on', s.id === id);
+  }
+  function start(){
+    reset();
+    hBest.textContent = best;
+    state = 'play';
+    tagT = 0.9;
+    show('none');
+  }
+  function togglePause(){
+    if (state === 'ready' || state === 'over') return;
+    if (state === 'pause') { state = paused; paused = null; show('none'); }
+    else { paused = state; state = 'pause'; show('scPause'); }
+  }
+
+  /** 누른 병 고르기. 손가락으로 누르기 쉽게 테두리보다 조금 넓게 잡는다 */
+  function tubeAt(px, py){
+    for (let i = 0; i < spots.length; i++) {
+      const s = spots[i];
+      if (px >= s.x - 10 && px <= s.x + TUBE_W + 10 &&
+          py >= s.y - 34 && py <= s.y + TUBE_H + 10) return i;
+    }
+    return -1;
+  }
+
+  function touch(i){
+    if (state !== 'play' || i < 0) return;
+    if (held < 0) {
+      if (board[i].length === 0) return;      // 빈 병에서는 들 것이 없다
+      held = i;
+    } else {
+      tryDrop(i);
+    }
+  }
+
+  el('btnStart').onclick = start;
+  el('btnRetry').onclick = start;
+  el('btnResume').onclick = togglePause;
+  el('btnUndo').onclick = undo;
+
+  cv.addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    if (state === 'ready' || state === 'over') { start(); return; }
+    const b = cv.getBoundingClientRect();
+    touch(tubeAt((e.clientX - b.left) / b.width * W, (e.clientY - b.top) / b.height * H));
+  });
+
+  addEventListener('keydown', (e) => {
+    const k = e.key.toLowerCase();
+    if ([' ', 'enter', 'arrowleft', 'arrowright'].includes(k)) e.preventDefault();
+    if (e.repeat) return;
+    if (k === 'p') { togglePause(); return; }
+    if (k === 'z') { undo(); return; }
+    if (state === 'ready' || state === 'over') {
+      if (k === ' ' || k === 'enter') start();
+      return;
+    }
+    if (state !== 'play') return;
+    if (k === 'arrowleft')  { keyMode = true; cursor = (cursor - 1 + board.length) % board.length; }
+    if (k === 'arrowright') { keyMode = true; cursor = (cursor + 1) % board.length; }
+    if (k === ' ' || k === 'enter') { keyMode = true; touch(cursor); }
+  });
+
+  // ── 최고 기록 ───────────────────────────────────────
+  // 기기에만 남는다. 서버로 보내지 않는다.
+  const KEY = 'tubeBest';
+  async function saveBest(v){
+    try { await window.storage.set(KEY, String(v)); return; } catch (e) {}
+    try { localStorage.setItem(KEY, String(v)); } catch (e) {}
+  }
+  (async () => {
+    let raw = null;
+    try { const r = await window.storage.get(KEY); raw = r && r.value; } catch (e) {}
+    if (raw == null) { try { raw = localStorage.getItem(KEY); } catch (e) {} }
+    if (raw) { best = parseInt(raw, 10) || 0; hBest.textContent = best; }
+  })();
+
+  reset();
+  requestAnimationFrame(frame);
+})();
+  </script>
+</GameLayout>
