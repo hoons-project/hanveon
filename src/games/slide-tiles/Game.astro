@@ -1,0 +1,468 @@
+---
+/*
+  쓱쓱 숫자 — 밀어서 합치기.
+
+  규칙을 다들 이미 아는 것이 이 게임의 값이다. 설명 없이 바로 시작할 수 있다.
+  몽글 과일과는 결이 다르다 — 저쪽은 떨어뜨려 물리로 붙이는 것이고,
+  이건 판을 밀어 자리를 짜는 것이다.
+
+  제일 틀리기 쉬운 곳은 **한 번 민 동안 같은 칸은 한 번만 합쳐진다**는 것이다.
+  `2 2 2 2` 를 왼쪽으로 밀면 `4 4` 이지 `8` 이 아니다. `slideLine()` 에 그렇게 적어 뒀다.
+*/
+import GameLayout from '../../layouts/GameLayout.astro';
+import { findGame } from '../../data/games';
+import type { Lang } from '../../i18n';
+import { STR } from './strings';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+
+const game = findGame('slide-tiles')!;
+const T = STR[lang];
+---
+
+<GameLayout
+  lang={lang}
+  game={game}
+  tag={T.tagline}
+  help={T.help}
+  about={T.about}
+  how={T.how}
+  tips={T.tips}
+>
+  <div class="hud">
+    <div><b>{T.score}</b><i id="hScore">0</i></div>
+    <div><b>{T.top}</b><i id="hTop">0</i></div>
+    <div><b>{T.best}</b><i id="hBest">0</i></div>
+  </div>
+
+  <div class="stage">
+    <canvas id="game"></canvas>
+
+    <div class="screen on" id="scReady">
+      <div class="card">
+        <h2>{T.readyTitle}</h2>
+        <p set:html={T.readyBody} />
+        <div class="legend">
+          <div><i class="chip" style="background:#FFD23F"></i><span>{T.legend1}</span></div>
+          <div><i class="chip" style="background:#FF9F43"></i><span>{T.legend2}</span></div>
+          <div><i class="chip" style="background:#FFF7EA"></i><span>{T.legend3}</span></div>
+        </div>
+        <button id="btnStart">{T.start}</button>
+      </div>
+    </div>
+
+    <div class="screen" id="scOver">
+      <div class="card">
+        <h2>{T.overTitle}</h2>
+        <div class="result">
+          <div><span>{T.score}</span><strong id="rScore">0</strong></div>
+          <div><span>{T.best}</span><strong id="rBest">0</strong></div>
+        </div>
+        <button id="btnRetry">{T.retry}</button>
+      </div>
+    </div>
+
+    <div class="screen" id="scPause">
+      <div class="card">
+        <h2>{T.paused}</h2>
+        <p>{T.pausedHint}</p>
+        <button id="btnResume">{T.resume}</button>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    /* 이 게임만 쓰는 것 — 따뜻한 회색 판. 나머지는 src/styles/game.css 에 있다. */
+    canvas{ background:#F0EDE8 }
+  </style>
+
+  <script define:vars={{ T }}>
+(() => {
+  const W = 360, H = 620;
+  const cv = document.getElementById('game');
+  const ctx = cv.getContext('2d');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function fit(){
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    cv.width = W * dpr; cv.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  fit();
+  addEventListener('resize', fit);
+
+  const INK = '#2A3145';
+  const CREAM = '#FFF7EA';
+  const CORAL = '#FF385C';
+  const EMPTY = '#E2DDD6';
+
+  /* ── 규칙. 여기를 바꾸면 「잘하는 요령」이 거짓말이 된다 ── */
+  const N = 4;
+  const NEW_FOUR = 0.10;      // 새 숫자가 4일 확률. 나머지는 2
+
+  /* ── 자리 ─────────────────────────────────────────── */
+  const CELL = 74, PAD = 10;
+  const BX = 7, BY = 150;                       // 판 왼쪽 위
+  const cellX = (c) => BX + PAD + c * (CELL + PAD);
+  const cellY = (r) => BY + PAD + r * (CELL + PAD);
+
+  const SLIDE = 0.12;         // 미는 데 걸리는 시간
+  const POP = 0.18;           // 합쳐진 칸이 커졌다 돌아오는 시간
+  const BIG_T = 1.6;          // 2048 알림이 떠 있는 시간
+
+  /* 숫자 색 — 지시서의 표 그대로 */
+  const SKIN = {
+    2:    ['#FFF7EA', INK],
+    4:    ['#FFE9C7', INK],
+    8:    ['#FFD23F', INK],
+    16:   ['#FFB84D', INK],
+    32:   ['#FF9F43', INK],
+    64:   ['#FF7A6B', INK],
+    128:  ['#FF385C', CREAM],
+    256:  ['#E8557F', CREAM],
+    512:  ['#C58BE8', CREAM],
+    1024: ['#7FB8FF', CREAM],
+    2048: ['#3BB78F', CREAM],
+  };
+  const skin = (v) => SKIN[v] || [INK, CREAM];   // 4096 위는 잉크 바탕에 크림 글씨
+
+  /* 큰 수가 칸 밖으로 안 나가게 자릿수에 따라 줄인다 */
+  function numSize(v){
+    const d = String(v).length;
+    return d <= 2 ? 34 : d === 3 ? 30 : d === 4 ? 25 : 21;
+  }
+
+  const el = (id) => document.getElementById(id);
+  const scReady = el('scReady'), scOver = el('scOver'), scPause = el('scPause');
+  const hScore = el('hScore'), hTop = el('hTop'), hBest = el('hBest');
+  const rScore = el('rScore'), rBest = el('rBest');
+
+  let state = 'ready';
+  let paused = null;
+  const eff = () => (state === 'pause' ? paused : state);
+
+  let grid, score, seen2048, bigT;
+  let anim, popT, pops, newCell, gains;
+  let best = 0;
+
+  /*
+    한 줄을 앞쪽으로 몰아붙이고 합친다. `line` 은 앞쪽이 먼저 오는 차례로 준다.
+    돌려주는 `to` 는 line 의 i번째 칸이 몇 번째 자리로 갔는지다 (애니메이션에 쓴다).
+
+    **한 번 민 동안 같은 칸은 한 번만 합쳐진다** — `i++` 로 짝을 건너뛰는 것이 그것이다.
+    그래서 `2 2 2 2` 는 `4 4` 이지 `8` 이 아니다.
+  */
+  function slideLine(line){
+    const src = [];                    // 빈 칸을 뺀 값과 원래 자리
+    for (let i = 0; i < line.length; i++) if (line[i]) src.push({ v: line[i], i });
+
+    const out = [], to = new Array(line.length).fill(-1), merged = [];
+    let gained = 0;
+
+    for (let k = 0; k < src.length; k++) {
+      if (k + 1 < src.length && src[k].v === src[k + 1].v) {
+        const v = src[k].v * 2;
+        const at = out.length;
+        out.push(v);
+        merged.push(at);
+        gained += v;
+        to[src[k].i] = at;
+        to[src[k + 1].i] = at;
+        k++;                            // 짝지은 것은 건너뛴다 — 한 번만 합쳐진다
+      } else {
+        const at = out.length;
+        out.push(src[k].v);
+        to[src[k].i] = at;
+      }
+    }
+    while (out.length < line.length) out.push(0);
+    return { out, to, merged, gained };
+  }
+
+  /* 방향마다 줄을 어떻게 읽을지. 앞쪽이 먼저 오게 준다 */
+  function lineCells(dir, idx){
+    const cells = [];
+    for (let k = 0; k < N; k++) {
+      if (dir === 'left')  cells.push([idx, k]);
+      if (dir === 'right') cells.push([idx, N - 1 - k]);
+      if (dir === 'up')    cells.push([k, idx]);
+      if (dir === 'down')  cells.push([N - 1 - k, idx]);
+    }
+    return cells;
+  }
+
+  function move(dir){
+    const next = Array.from({ length: N }, () => new Array(N).fill(0));
+    const moving = [], mergedCells = [], gainList = [];
+    let changed = false, gained = 0;
+
+    for (let idx = 0; idx < N; idx++) {
+      const cells = lineCells(dir, idx);
+      const line = cells.map(([r, c]) => grid[r][c]);
+      const { out, to, merged, gained: g } = slideLine(line);
+      gained += g;
+
+      for (let k = 0; k < N; k++) {
+        const [r, c] = cells[k];
+        next[r][c] = out[k];
+      }
+      for (let k = 0; k < N; k++) {
+        if (to[k] < 0) continue;
+        if (to[k] !== k) changed = true;
+        const [fr, fc] = cells[k];
+        const [tr, tc] = cells[to[k]];
+        moving.push({ v: line[k], fr, fc, tr, tc });
+      }
+      for (const m of merged) {
+        changed = true;
+        const [r, c] = cells[m];
+        mergedCells.push({ r, c });
+        gainList.push({ r, c, txt: T.gain.replace('{n}', out[m]) });
+      }
+    }
+
+    /* 아무것도 안 달라졌으면 새 숫자도 없다 */
+    if (!changed) return false;
+
+    grid = next;
+    score += gained;
+    hScore.textContent = score;
+    if (score > best) { best = score; hBest.textContent = best; saveBest(best); }
+
+    newCell = spawn();
+    pops = mergedCells;
+    gains = gainList;
+    anim = { t: 0, moving };
+    popT = 0;
+
+    if (!seen2048 && mergedCells.some(({ r, c }) => grid[r][c] === 2048)) {
+      seen2048 = true; bigT = BIG_T;
+    }
+    hTop.textContent = topTile();
+    return true;
+  }
+
+  function spawn(){
+    const free = [];
+    for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) if (!grid[r][c]) free.push([r, c]);
+    if (!free.length) return null;
+    const [r, c] = free[Math.floor(Math.random() * free.length)];
+    grid[r][c] = Math.random() < NEW_FOUR ? 4 : 2;
+    return { r, c };
+  }
+
+  const topTile = () => Math.max(0, ...grid.flat());
+
+  function canMoveAny(){
+    for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
+      if (!grid[r][c]) return true;
+      if (c + 1 < N && grid[r][c] === grid[r][c + 1]) return true;
+      if (r + 1 < N && grid[r][c] === grid[r + 1][c]) return true;
+    }
+    return false;
+  }
+
+  function over(){
+    state = 'over';
+    rScore.textContent = score;
+    rBest.textContent = best;
+    show('scOver');
+  }
+
+  function reset(){
+    grid = Array.from({ length: N }, () => new Array(N).fill(0));
+    score = 0; seen2048 = false; bigT = 0;
+    anim = null; popT = 0; pops = []; gains = []; newCell = null;
+    spawn(); spawn();
+    hScore.textContent = '0';
+    hTop.textContent = topTile();
+  }
+
+  // ── 그리기 ──────────────────────────────────────────
+  function rr(x, y, w, h, r){
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x+w, y, x+w, y+h, r);
+    ctx.arcTo(x+w, y+h, x, y+h, r);
+    ctx.arcTo(x, y+h, x, y, r);
+    ctx.arcTo(x, y, x+w, y, r);
+    ctx.closePath();
+  }
+
+  function drawTile(x, y, v, scale){
+    const s = scale === undefined ? 1 : scale;
+    const w = CELL * s, off = (CELL - w) / 2;
+    const [bg, fg] = skin(v);
+    rr(x + off, y + off, w, w, 10 * s);
+    ctx.fillStyle = bg; ctx.fill();
+    ctx.lineWidth = 2.5; ctx.strokeStyle = INK; ctx.stroke();
+
+    ctx.fillStyle = fg;
+    ctx.font = `800 ${numSize(v) * s}px system-ui, sans-serif`;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(String(v), x + CELL / 2, y + CELL / 2 + 1);
+    ctx.textBaseline = 'alphabetic';
+  }
+
+  function draw(){
+    const st = eff();
+
+    ctx.fillStyle = '#F0EDE8';
+    ctx.fillRect(-12, -12, W + 24, H + 24);
+
+    /* 빈 칸 */
+    for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
+      rr(cellX(c), cellY(r), CELL, CELL, 10);
+      ctx.fillStyle = EMPTY; ctx.fill();
+    }
+
+    if (anim) {
+      /* 미는 동안 — 칸이 미끄러져 가는 것이 보여야 어디로 갔는지 안다 */
+      const u = Math.min(1, anim.t / SLIDE);
+      const e = 1 - Math.pow(1 - u, 3);
+      for (const m of anim.moving) {
+        const x = cellX(m.fc) + (cellX(m.tc) - cellX(m.fc)) * e;
+        const y = cellY(m.fr) + (cellY(m.tr) - cellY(m.fr)) * e;
+        drawTile(x, y, m.v);
+      }
+    } else {
+      const p = popT > 0 ? popT / POP : 0;
+      for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
+        const v = grid[r][c];
+        if (!v) continue;
+        let s = 1;
+        if (p > 0) {
+          if (pops.some((q) => q.r === r && q.c === c)) s = 1 + 0.15 * Math.sin(p * Math.PI);
+          else if (newCell && newCell.r === r && newCell.c === c) s = 1 - p;
+        }
+        drawTile(cellX(c), cellY(r), v, s);
+      }
+
+      /* 합친 자리에 뜨는 점수 */
+      if (p > 0) {
+        ctx.font = '900 17px system-ui, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = INK;
+        ctx.globalAlpha = Math.min(1, p * 1.6);
+        for (const g of gains)
+          ctx.fillText(g.txt, cellX(g.c) + CELL / 2, cellY(g.r) - 6 - (1 - p) * 10);
+        ctx.globalAlpha = 1;
+      }
+    }
+
+    /* 2048 을 처음 만들면 한 번만 알린다. 게임은 안 끝난다 */
+    if (bigT > 0 && st === 'play') {
+      ctx.font = '900 40px system-ui, sans-serif';
+      ctx.textAlign = 'center'; ctx.lineJoin = 'round';
+      ctx.lineWidth = 9; ctx.strokeStyle = INK;
+      ctx.strokeText(T.bigOne, W / 2, 90);
+      ctx.fillStyle = CORAL; ctx.fillText(T.bigOne, W / 2, 90);
+      ctx.font = '700 17px system-ui, sans-serif';
+      ctx.fillStyle = INK;
+      ctx.fillText(T.keepGoing, W / 2, 120);
+    }
+  }
+
+  function update(dt){
+    if (bigT > 0) bigT = Math.max(0, bigT - dt);
+
+    if (anim) {
+      anim.t += dt;
+      if (reduce || anim.t >= SLIDE) { anim = null; popT = POP; }
+      return;
+    }
+    if (popT > 0) {
+      popT = Math.max(0, popT - dt);
+      if (popT === 0 && state === 'play' && !canMoveAny()) over();
+    }
+  }
+
+  let last = 0;
+  function frame(t){
+    const dt = Math.min((t - last) / 1000, .04);
+    last = t;
+    update(dt); draw();
+    requestAnimationFrame(frame);
+  }
+
+  // ── 조작 ────────────────────────────────────────────
+  function show(id){
+    for (const s of [scReady, scOver, scPause]) s.classList.toggle('on', s.id === id);
+  }
+  function start(){
+    reset();
+    hBest.textContent = best;
+    state = 'play';
+    show('none');
+  }
+  function togglePause(){
+    if (state === 'ready' || state === 'over') return;
+    if (state === 'pause') { state = paused; paused = null; show('none'); }
+    else { paused = state; state = 'pause'; show('scPause'); }
+  }
+
+  function push(dir){
+    if (state !== 'play' || anim) return;
+    move(dir);
+  }
+
+  el('btnStart').onclick = start;
+  el('btnRetry').onclick = start;
+  el('btnResume').onclick = togglePause;
+
+  /* 쓸기 — 가로세로 중 더 많이 움직인 쪽으로 민다. 30px 넘어야 친다 */
+  const SWIPE = 30;
+  let sx = 0, sy = 0, armed = false;
+  const at = (e) => {
+    const b = cv.getBoundingClientRect();
+    return { x: (e.clientX - b.left) / b.width * W, y: (e.clientY - b.top) / b.height * H };
+  };
+  cv.addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    if (state === 'ready' || state === 'over') { start(); return; }
+    const p = at(e); sx = p.x; sy = p.y; armed = true;
+    try { cv.setPointerCapture(e.pointerId); } catch (err) {}
+  });
+  cv.addEventListener('pointermove', (e) => {
+    if (!armed) return;
+    const p = at(e), dx = p.x - sx, dy = p.y - sy;
+    if (Math.max(Math.abs(dx), Math.abs(dy)) < SWIPE) return;
+    armed = false;
+    push(Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'right' : 'left') : (dy > 0 ? 'down' : 'up'));
+  });
+  for (const ev of ['pointerup', 'pointercancel', 'pointerleave'])
+    cv.addEventListener(ev, () => { armed = false; });
+
+  addEventListener('keydown', (e) => {
+    const k = e.key.toLowerCase();
+    const arrow = { arrowleft:'left', arrowright:'right', arrowup:'up', arrowdown:'down' }[k];
+    if (arrow || k === ' ') e.preventDefault();
+    if (e.repeat) return;
+    if (k === 'p') { togglePause(); return; }
+    if (state === 'ready' || state === 'over') {
+      if (k === ' ' || k === 'enter') start();
+      return;
+    }
+    if (arrow) push(arrow);
+  });
+
+  // ── 최고 기록 ───────────────────────────────────────
+  // 기기에만 남는다. 서버로 보내지 않는다.
+  const KEY = 'slideBest';
+  async function saveBest(v){
+    try { await window.storage.set(KEY, String(v)); return; } catch (e) {}
+    try { localStorage.setItem(KEY, String(v)); } catch (e) {}
+  }
+  (async () => {
+    let raw = null;
+    try { const r = await window.storage.get(KEY); raw = r && r.value; } catch (e) {}
+    if (raw == null) { try { raw = localStorage.getItem(KEY); } catch (e) {} }
+    if (raw) { best = parseInt(raw, 10) || 0; hBest.textContent = best; }
+  })();
+
+  reset();
+  requestAnimationFrame(frame);
+})();
+  </script>
+</GameLayout>

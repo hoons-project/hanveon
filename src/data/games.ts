@@ -297,6 +297,35 @@ export const GAMES: Game[] = [
       <circle cx="46" cy="42" r="4.6" fill="#FFD23F" stroke="#2A3145" stroke-width="2"/>
       <circle cx="46" cy="20" r="4.6" fill="#3BB78F" stroke="#2A3145" stroke-width="2"/></svg>`,
   },
+  {
+    slug: 'slide-tiles',
+    kind: 'stack',
+    name: {
+      en: ['Slide', 'Tiles'],
+      ko: ['쓱쓱', '숫자'],
+      ja: ['スイスイ', 'すうじ'],
+      es: ['Desliza', 'Números'],
+      fr: ['Glisse', 'Nombres'],
+      zh: ['滑动', '合数'],
+    },
+    desc: {
+      en: 'Swipe to slide every tile. Equal numbers become one twice as big.',
+      ko: '한쪽으로 쓸면 다 밀려요. 같은 수끼리 만나면 두 배가 돼요.',
+      ja: 'なぞると全部が寄る。同じ数が出会うと倍になる。',
+      es: 'Desliza y todo se mueve. Dos iguales se convierten en el doble.',
+      fr: 'Glisse et tout se décale. Deux nombres égaux en font un double.',
+      zh: '一滑全部挪动，相同的数合成两倍。',
+    },
+    art: `<svg viewBox="0 0 60 60" aria-hidden="true">
+      <rect width="60" height="60" fill="#F0EDE8"/>
+      <rect x="6" y="6" width="22" height="22" rx="5" fill="#FFD23F" stroke="#2A3145" stroke-width="2.4"/>
+      <rect x="32" y="6" width="22" height="22" rx="5" fill="#FFD23F" stroke="#2A3145" stroke-width="2.4"/>
+      <rect x="6" y="32" width="22" height="22" rx="5" fill="#FF9F43" stroke="#2A3145" stroke-width="2.4"/>
+      <rect x="32" y="32" width="22" height="22" rx="5" fill="#FF385C" stroke="#2A3145" stroke-width="2.4"/>
+      <path d="M14 17h6M17 14v6M40 17h6M43 14v6" stroke="#2A3145" stroke-width="2.6" stroke-linecap="round"/>
+      <path d="M12 43h10M38 40h8M38 46h8" stroke="#2A3145" stroke-width="2.6" stroke-linecap="round"/>
+      <path d="M42 37v12" stroke="#2A3145" stroke-width="2.6" stroke-linecap="round"/></svg>`,
+  },
 ];
 
 /** 주소 조각으로 게임을 찾는다. 없으면 undefined. */
