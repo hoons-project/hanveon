@@ -1,0 +1,532 @@
+---
+/*
+  휙휙 패스 — 미식축구 패스.
+
+  뻥뻥 슛과 일부러 다르게 잡았다. 승부차기는 「막는 놈을 피하기」고
+  이건 「움직이는 것을 예측하기」다. 손가락은 똑같이 한 번 쓰는데
+  머릿속에서 하는 일이 다르다.
+
+  알맹이는 **공이 나는 데 시간이 걸린다**는 것이다. 그 사이에도 받는 선수는
+  계속 달리니까, 지금 있는 자리가 아니라 갈 자리로 던져야 한다.
+  멀리 던질수록 오래 떠 있으니 더 많이 앞을 봐야 한다.
+
+  표적의 **좌우는 받는 선수 줄을 따라간다.** 누르는 사람이 정하는 것은 「얼마나 멀리」
+  하나뿐이다 — 지시서의 숫자로 재 보면 그래야 말이 된다. 받는 선수가 `180 ±70` 에서
+  나오는데 표적을 180 에 붙박아 두면 잡는 반지름이 34 라서 절반 가까운 차례가
+  손도 못 대는 차례가 된다. 그리고 스페이스·엔터로 하는 사람은 좌우를 정할 길이 아예 없다.
+  좌우를 따라가게 두면 남는 것이 「앞을 얼마나 보느냐」뿐이라 요령 세 줄과 딱 맞는다.
+
+  진짜 팀·선수·리그 이름은 하나도 안 쓴다. 이름 없는 선수와 아무 뜻 없는 색뿐이다.
+*/
+import GameLayout from '../../layouts/GameLayout.astro';
+import { findGame } from '../../data/games';
+import type { Lang } from '../../i18n';
+import { STR } from './strings';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+
+const game = findGame('long-pass')!;
+const T = STR[lang];
+---
+
+<GameLayout
+  lang={lang}
+  game={game}
+  tag={T.tagline}
+  help={T.help}
+  about={T.about}
+  how={T.how}
+  tips={T.tips}
+>
+  <div class="hud">
+    <div><b>{T.yards}</b><i id="hYards">0</i></div>
+    <div><b>{T.downs}</b><i id="hDowns" class="word">●●●●</i></div>
+    <div><b>{T.best}</b><i id="hBest">0</i></div>
+  </div>
+
+  <div class="stage">
+    <canvas id="game"></canvas>
+
+    <div class="screen on" id="scReady">
+      <div class="card">
+        <h2>{T.readyTitle}</h2>
+        <p set:html={T.readyBody} />
+        <div class="legend">
+          <div><i class="chip" style="background:#FF385C"></i><span>{T.legend1}</span></div>
+          <div><i class="chip" style="background:#C87A4B"></i><span>{T.legend2}</span></div>
+          <div><i class="chip" style="background:#FFD23F"></i><span>{T.legend3}</span></div>
+        </div>
+        <button id="btnStart">{T.start}</button>
+      </div>
+    </div>
+
+    <div class="screen" id="scOver">
+      <div class="card">
+        <h2>{T.overTitle}</h2>
+        <div class="result">
+          <div><span>{T.yards}</span><strong id="rYards">0</strong></div>
+          <div><span>{T.best}</span><strong id="rBest">0</strong></div>
+        </div>
+        <button id="btnRetry">{T.retry}</button>
+      </div>
+    </div>
+
+    <div class="screen" id="scPause">
+      <div class="card">
+        <h2>{T.paused}</h2>
+        <p>{T.pausedHint}</p>
+        <button id="btnResume">{T.resume}</button>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    /* 이 게임만 쓰는 것 — 잔디밭. 나머지는 src/styles/game.css 에 있다. */
+    canvas{ background:#7FD8C8 }
+  </style>
+
+  <script define:vars={{ T }}>
+(() => {
+  const W = 360, H = 620;
+  const cv = document.getElementById('game');
+  const ctx = cv.getContext('2d');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function fit(){
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    cv.width = W * dpr; cv.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  fit();
+  addEventListener('resize', fit);
+
+  const INK = '#2A3145';
+  const CREAM = '#FFF7EA';
+  const SUN = '#FFD23F';
+  const CORAL = '#FF385C';
+  const NAVY = '#3B4CCA';
+  const BROWN = '#C87A4B';
+
+  /* ── 숫자. 여기를 바꾸면 「잘하는 요령」이 거짓말이 된다 ── */
+  const PXY        = 9.4;      // 1야드 = 9.4px
+  const LOS        = 540;      // 스크리미지 선
+  const MARK_SPEED = 235;      // 표적이 나가는 속도 px/초
+  const MARK_MAX   = 470;      // 최대 50야드
+  const FLY_BASE   = 0.18;     // 공이 나는 기본 시간(초)
+  const FLY_PER_PX = 0.0020;   // 거리 1px 당 더해지는 시간
+  const CATCH_R    = 34;       // 잡는 반지름
+  const PICK_R     = 30;       // 가로채는 반지름
+  const DOWNS      = 4;
+
+  const QB_X = 180, QB_Y = 572;
+  const ESCAPE_Y = 60;         // 여기까지 올라가면 그 차례는 놓친 것
+  const RESULT_T = 1.0;
+
+  const el = (id) => document.getElementById(id);
+  const scReady = el('scReady'), scOver = el('scOver'), scPause = el('scPause');
+  const hYards = el('hYards'), hDowns = el('hDowns'), hBest = el('hBest');
+  const rYards = el('rYards'), rBest = el('rBest');
+
+  let state = 'ready';
+  let paused = null;
+  const eff = () => (state === 'pause' ? paused : state);
+
+  let score, downs, toGo, tds;
+  let recv, defs, mark, holding;
+  let land, flyT, ft, spin, outcome, resT, gainTxt, gainAt;
+  let parts, shake;
+  let best = 0;
+
+  /* 갈수록 조금씩 빨라지고 수비도 는다 */
+  const recvSpeed = () => Math.min(200, 118 + tds * 14);
+  const defCount  = () => Math.min(3, 1 + tds);
+
+  function newDown(){
+    recv = { x: 180 + (Math.random() * 140 - 70), y: LOS, t: 0 };
+    defs = [];
+    for (let i = 0; i < defCount(); i++)
+      defs.push({ x: 40 + Math.random() * 280, y: LOS - 120 - i * 90 });
+    mark = 0; holding = false;
+    land = null; flyT = 0; ft = 0; spin = 0;
+    outcome = null; resT = 0; gainTxt = null; gainAt = null;
+  }
+
+  function reset(){
+    score = 0; downs = DOWNS; toGo = 100; tds = 0;
+    parts = []; shake = 0;
+    newDown();
+  }
+
+  // ── 달리기. 누르든 안 누르든 선수들은 계속 간다 ────
+  function run(dt){
+    const sp = recvSpeed();
+    recv.t += dt;
+    recv.y -= sp * dt;
+    recv.x += Math.sin(recv.t * 3.9) * 40 * dt;
+    recv.x = Math.max(24, Math.min(336, recv.x));
+
+    for (const d of defs) {
+      d.y -= sp * 0.85 * dt;
+      const dir = Math.sign(recv.x - d.x);
+      d.x += dir * sp * 0.55 * dt;
+    }
+  }
+
+  // ── 던지기 ──────────────────────────────────────────
+  function throwBall(){
+    /* 좌우는 받는 선수 줄을 따라간다. 정하는 것은 「얼마나 멀리」뿐이다 */
+    land = { x: recv.x, y: LOS - mark };
+    flyT = FLY_BASE + mark * FLY_PER_PX;
+    ft = 0; spin = 0; holding = false;
+    state = 'fly';
+  }
+
+  // ── 판정. 공이 떨어질 때 한 번만. 가로채기를 먼저 본다 ──
+  function judge(){
+    const dRecv = Math.hypot(land.x - recv.x, land.y - recv.y);
+    let dDef = Infinity;
+    for (const d of defs) dDef = Math.min(dDef, Math.hypot(land.x - d.x, land.y - d.y));
+
+    if (dDef < PICK_R && dDef < dRecv) {
+      outcome = 'picked';
+      downs -= 2;
+      shake = 1;
+      puff(land.x, land.y, 10, NAVY);
+    } else if (dRecv < CATCH_R) {
+      outcome = 'caught';
+      downs -= 1;
+      const yards = Math.round((LOS - land.y) / PXY);
+      score += yards;
+      toGo -= yards;
+      gainTxt = T.gain.replace('{n}', yards);
+      gainAt = { x: land.x, y: land.y };
+      puff(land.x, land.y, 9, CORAL);
+      if (toGo <= 0) {                 // 끝 선을 넘었다
+        outcome = 'touchdown';
+        score += 25;
+        tds += 1;
+        toGo = 100;
+        downs = DOWNS;
+        puff(land.x, land.y, 16, SUN);
+      }
+      hYards.textContent = score;
+      if (score > best) { best = score; hBest.textContent = best; saveBest(best); }
+    } else {
+      outcome = 'incomplete';
+      downs -= 1;
+      puff(land.x, land.y, 5, CREAM);
+    }
+
+    hDowns.textContent = '●'.repeat(Math.max(0, downs)) || '—';
+    state = 'result'; resT = 0;
+  }
+
+  /* 너무 오래 기다려서 받는 선수가 화면 밖으로 나간 경우 */
+  function escaped(){
+    land = { x: recv.x, y: recv.y };
+    outcome = 'incomplete';
+    downs -= 1;
+    hDowns.textContent = '●'.repeat(Math.max(0, downs)) || '—';
+    state = 'result'; resT = 0;
+  }
+
+  function over(){
+    state = 'over';
+    rYards.textContent = score;
+    rBest.textContent = best;
+    show('scOver');
+  }
+
+  // ── 조각 ────────────────────────────────────────────
+  function puff(x, y, n, c){
+    if (reduce) return;
+    for (let i = 0; i < n; i++)
+      parts.push({ x, y, vx:(Math.random()-.5)*200, vy:(Math.random()-.5)*200 - 30,
+                   r: 2.4 + Math.random()*5, life:.35 + Math.random()*.35, max:.7, c });
+  }
+
+  // ── 그리기 도구 ─────────────────────────────────────
+  function rr(x, y, w, h, r){
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x+w, y, x+w, y+h, r);
+    ctx.arcTo(x+w, y+h, x, y+h, r);
+    ctx.arcTo(x, y+h, x, y, r);
+    ctx.arcTo(x, y, x+w, y, r);
+    ctx.closePath();
+  }
+  function fs(fill, lw){
+    ctx.fillStyle = fill; ctx.fill();
+    ctx.lineWidth = lw || 3; ctx.strokeStyle = INK; ctx.stroke();
+  }
+  function label(txt, x, y, size, color){
+    ctx.font = `900 ${size}px system-ui, sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.lineJoin = 'round';
+    ctx.lineWidth = Math.max(4, size * 0.24); ctx.strokeStyle = INK;
+    ctx.strokeText(txt, x, y);
+    ctx.fillStyle = color; ctx.fillText(txt, x, y);
+  }
+
+  // ── 선수. 다른 게임과 같은 규칙 — 잉크 테두리에 눈 둘 ──
+  function drawPlayer(x, y, color, phase){
+    const bob = Math.sin(phase) * 1.6;
+    ctx.save();
+    ctx.translate(x, y);
+
+    ctx.globalAlpha = .15; ctx.fillStyle = '#1B2030';
+    ctx.beginPath(); ctx.ellipse(1, 1, 10, 3.4, 0, 0, 6.284); ctx.fill();
+    ctx.globalAlpha = 1;
+
+    /* 다리 — 달리는 대로 엇갈린다 */
+    ctx.strokeStyle = INK; ctx.lineWidth = 4.5; ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(-4, -9 + bob); ctx.lineTo(-4 + Math.sin(phase) * 4, -1);
+    ctx.moveTo(4, -9 + bob);  ctx.lineTo(4 - Math.sin(phase) * 4, -1);
+    ctx.stroke();
+    ctx.lineCap = 'butt';
+
+    ctx.translate(0, bob);
+
+    rr(-7.5, -21, 15, 13, 4.5);
+    fs(color, 2.6);
+
+    ctx.beginPath(); ctx.arc(0, -27, 6.4, 0, 6.284);
+    fs(CREAM, 2.4);
+    for (const s of [-1, 1]) {
+      ctx.beginPath(); ctx.arc(s * 2.3, -27.6, 1.15, 0, 6.284);
+      ctx.fillStyle = INK; ctx.fill();
+    }
+
+    ctx.restore();
+  }
+
+  // ── 공 ──────────────────────────────────────────────
+  function drawBall(x, y, rot){
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(rot);
+    ctx.beginPath(); ctx.ellipse(0, 0, 9, 6, 0, 0, 6.284);
+    fs(BROWN, 2.6);
+    ctx.strokeStyle = CREAM; ctx.lineWidth = 1.8; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(-3.4, 0); ctx.lineTo(3.4, 0); ctx.stroke();
+    ctx.lineCap = 'butt';
+    ctx.restore();
+  }
+
+  // ── 들판 ────────────────────────────────────────────
+  function drawField(){
+    ctx.fillStyle = '#7FD8C8';
+    ctx.fillRect(-12, -12, W + 24, H + 24);
+
+    /* 야드 선 — 540 부터 위로 47px(=5야드) 마다 */
+    ctx.save();
+    ctx.globalAlpha = 0.7;
+    ctx.strokeStyle = CREAM; ctx.lineWidth = 2;
+    ctx.beginPath();
+    for (let y = LOS; y > 0; y -= 47) { ctx.moveTo(0, y); ctx.lineTo(W, y); }
+    ctx.stroke();
+    ctx.restore();
+
+    /* 끝 선. 50야드 안으로 들어와야 화면에 보인다 */
+    const endY = LOS - toGo * PXY;
+    if (toGo <= 50) {
+      ctx.fillStyle = 'rgba(255,56,92,.10)';
+      ctx.fillRect(0, 0, W, Math.max(0, endY));
+      ctx.strokeStyle = CORAL; ctx.lineWidth = 5;
+      ctx.beginPath(); ctx.moveTo(0, endY); ctx.lineTo(W, endY); ctx.stroke();
+    }
+
+    /* 스크리미지 선 */
+    ctx.strokeStyle = CREAM; ctx.lineWidth = 4;
+    ctx.beginPath(); ctx.moveTo(0, LOS); ctx.lineTo(W, LOS); ctx.stroke();
+  }
+
+  // ── 한 판 그리기 ────────────────────────────────────
+  function draw(){
+    const st = eff();
+
+    ctx.save();
+    if (shake > 0 && !reduce)
+      ctx.translate((Math.random()-.5) * shake * 6, (Math.random()-.5) * shake * 6);
+
+    drawField();
+
+    /* 끝 선이 화면 밖이면 얼마나 남았는지 글로 알려준다 */
+    if (toGo > 50) label(T.toGo.replace('{n}', toGo), W / 2, 34, 15, CREAM);
+
+    /* 표적 — 누르고 있는 동안만 */
+    if (st === 'aim' && holding) {
+      const ty = LOS - mark;
+      ctx.save();
+      ctx.globalAlpha = .5;
+      ctx.strokeStyle = CORAL; ctx.lineWidth = 2; ctx.setLineDash([6, 7]);
+      ctx.beginPath(); ctx.moveTo(QB_X, QB_Y - 20); ctx.lineTo(recv.x, ty); ctx.stroke();
+      ctx.restore();
+
+      ctx.strokeStyle = CORAL; ctx.lineWidth = 3.4;
+      ctx.beginPath(); ctx.arc(recv.x, ty, 15, 0, 6.284); ctx.stroke();
+      ctx.beginPath(); ctx.arc(recv.x, ty, 3.4, 0, 6.284);
+      ctx.fillStyle = CORAL; ctx.fill();
+    }
+
+    /* 공이 나는 동안 — 땅 그림자가 어디 떨어질지 알려준다 */
+    if (st === 'fly') {
+      const u = Math.min(1, ft / flyT);
+      const gx = QB_X + (land.x - QB_X) * u;
+      const gy = QB_Y + (land.y - QB_Y) * u;
+      ctx.globalAlpha = .18; ctx.fillStyle = '#1B2030';
+      ctx.beginPath(); ctx.ellipse(gx, gy, 8, 3.2, 0, 0, 6.284); ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+
+    for (const d of defs) drawPlayer(d.x, d.y, NAVY, d.y * 0.16);
+    drawPlayer(recv.x, recv.y, CORAL, recv.t * 11);
+    drawPlayer(QB_X, QB_Y, CORAL, 0);
+
+    if (st === 'fly') {
+      const u = Math.min(1, ft / flyT);
+      const bx = QB_X + (land.x - QB_X) * u;
+      const by = QB_Y + (land.y - QB_Y) * u - Math.sin(u * Math.PI) * (mark * 0.13 + 14);
+      drawBall(bx, by, spin);
+    }
+
+    for (const q of parts) {
+      const a = Math.max(0, q.life / q.max);
+      ctx.globalAlpha = a;
+      ctx.beginPath(); ctx.arc(q.x, q.y, q.r * a, 0, 6.284);
+      ctx.fillStyle = q.c; ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+
+    /* 캔버스에 얹는 글씨 */
+    if (st === 'aim') label(holding ? T.holdHint : T.readyHint, W / 2, 604, 16, CREAM);
+
+    if (st === 'result') {
+      const txt = outcome === 'caught' ? T.caught
+                : outcome === 'touchdown' ? T.touchdown
+                : outcome === 'picked' ? T.picked
+                : T.incomplete;
+      const col = outcome === 'touchdown' ? SUN : CREAM;
+      /* 얻은 야드는 잡은 자리에 붙는다. 큰 글씨는 그 자리를 피해서 놓는다 —
+         안 그러면 둘이 겹쳐서 둘 다 안 읽힌다 */
+      const bannerY = land && land.y < 320 ? 440 : 220;
+      label(txt, W / 2, bannerY, outcome === 'touchdown' ? 34 : 28, col);
+      if (gainTxt && gainAt) label(gainTxt, gainAt.x, Math.max(32, gainAt.y - 34), 17, SUN);
+    }
+
+    ctx.restore();
+  }
+
+  // ── 흐르는 시간 ─────────────────────────────────────
+  function update(dt){
+    for (let i = parts.length - 1; i >= 0; i--) {
+      const q = parts[i];
+      q.life -= dt; q.x += q.vx*dt; q.y += q.vy*dt; q.vx *= .9; q.vy *= .9;
+      if (q.life <= 0) parts.splice(i, 1);
+    }
+    shake = Math.max(0, shake - dt * 3.4);
+
+    if (state === 'aim') {
+      run(dt);
+      if (holding) mark = Math.min(MARK_MAX, mark + MARK_SPEED * dt);
+      if (recv.y <= ESCAPE_Y) escaped();
+      return;
+    }
+
+    if (state === 'fly') {
+      run(dt);                       // 공이 가는 동안에도 계속 달린다
+      spin += dt * 15;
+      ft += dt;
+      if (ft >= flyT) { ft = flyT; judge(); }
+      return;
+    }
+
+    if (state === 'result') {
+      resT += dt;
+      if (resT >= RESULT_T) {
+        if (downs <= 0) { over(); }
+        else { newDown(); state = 'aim'; }
+      }
+    }
+  }
+
+  let last = 0;
+  function frame(t){
+    const dt = Math.min((t - last) / 1000, .04);
+    last = t;
+    update(dt); draw();
+    requestAnimationFrame(frame);
+  }
+
+  // ── 덮개 화면과 누르기 ──────────────────────────────
+  function show(id){
+    for (const s of [scReady, scOver, scPause]) s.classList.toggle('on', s.id === id);
+  }
+  function start(){
+    reset();
+    hYards.textContent = '0';
+    hDowns.textContent = '●'.repeat(DOWNS);
+    state = 'aim';
+    show('none');
+  }
+  function togglePause(){
+    if (state === 'ready' || state === 'over') return;
+    if (state === 'pause') { state = paused; paused = null; show('none'); }
+    else { holding = false; paused = state; state = 'pause'; show('scPause'); }
+  }
+
+  /* 누르는 것 셋이 다 같다 — 손가락·마우스, 스페이스, 엔터.
+     누르고 있는 동안 표적이 나가고, 떼면 던진다 */
+  function press(){
+    if (state === 'ready' || state === 'over') { start(); return; }
+    if (state === 'aim') holding = true;
+  }
+  function release(){
+    if (state === 'aim' && holding) throwBall();
+  }
+
+  el('btnStart').onclick = start;
+  el('btnRetry').onclick = start;
+  el('btnResume').onclick = togglePause;
+
+  cv.addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    press();
+    try { cv.setPointerCapture(e.pointerId); } catch (err) {}
+  });
+  for (const ev of ['pointerup', 'pointercancel', 'pointerleave'])
+    cv.addEventListener(ev, release);
+
+  addEventListener('keydown', (e) => {
+    const k = e.key.toLowerCase();
+    if (k === ' ' || k === 'enter') e.preventDefault();
+    if (e.repeat) return;                 // 눌러 두면 반복해서 오는 것은 무시한다
+    if (k === 'p') { togglePause(); return; }
+    if (k === ' ' || k === 'enter') press();
+  });
+  addEventListener('keyup', (e) => {
+    const k = e.key.toLowerCase();
+    if (k === ' ' || k === 'enter') release();
+  });
+
+  // ── 최고 기록 ───────────────────────────────────────
+  // 기기에만 남는다. 서버로 보내지 않는다.
+  const KEY = 'passBest';
+  async function saveBest(v){
+    try { await window.storage.set(KEY, String(v)); return; } catch (e) {}
+    try { localStorage.setItem(KEY, String(v)); } catch (e) {}
+  }
+  (async () => {
+    let raw = null;
+    try { const r = await window.storage.get(KEY); raw = r && r.value; } catch (e) {}
+    if (raw == null) { try { raw = localStorage.getItem(KEY); } catch (e) {} }
+    if (raw) { best = parseInt(raw, 10) || 0; hBest.textContent = best; }
+  })();
+
+  reset();
+  requestAnimationFrame(frame);
+})();
+  </script>
+</GameLayout>

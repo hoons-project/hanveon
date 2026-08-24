@@ -234,6 +234,38 @@ export const GAMES: Game[] = [
       <circle cx="30" cy="49" r="7" fill="#FFF7EA" stroke="#2A3145" stroke-width="2.6"/>
       <path d="M30 45.4l2.7 2-1.1 3.2h-3.2l-1.1-3.2z" fill="#2A3145"/></svg>`,
   },
+  {
+    slug: 'long-pass',
+    kind: 'quick',
+    name: {
+      en: ['Long', 'Pass'],
+      ko: ['휙휙', '패스'],
+      ja: ['ビュン', 'パス'],
+      es: ['Pase', 'Largo'],
+      fr: ['Longue', 'Passe'],
+      zh: ['长传', '达阵'],
+    },
+    desc: {
+      en: 'Hold to throw far, let go so the ball meets the runner.',
+      ko: '누르면 멀리 가요. 달리는 선수에게 맞춰 떼요.',
+      ja: '押すほど遠くへ。走る選手に合わせて離す。',
+      es: 'Mantén para lanzar lejos. Suelta para encontrar al receptor.',
+      fr: 'Maintiens pour lancer loin. Relâche pour trouver le receveur.',
+      zh: '按住传得更远，看准跑动的接球手松手。',
+    },
+    art: `<svg viewBox="0 0 60 60" aria-hidden="true">
+      <rect width="60" height="60" fill="#7FD8C8"/>
+      <path d="M0 12h60M0 26h60M0 40h60" stroke="#FFF7EA" stroke-width="2" opacity=".75"/>
+      <ellipse cx="30" cy="21" rx="9" ry="6" transform="rotate(-24 30 21)"
+               fill="#C87A4B" stroke="#2A3145" stroke-width="2.6"/>
+      <path d="M26 22.5l7-3.2" stroke="#FFF7EA" stroke-width="1.8" stroke-linecap="round"/>
+      <rect x="12" y="44" width="9" height="12" rx="3.4" fill="#FF385C" stroke="#2A3145" stroke-width="2.2"/>
+      <circle cx="16.5" cy="41.4" r="3.5" fill="#FFF7EA" stroke="#2A3145" stroke-width="2.2"/>
+      <circle cx="15.3" cy="41.6" r=".9" fill="#2A3145"/><circle cx="17.7" cy="41.6" r=".9" fill="#2A3145"/>
+      <rect x="40" y="30" width="9" height="12" rx="3.4" fill="#FFD23F" stroke="#2A3145" stroke-width="2.2"/>
+      <circle cx="44.5" cy="27.4" r="3.5" fill="#FFF7EA" stroke="#2A3145" stroke-width="2.2"/>
+      <circle cx="43.3" cy="27.6" r=".9" fill="#2A3145"/><circle cx="45.7" cy="27.6" r=".9" fill="#2A3145"/></svg>`,
+  },
 ];
 
 /** 주소 조각으로 게임을 찾는다. 없으면 undefined. */
