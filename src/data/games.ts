@@ -43,12 +43,12 @@ export const GAMES: Game[] = [
     slug: 'hoppy-jump',
     kind: 'quick',
     name: {
-      en: ['Hoppy', 'Jump'],
-      ko: ['폴짝', '점프'],
-      ja: ['ぴょん', 'ジャンプ'],
+      en: ['Jump', 'Climber'],
+      ko: ['점프', '클라이머'],
+      ja: ['ジャンプ', 'クライマー'],
       es: ['Salto', 'Infinito'],
       fr: ['Saut', 'Sans Fin'],
-      zh: ['一路', '跳高'],
+      zh: ['跳跃', '攀登'],
     },
     desc: {
       en: 'Bounce from platform to platform. You only need to steer.',
@@ -180,7 +180,7 @@ export const GAMES: Game[] = [
     slug: 'chain-dots',
     kind: 'think',
     name: {
-      en: ['Chain', 'Dots'],
+      en: ['Color', 'Chain'],
       ko: ['구슬', '잇기'],
       ja: ['ビーズ', 'つなぎ'],
       es: ['Cadena de', 'Colores'],
@@ -210,7 +210,7 @@ export const GAMES: Game[] = [
     kind: 'quick',
     name: {
       en: ['Penalty', 'Kick'],
-      ko: ['승부', '차기'],
+      ko: ['PK', '챌린지'],
       ja: ['PK', 'チャレンジ'],
       es: ['Tanda de', 'Penaltis'],
       fr: ['Tirs au', 'But'],
