@@ -105,12 +105,14 @@ const CSS = (lang) => `
     background:${FAINT};border-radius:9999px;padding:11px 22px;
   }
 
-  /* 대문 그림 — 그림 여섯을 한 줄로 늘어놓는다 */
-  body.home{flex-direction:column;align-items:flex-start;justify-content:center;gap:22px}
-  .home .name{font-size:104px}
-  .home .desc{font-size:29px;max-width:1000px}
-  .arts{display:flex;gap:18px;margin-top:10px}
-  .arts .art{width:132px;height:132px;border-radius:16px;border:1px solid ${BEBE}}
+  /* 대문 그림 — 게임 그림을 늘어놓는다.
+     크기와 줄 수는 artsLayout() 이 게임 개수를 보고 정한다.
+     예전에는 132px 한 줄 고정이라 여덟 개부터 잘려 나갔다. */
+  body.home{flex-direction:column;align-items:flex-start;justify-content:center;gap:20px}
+  .home .name{font-size:96px}
+  .home .desc{font-size:28px;max-width:1000px}
+  .arts{display:flex;flex-wrap:wrap;margin-top:6px}
+  .arts .art{flex:none;border-radius:14px;border:1px solid ${BEBE}}
 `;
 
 function gameCard(game, lang) {
@@ -127,13 +129,47 @@ function gameCard(game, lang) {
 </div></body></html>`;
 }
 
+/* ── 대문 그림의 게임 그림 늘어놓기 ────────────────────
+   게임이 늘어도 안 잘리게, 개수를 보고 크기와 줄 수를 정한다.
+   일곱까지는 한 줄, 그 위는 두 줄. 두 줄이 넘치면 뒤를 빼고 알린다. */
+const ARTS_W = 1000;        // 설명 글 칸과 같은 너비
+const ARTS_GAP = 16;
+const ARTS_MAX1 = 132;      // 한 줄일 때 최대 크기
+const ARTS_MAX2 = 96;       // 두 줄일 때 최대 크기 (세로가 모자란다)
+const ARTS_MIN = 70;        // 이보다 작아지면 뒤를 잘라낸다
+
+function artsLayout(n) {
+  const rows = n <= 7 ? 1 : 2;
+  const max = rows === 1 ? ARTS_MAX1 : ARTS_MAX2;
+  let shown = n;
+  for (;;) {
+    const per = Math.ceil(shown / rows);
+    const size = Math.min(max, Math.floor((ARTS_W - (per - 1) * ARTS_GAP) / per));
+    if (size >= ARTS_MIN || shown <= 1) {
+      return { size, per, shown, rowW: per * size + (per - 1) * ARTS_GAP };
+    }
+    shown--;
+  }
+}
+
+/* 자리가 모자라 뺀 것이 있으면 조용히 넘어가지 않고 알린다 */
+{
+  const L = artsLayout(GAMES.length);
+  if (L.shown < GAMES.length) {
+    console.warn(`[og] 대문 그림 — 게임 ${GAMES.length}개 중 ${L.shown}개만 넣었다. ` +
+                 `뒤 ${GAMES.length - L.shown}개가 빠진다. 줄 수를 늘리거나 크기를 줄여야 한다.`);
+  }
+}
+
 function homeCard(lang) {
   const t = UI[lang];
+  const L = artsLayout(GAMES.length);
   return `<!doctype html><html lang="${lang}"><head><meta charset="utf-8">
 <style>${CSS(lang)}</style></head><body class="home">
 <div class="name">Han<span style="color:${RAUSCH}">veon</span></div>
 <div class="desc">${esc(t.metaDesc)}</div>
-<div class="arts">${GAMES.map((g) => `<div class="art">${g.art}</div>`).join('')}</div>
+<div class="arts" style="width:${L.rowW}px;gap:${ARTS_GAP}px">${GAMES.slice(0, L.shown)
+  .map((g) => `<div class="art" style="width:${L.size}px;height:${L.size}px">${g.art}</div>`).join('')}</div>
 <div class="tag">${esc(t.freeTag)}</div>
 </body></html>`;
 }
