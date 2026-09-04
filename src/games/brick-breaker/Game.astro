@@ -1,0 +1,932 @@
+---
+/*
+  벽돌 깨기.
+
+  이 파일은 두 층으로 나뉜다.
+
+    1. `SIM` — 공·벽돌·막대·아이템의 **셈만** 한다. 화면도 글도 모른다.
+       아래 「SIM 시작」「SIM 끝」 표시 사이가 그것이다.
+       `scripts/brick-check.mjs` 가 이 두 줄 사이를 그대로 떼어 내
+       브라우저 없이 돌린다. 그래서 **재는 것과 노는 것이 같은 코드**다.
+    2. 그 아래 — 그리기와 조작. 여기만 DOM 과 글(`T`)을 안다.
+
+  SIM 안의 숫자를 바꾸면 `strings.ts` 의 「요령」 세 줄이 거짓이 된다.
+  바꾸기 전에 `node scripts/brick-check.mjs` 를 돌려 본다.
+*/
+import GameLayout from '../../layouts/GameLayout.astro';
+import { findGame } from '../../data/games';
+import type { Lang } from '../../i18n';
+import { STR } from './strings';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+
+const game = findGame('brick-breaker')!;
+const T = STR[lang];
+
+/* 캔버스 아래 아이템 목록. 좋고 나쁨은 **색만이 아니라 모양으로도** 갈린다 —
+   좋은 것은 둥근 네모, 나쁜 것은 마름모다. design/README.md 참고. */
+const ITEMS = [
+  { key: 'wide',   good: true,  label: T.itWide },
+  { key: 'multi',  good: true,  label: T.itMulti },
+  { key: 'slow',   good: true,  label: T.itSlow },
+  { key: 'pierce', good: true,  label: T.itPierce },
+  { key: 'narrow', good: false, label: T.itNarrow },
+  { key: 'fast',   good: false, label: T.itFast },
+];
+
+const GLYPH: Record<string, string> = {
+  wide:   '<path d="M4 10h12" stroke="#2A3145" stroke-width="2.6" stroke-linecap="round"/><path d="M4 7v6M16 7v6" stroke="#2A3145" stroke-width="2" stroke-linecap="round"/>',
+  multi:  '<circle cx="6.2" cy="10" r="1.9" fill="#2A3145"/><circle cx="10" cy="10" r="1.9" fill="#2A3145"/><circle cx="13.8" cy="10" r="1.9" fill="#2A3145"/>',
+  slow:   '<path d="M10 5.6v6.6M6.9 9.6 10 12.9l3.1-3.3" stroke="#2A3145" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M6.4 15h7.2" stroke="#2A3145" stroke-width="2.2" stroke-linecap="round"/>',
+  pierce: '<path d="M5 12.4h10" stroke="#2A3145" stroke-width="2" stroke-linecap="round" stroke-dasharray="2.2 2.2"/><path d="M10 15.4V4.8M6.9 7.7 10 4.6l3.1 3.1" stroke="#2A3145" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>',
+  narrow: '<path d="M3.4 10h4.2M6 7.8 8.2 10 6 12.2M16.6 10h-4.2M14 7.8 11.8 10 14 12.2" stroke="#FFF7EA" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>',
+  fast:   '<path d="M6.3 10.6 10 6.9l3.7 3.7M6.3 14.6 10 10.9l3.7 3.7" stroke="#FFF7EA" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>',
+};
+
+const FRAME_GOOD = '<rect x="1.5" y="1.5" width="17" height="17" rx="6" fill="#7FD8C8" stroke="#2A3145" stroke-width="2.2"/>';
+const FRAME_BAD  = '<path d="M10 1.1 18.9 10 10 18.9 1.1 10Z" fill="#FF385C" stroke="#2A3145" stroke-width="2.2" stroke-linejoin="round"/>';
+---
+
+<GameLayout
+  lang={lang}
+  game={game}
+  tag={T.tagline}
+  help={T.help}
+  about={T.about}
+  how={T.how}
+  tips={T.tips}
+>
+  <div class="hud">
+    <div><b>{T.score}</b><i id="hScore">0</i></div>
+    <div><b>{T.level}</b><i id="hLevel">1</i></div>
+    <div><b>{T.best}</b><i id="hBest">0</i></div>
+  </div>
+
+  <div class="stage">
+    <canvas id="game"></canvas>
+
+    <div class="screen on" id="scReady">
+      <div class="card">
+        <h2>{T.readyTitle}</h2>
+        <p set:html={T.readyBody} />
+        <button id="btnStart">{T.start}</button>
+      </div>
+    </div>
+
+    <div class="screen" id="scClear">
+      <div class="card">
+        <h2 id="clearTitle">{T.clearTitle.replace('{n}', '1')}</h2>
+        <p id="clearNote" hidden>{T.allNote}</p>
+        <div class="result">
+          <div><span>{T.score}</span><strong id="cScore">0</strong></div>
+          <div><span>{T.level}</span><strong id="cLevel">1</strong></div>
+        </div>
+        <button id="btnNext">{T.clearNext}</button>
+      </div>
+    </div>
+
+    <div class="screen" id="scOver">
+      <div class="card">
+        <h2>{T.overTitle}</h2>
+        <div class="result">
+          <div><span>{T.score}</span><strong id="rScore">0</strong></div>
+          <div><span>{T.level}</span><strong id="rLevel">1</strong></div>
+        </div>
+        <button id="btnRetry">{T.retry}</button>
+      </div>
+    </div>
+
+    <div class="screen" id="scPause">
+      <div class="card">
+        <h2>{T.paused}</h2>
+        <p>{T.pausedHint}</p>
+        <button id="btnResume">{T.resume}</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="legend items">
+    {ITEMS.map((it) => (
+      <div>
+        <svg class="ic" viewBox="0 0 20 20" aria-hidden="true"
+             set:html={(it.good ? FRAME_GOOD : FRAME_BAD) + GLYPH[it.key]} />
+        <span>{it.label}</span>
+      </div>
+    ))}
+    <p class="shapes">
+      <svg class="ic" viewBox="0 0 20 20" aria-hidden="true" set:html={FRAME_GOOD} />
+      <span>{T.good}</span>
+      <svg class="ic" viewBox="0 0 20 20" aria-hidden="true" set:html={FRAME_BAD} />
+      <span>{T.bad}</span>
+    </p>
+  </div>
+
+  <style>
+    /* 이 게임만 쓰는 것. 나머지는 src/styles/game.css 에 있다. */
+    canvas{ background:#3B2F3F }
+
+    /* 캔버스 아래 아이템 목록 — 좁으면 한 줄, 넓으면 두 줄 */
+    .legend.items{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr));
+      gap:8px 12px;
+      margin:12px 0 0;
+    }
+    .legend.items div{ gap:8px; font-size:12.5px; line-height:1.3 }
+    .legend.items .ic{ width:20px;height:20px;flex:none;display:block }
+    .legend.items .shapes{
+      grid-column:1 / -1;
+      display:flex;align-items:center;justify-content:center;gap:6px;
+      margin:2px 0 0;font-size:12px;color:var(--foggy);
+    }
+    .legend.items .shapes span{ margin-right:10px }
+    @media (max-width:400px){
+      .legend.items{ grid-template-columns:minmax(0,1fr) }
+    }
+  </style>
+
+  <script define:vars={{ T }}>
+(() => {
+  // ══ SIM 시작 ══
+  // 여기부터 「SIM 끝」까지는 DOM 도 글도 모르는 순수한 셈이다.
+  // scripts/brick-check.mjs 가 이 사이를 그대로 떼어 내 재검사한다.
+  const SIM = (() => {
+    const W = 360, H = 620;
+
+    /* ── 지시서에서 못 박은 값. 바꾸면 「요령」 세 줄이 거짓이 된다 ── */
+    const COLS = 7, MAX_ROWS = 8;
+    const BW = 44, BH = 18, GAP = 4, MARGIN = 14, TOPY = 70, ROWY = 22;
+    const PADY = 566, PADH = 12;
+    const PAD_BASE = 76, PAD_WIDE = 112, PAD_NARROW = 50;
+    const BALLR = 6;
+    const SPD0 = 4.2, SPD_UP = 0.18, SPD_MAX = 6.6;   // 한 프레임(60fps)에 가는 거리
+    const LIVES = 3;
+    const ANG_MAX = 60, ANG_MIN = 15;                 // 막대 튕김 각 (수직에서 잰 도)
+
+    const SC_NORMAL = 10, SC_TOUGH = 25, SC_CLEAR = 200, SC_LIFE = 50;
+
+    const DROP_RATE = 0.14, DROP_SPD = 2.2, DROP_SZ = 20;
+    const GOOD = ['wide', 'multi', 'slow', 'pierce'];
+    const BAD  = ['narrow', 'fast'];
+    const GOOD_RATE = 0.7;
+    const DUR = { wide:12, slow:10, pierce:10, narrow:10, fast:8 };
+    const OPP = { wide:'narrow', narrow:'wide', slow:'fast', fast:'slow' };
+    const SLOW_MUL = 0.72, FAST_MUL = 1.3;
+    const MULTI_ANG = 25, MAX_BALLS = 5;
+
+    /* ── 막판이 지루해지지 않게 ──
+       지시서의 첫 값(x1.15 · 20초 뒤 · 5초마다 · 3줄)으로는
+       벽돌 3개 남기고 200판을 돌렸을 때 30초 안에 끝난 것이 76% 뿐이었다.
+       `node scripts/brick-check.mjs 4` 로 값을 훑어 아래로 고쳤다 (93%).
+       왜 그랬는지는 지시서 답장에 적어 뒀다 — 줄을 내려도 공의 **가로** 길은
+       그대로라, 결국 속도를 올려야 헛도는 시간이 짧아진다. */
+    const LAST_N = 3, LAST_MUL = 1.5, LAST_WAIT = 12, LAST_EVERY = 4, LAST_ROWS = 8;
+    const LAST_KEEP = 80;   // 벽돌이 막대에 이만큼 가까워지면 더는 안 내린다
+
+    const SERVE_WAIT = 1;   // 이만큼 지나면 저절로 나간다
+
+    /* ── 판 열둘. 0 빈칸 · 1 보통 · 2 단단 ──
+       판 1~3 은 지시서에 그려진 그대로다. 4~12 는 여기서 지었다.
+       벽돌 24~40개 · 좌우 대칭 · 판이 올라갈수록 많아진다. */
+    const LEVELS = [
+      ['1111111', '1111111', '1111111', '1111111'],
+      ['0111110', '1111111', '1111111', '0111110', '1111111'],
+      ['1111111', '1010101', '1111111', '1010101', '1111111'],
+      ['0111110', '1211121', '1112111', '1211121', '0111110'],
+      ['1111111', '1021201', '1111111', '1211121', '1112111'],
+      ['1111111', '1111111', '0121210', '1111111', '0212120', '0011100'],
+      ['1111111', '1111111', '1211121', '1112111', '0121210', '0010100'],
+      ['1111111', '2112112', '1211121', '2112112', '0121210', '0012100'],
+      ['1111111', '1221221', '1111111', '2121212', '1212121', '0010100'],
+      ['1111111', '2112112', '1221221', '1111111', '1221221', '0011100'],
+      ['1111111', '1221221', '2112112', '1211121', '2112112', '1010101'],
+      ['1111111', '1221221', '1111111', '2121212', '1211121', '0121210'],
+    ];
+
+    const brickX = (c) => MARGIN + c * (BW + GAP);
+    const brickY = (r) => TOPY + r * ROWY;
+
+    /* 씨앗을 주면 늘 같은 판이 나온다. 헤드리스 검사가 되풀이될 수 있어야 한다. */
+    function rng(seed){
+      let s = (seed >>> 0) || 0x9e3779b9;
+      return () => {
+        s ^= s << 13; s >>>= 0;
+        s ^= s >>> 17;
+        s ^= s << 5;  s >>>= 0;
+        return s / 4294967296;
+      };
+    }
+
+    /**
+     * 막대에서 튕겨 나가는 각(도). 수직이 0, 오른쪽이 +.
+     * `hit` 은 막대 어디에 맞았는지 — -1 왼끝 · 0 가운데 · +1 오른끝.
+     * 수직에 너무 가까우면 ±ANG_MIN 으로 밀어낸다. 안 그러면 위아래로만 왕복한다.
+     */
+    function bounceAngle(hit, dirX){
+      const h = Math.max(-1, Math.min(1, hit));
+      let a = h * ANG_MAX;
+      if (Math.abs(a) < ANG_MIN) {
+        const s = a !== 0 ? Math.sign(a) : (dirX >= 0 ? 1 : -1);
+        a = ANG_MIN * s;
+      }
+      return a;
+    }
+
+    function padW(g){
+      return g.fx.wide > 0 ? PAD_WIDE : g.fx.narrow > 0 ? PAD_NARROW : PAD_BASE;
+    }
+
+    /** 판에 따른 기본 속도. 판을 깰 때마다 +0.18, 6.6 에서 멈춘다. */
+    function baseSpeed(g){ return Math.min(SPD_MAX, SPD0 + SPD_UP * g.cleared); }
+
+    /** 아이템과 막판 규칙까지 얹은 실제 속도. */
+    function speed(g){
+      let s = baseSpeed(g);
+      if (g.fx.slow > 0) s *= SLOW_MUL;
+      else if (g.fx.fast > 0) s *= FAST_MUL;
+      if (g.boost) s *= LAST_MUL;
+      return s;
+    }
+
+    function create(seed){
+      return {
+        rnd: rng(seed),
+        state: 'ready',          // ready · serve · play · clear · allclear · over
+        level: 1, cleared: 0, score: 0, lives: LIVES,
+        bricks: [], balls: [], drops: [],
+        padX: W / 2,
+        fx: { wide:0, narrow:0, slow:0, pierce:0, fast:0 },
+        alive: 0, boost: false, lastT: 0, lastNext: LAST_WAIT, lastRows: 0,
+        serveT: 0,
+        broken: 0, dropped: 0, droppedGood: 0, dropKinds: {},
+        events: [],
+      };
+    }
+
+    function load(g, n){
+      const rows = LEVELS[n - 1];
+      g.bricks = [];
+      for (let r = 0; r < rows.length && r < MAX_ROWS; r++)
+        for (let c = 0; c < COLS; c++) {
+          const v = rows[r][c];
+          if (v === '0') continue;
+          const hp = v === '2' ? 2 : 1;
+          g.bricks.push({ x: brickX(c), y: brickY(r), hp, max: hp, alive: true, row: r, col: c });
+        }
+      g.drops = [];
+      g.alive = g.bricks.length;
+      g.boost = false; g.lastT = 0; g.lastNext = LAST_WAIT; g.lastRows = 0;
+      resetFx(g);
+    }
+
+    function recount(g){ g.alive = g.bricks.filter((b) => b.alive).length; }
+
+    function resetFx(g){ g.fx.wide = g.fx.narrow = g.fx.slow = g.fx.pierce = g.fx.fast = 0; }
+
+    function serve(g){
+      g.balls = [{ x: g.padX, y: PADY - BALLR - 1, dx: 0, dy: -1 }];
+      g.serveT = 0;
+      g.state = 'serve';
+    }
+
+    function launch(g){
+      if (g.state !== 'serve') return;
+      const s = g.rnd() < 0.5 ? -1 : 1;
+      const a = s * (25 + g.rnd() * 20) * Math.PI / 180;
+      const b = g.balls[0];
+      b.dx = Math.sin(a); b.dy = -Math.cos(a);
+      g.state = 'play';
+    }
+
+    /** 새 판(게임)을 처음부터. */
+    function begin(g){
+      g.state = 'ready';
+      g.level = 1; g.cleared = 0; g.score = 0; g.lives = LIVES;
+      g.padX = W / 2;
+      g.broken = 0; g.dropped = 0; g.droppedGood = 0; g.dropKinds = {};
+      load(g, 1);
+      serve(g);
+    }
+
+    /** 판을 깬 화면에서 「다음 판」. 판 12 를 깬 뒤면 판 1 로 돌되 속도는 이어진다. */
+    function next(g){
+      if (g.state !== 'clear' && g.state !== 'allclear') return;
+      g.level = g.level >= LEVELS.length ? 1 : g.level + 1;
+      load(g, g.level);
+      serve(g);
+    }
+
+    function applyItem(g, kind){
+      if (kind === 'multi') {
+        const src = g.balls[0];
+        if (!src) return;
+        const a0 = Math.atan2(src.dx, -src.dy);
+        for (const s of [-1, 1]) {
+          if (g.balls.length >= MAX_BALLS) break;
+          const a = a0 + s * MULTI_ANG * Math.PI / 180;
+          g.balls.push({ x: src.x, y: src.y, dx: Math.sin(a), dy: -Math.cos(a) });
+        }
+        return;
+      }
+      /* 같은 것을 또 받으면 시간이 새로 시작한다. 세지지는 않는다.
+         좋은 것과 나쁜 것은 서로 푼다 — wide↔narrow, slow↔fast. */
+      g.fx[kind] = DUR[kind];
+      const o = OPP[kind];
+      if (o) g.fx[o] = 0;
+    }
+
+    function spawnDrop(g, x, y){
+      const good = g.rnd() < GOOD_RATE;
+      const list = good ? GOOD : BAD;
+      const kind = list[Math.min(list.length - 1, Math.floor(g.rnd() * list.length))];
+      g.drops.push({ x, y, kind, good });
+      g.dropped++;
+      if (good) g.droppedGood++;
+      g.dropKinds[kind] = (g.dropKinds[kind] || 0) + 1;
+    }
+
+    function damage(g, b){
+      b.hp--;
+      if (b.hp > 0) { g.events.push({ t: 'crack', x: b.x + BW / 2, y: b.y + BH / 2 }); return; }
+      b.alive = false;
+      g.alive--;
+      g.broken++;
+      g.score += b.max === 2 ? SC_TOUGH : SC_NORMAL;
+      g.events.push({ t: 'break', x: b.x + BW / 2, y: b.y + BH / 2, tough: b.max === 2 });
+      if (g.rnd() < DROP_RATE) spawnDrop(g, b.x + BW / 2, b.y + BH / 2);
+    }
+
+    function hitBricks(g, ball){
+      const pierce = g.fx.pierce > 0;
+      for (const b of g.bricks) {
+        if (!b.alive) continue;
+        const nx = Math.max(b.x, Math.min(ball.x, b.x + BW));
+        const ny = Math.max(b.y, Math.min(ball.y, b.y + BH));
+        const dx = ball.x - nx, dy = ball.y - ny;
+        if (dx * dx + dy * dy >= BALLR * BALLR) continue;
+
+        if (!pierce) {
+          const cx = b.x + BW / 2, cy = b.y + BH / 2;
+          const ox = Math.abs(ball.x - cx) / (BW / 2 + BALLR);
+          const oy = Math.abs(ball.y - cy) / (BH / 2 + BALLR);
+          if (ox > oy) {
+            ball.dx = ball.x < cx ? -Math.abs(ball.dx) : Math.abs(ball.dx);
+            ball.x = ball.x < cx ? b.x - BALLR : b.x + BW + BALLR;
+          } else {
+            ball.dy = ball.y < cy ? -Math.abs(ball.dy) : Math.abs(ball.dy);
+            ball.y = ball.y < cy ? b.y - BALLR : b.y + BH + BALLR;
+          }
+          damage(g, b);
+          return;
+        }
+        damage(g, b);
+      }
+    }
+
+    function clearLevel(g){
+      g.score += SC_CLEAR + SC_LIFE * g.lives;
+      g.cleared++;
+      g.drops = [];
+      g.boost = false;
+      g.state = g.level >= LEVELS.length ? 'allclear' : 'clear';
+    }
+
+    function loseLife(g){
+      g.lives--;
+      resetFx(g);
+      g.drops = [];
+      g.events.push({ t: 'lose' });
+      if (g.lives <= 0) { g.state = 'over'; return; }
+      serve(g);
+    }
+
+    function moveBalls(g, d){
+      const pw = padW(g);
+      const L = g.padX - pw / 2, R = g.padX + pw / 2;
+
+      for (let i = g.balls.length - 1; i >= 0; i--) {
+        const b = g.balls[i];
+        b.x += b.dx * d;
+        b.y += b.dy * d;
+
+        if (b.x < BALLR) { b.x = BALLR; b.dx = Math.abs(b.dx); }
+        else if (b.x > W - BALLR) { b.x = W - BALLR; b.dx = -Math.abs(b.dx); }
+        if (b.y < BALLR) { b.y = BALLR; b.dy = Math.abs(b.dy); }
+
+        hitBricks(g, b);
+
+        if (b.dy > 0 && b.y + BALLR >= PADY && b.y - BALLR <= PADY + PADH &&
+            b.x >= L - BALLR && b.x <= R + BALLR) {
+          b.y = PADY - BALLR;
+          const hit = (b.x - g.padX) / (pw / 2);
+          const a = bounceAngle(hit, b.dx) * Math.PI / 180;
+          b.dx = Math.sin(a); b.dy = -Math.cos(a);
+          g.events.push({ t: 'pad', x: b.x, y: PADY });
+        }
+
+        if (b.y - BALLR > H) g.balls.splice(i, 1);
+      }
+
+      if (g.alive === 0) { clearLevel(g); return; }
+      if (g.balls.length === 0) loseLife(g);
+    }
+
+    function moveDrops(g, dt){
+      const pw = padW(g);
+      const L = g.padX - pw / 2, R = g.padX + pw / 2;
+      const half = DROP_SZ / 2;
+      for (let i = g.drops.length - 1; i >= 0; i--) {
+        const d = g.drops[i];
+        d.y += DROP_SPD * dt * 60;
+        if (d.y + half >= PADY && d.y - half <= PADY + PADH &&
+            d.x + half >= L && d.x - half <= R) {
+          g.drops.splice(i, 1);
+          applyItem(g, d.kind);
+          g.events.push({ t: 'take', x: d.x, y: d.y, kind: d.kind, good: d.good });
+          continue;
+        }
+        if (d.y - half > H) g.drops.splice(i, 1);
+      }
+    }
+
+    /* 벽돌이 3개 이하로 남으면 빨라지고, 20초가 더 지나면 5초마다 한 줄씩 내려온다. */
+    function lastFew(g, dt){
+      if (g.alive === 0 || g.alive > LAST_N) { g.boost = false; return; }
+      g.boost = true;
+      g.lastT += dt;
+      if (g.lastT < g.lastNext || g.lastRows >= LAST_ROWS) return;
+      /* 막대 코앞까지 내려오면 멈춘다. 지나쳐 버리면 영영 못 깨는 판이 된다 */
+      let low = 0;
+      for (const b of g.bricks) if (b.alive) low = Math.max(low, b.y + BH);
+      if (low + ROWY > PADY - LAST_KEEP) return;
+      g.lastRows++;
+      for (const b of g.bricks) if (b.alive) b.y += ROWY;
+      g.lastNext += LAST_EVERY;
+    }
+
+    function tick(g, dt){
+      for (const k of ['wide', 'narrow', 'slow', 'pierce', 'fast'])
+        if (g.fx[k] > 0) g.fx[k] = Math.max(0, g.fx[k] - dt);
+      const pw = padW(g);
+      g.padX = Math.max(pw / 2, Math.min(W - pw / 2, g.padX));
+    }
+
+    function step(g, dt){
+      if (g.state === 'serve') {
+        tick(g, dt);
+        const b = g.balls[0];
+        b.x = g.padX; b.y = PADY - BALLR - 1;
+        moveDrops(g, dt);
+        g.serveT += dt;
+        if (g.serveT >= SERVE_WAIT) launch(g);
+        return;
+      }
+      if (g.state !== 'play') return;
+
+      tick(g, dt);
+      lastFew(g, dt);
+
+      /* 한 걸음이 2px 을 넘지 않게 쪼갠다. 안 그러면 빠른 공이 벽돌을 뚫고 지나간다. */
+      const dist = speed(g) * dt * 60;
+      const n = Math.max(1, Math.ceil(dist / 2));
+      for (let i = 0; i < n; i++) {
+        moveBalls(g, dist / n);
+        if (g.state !== 'play') break;
+      }
+      if (g.state === 'play') moveDrops(g, dt);
+    }
+
+    return {
+      W, H, COLS, MAX_ROWS, BW, BH, GAP, MARGIN, TOPY, ROWY,
+      PADY, PADH, PAD_BASE, PAD_WIDE, PAD_NARROW, BALLR,
+      SPD0, SPD_UP, SPD_MAX, LIVES, ANG_MAX, ANG_MIN,
+      DROP_RATE, DROP_SPD, DROP_SZ, GOOD, BAD, GOOD_RATE, DUR, OPP,
+      SLOW_MUL, FAST_MUL, MULTI_ANG, MAX_BALLS,
+      LAST_N, LAST_MUL, LAST_WAIT, LAST_EVERY, LAST_ROWS, LAST_KEEP, SERVE_WAIT,
+      LEVELS, brickX, brickY, rng,
+      create, begin, load, recount, serve, launch, next, step,
+      bounceAngle, padW, speed, baseSpeed, applyItem,
+    };
+  })();
+  // ══ SIM 끝 ══
+
+  /* ─────────────────────────────────────────────────
+     여기부터 그리기와 조작. 글(`T`)과 DOM 은 여기만 안다.
+     ───────────────────────────────────────────────── */
+
+  const W = SIM.W, H = SIM.H;
+  const cv = document.getElementById('game');
+  const ctx = cv.getContext('2d');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function fit(){
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    cv.width = W * dpr; cv.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  fit();
+  addEventListener('resize', fit);
+
+  const INK = '#2A3145';
+  const CREAM = '#FFF7EA';
+  const PADCOL = '#BFE8FF';
+  const GOODCOL = '#7FD8C8';
+  const BADCOL = '#FF385C';
+  /* 줄마다 다른 색. 위에서부터 내려온다 */
+  const ROWCOL = ['#FF385C', '#FFC93C', '#7FD8C8', '#7FB8FF', '#FF9ECF', '#8FD9A8', '#FFB07C', '#C9A7FF'];
+  const TOUGH = '#9AA7C7', TOUGH_HIT = '#D9E0F0';
+
+  const g = SIM.create((Date.now() ^ 0x5bd1e995) >>> 0);
+  let parts = [];
+  let best = 0;
+
+  /* ── 그리기 도구 ────────────────────────────────── */
+  function rr(x, y, w, h, r){
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+  function fs(fill, lw){
+    ctx.fillStyle = fill; ctx.fill();
+    ctx.lineWidth = lw || 2.6; ctx.strokeStyle = INK; ctx.stroke();
+  }
+
+  function drawBrick(b){
+    if (!b.alive) return;
+    const tough = b.max === 2;
+    const col = tough ? (b.hp === 2 ? TOUGH : TOUGH_HIT) : ROWCOL[b.row % ROWCOL.length];
+
+    ctx.globalAlpha = .22; ctx.fillStyle = '#14101A';
+    rr(b.x + 2, b.y + 3, SIM.BW, SIM.BH, 5); ctx.fill();
+    ctx.globalAlpha = 1;
+
+    rr(b.x, b.y, SIM.BW, SIM.BH, 5);
+    fs(col, 2.6);
+
+    /* 위쪽 반짝임 */
+    ctx.globalAlpha = .45;
+    rr(b.x + 5, b.y + 3.5, SIM.BW - 10, 3.5, 1.8);
+    ctx.fillStyle = '#fff'; ctx.fill();
+    ctx.globalAlpha = 1;
+
+    /* 단단한 것은 리벳 두 개. 색만으로 가리지 않는다 */
+    if (tough) {
+      ctx.fillStyle = INK;
+      for (const dx of [8, SIM.BW - 8]) {
+        ctx.beginPath(); ctx.arc(b.x + dx, b.y + SIM.BH / 2, 1.9, 0, 6.284); ctx.fill();
+      }
+      if (b.hp === 1) {
+        ctx.lineWidth = 1.8; ctx.strokeStyle = 'rgba(42,49,69,.5)';
+        ctx.beginPath();
+        ctx.moveTo(b.x + 16, b.y + 2); ctx.lineTo(b.x + 21, b.y + SIM.BH - 2);
+        ctx.moveTo(b.x + 28, b.y + 2); ctx.lineTo(b.x + 24, b.y + SIM.BH - 2);
+        ctx.stroke();
+      }
+    }
+  }
+
+  function drawPaddle(){
+    const w = SIM.padW(g), x = g.padX - w / 2, y = SIM.PADY;
+
+    ctx.globalAlpha = .25; ctx.fillStyle = '#14101A';
+    rr(x + 2, y + 4, w, SIM.PADH, 6); ctx.fill();
+    ctx.globalAlpha = 1;
+
+    rr(x, y, w, SIM.PADH, 6);
+    fs(g.fx.narrow > 0 ? '#FFB3C1' : PADCOL, 3);
+
+    /* 눈 두 개와 볼 — 캔버스 안쪽은 옛 장난감 오락기 그대로다 */
+    const cx = g.padX, ey = y + SIM.PADH / 2, sp = Math.min(11, w * .12);
+    ctx.fillStyle = INK;
+    for (const s of [-1, 1]) {
+      ctx.beginPath(); ctx.arc(cx + s * sp, ey, 1.9, 0, 6.284); ctx.fill();
+    }
+    ctx.globalAlpha = .5; ctx.fillStyle = '#FF9EA8';
+    for (const s of [-1, 1]) {
+      ctx.beginPath(); ctx.arc(cx + s * (sp + 8), ey + .5, 2.4, 0, 6.284); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function drawBall(b){
+    if (g.fx.pierce > 0) {
+      ctx.globalAlpha = .35; ctx.fillStyle = '#FFD23F';
+      ctx.beginPath(); ctx.arc(b.x, b.y, SIM.BALLR + 4, 0, 6.284); ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+    ctx.beginPath(); ctx.arc(b.x, b.y, SIM.BALLR, 0, 6.284);
+    fs(g.fx.pierce > 0 ? '#FFD23F' : CREAM, 2.4);
+    ctx.globalAlpha = .6; ctx.fillStyle = '#fff';
+    ctx.beginPath(); ctx.arc(b.x - 1.8, b.y - 2, 1.8, 0, 6.284); ctx.fill();
+    ctx.globalAlpha = 1;
+  }
+
+  /* 아이템 속 그림. 색약이어도 가리게 아이템마다 다르다 */
+  function glyph(kind, s){
+    ctx.lineWidth = 2.2 * s;
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.strokeStyle = kind === 'narrow' || kind === 'fast' ? CREAM : INK;
+    ctx.fillStyle = ctx.strokeStyle;
+    ctx.beginPath();
+    if (kind === 'wide') {
+      ctx.moveTo(-6 * s, 0); ctx.lineTo(6 * s, 0); ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(-6 * s, -3 * s); ctx.lineTo(-6 * s, 3 * s);
+      ctx.moveTo(6 * s, -3 * s); ctx.lineTo(6 * s, 3 * s);
+      ctx.stroke();
+    } else if (kind === 'multi') {
+      for (const dx of [-3.8, 0, 3.8]) {
+        ctx.beginPath(); ctx.arc(dx * s, 0, 1.9 * s, 0, 6.284); ctx.fill();
+      }
+    } else if (kind === 'slow') {
+      ctx.moveTo(0, -4.4 * s); ctx.lineTo(0, 2.2 * s);
+      ctx.moveTo(-3.1 * s, -0.8 * s); ctx.lineTo(0, 2.5 * s); ctx.lineTo(3.1 * s, -0.8 * s);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(-3.6 * s, 5 * s); ctx.lineTo(3.6 * s, 5 * s); ctx.stroke();
+    } else if (kind === 'pierce') {
+      ctx.setLineDash([2.2 * s, 2.2 * s]);
+      ctx.moveTo(-5 * s, 2.4 * s); ctx.lineTo(5 * s, 2.4 * s); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.beginPath();
+      ctx.moveTo(0, 5.4 * s); ctx.lineTo(0, -5.4 * s);
+      ctx.moveTo(-3.1 * s, -2.3 * s); ctx.lineTo(0, -5.4 * s); ctx.lineTo(3.1 * s, -2.3 * s);
+      ctx.stroke();
+    } else if (kind === 'narrow') {
+      ctx.moveTo(-6.6 * s, 0); ctx.lineTo(-2.4 * s, 0);
+      ctx.moveTo(-4 * s, -2.2 * s); ctx.lineTo(-1.8 * s, 0); ctx.lineTo(-4 * s, 2.2 * s);
+      ctx.moveTo(6.6 * s, 0); ctx.lineTo(2.4 * s, 0);
+      ctx.moveTo(4 * s, -2.2 * s); ctx.lineTo(1.8 * s, 0); ctx.lineTo(4 * s, 2.2 * s);
+      ctx.stroke();
+    } else if (kind === 'fast') {
+      ctx.moveTo(-3.7 * s, 0.6 * s); ctx.lineTo(0, -3.1 * s); ctx.lineTo(3.7 * s, 0.6 * s);
+      ctx.moveTo(-3.7 * s, 4.6 * s); ctx.lineTo(0, 0.9 * s); ctx.lineTo(3.7 * s, 4.6 * s);
+      ctx.stroke();
+    }
+  }
+
+  function drawDrop(d){
+    const h = SIM.DROP_SZ / 2;
+    ctx.save();
+    ctx.translate(d.x, d.y);
+    if (d.good) {
+      rr(-h, -h, SIM.DROP_SZ, SIM.DROP_SZ, 6);
+      fs(GOODCOL, 2.6);
+    } else {
+      /* 나쁜 것은 뾰족한 마름모다. 색만으로 가리지 않는다 */
+      ctx.beginPath();
+      ctx.moveTo(0, -h); ctx.lineTo(h, 0); ctx.lineTo(0, h); ctx.lineTo(-h, 0);
+      ctx.closePath();
+      ctx.lineJoin = 'round';
+      fs(BADCOL, 2.6);
+    }
+    glyph(d.kind, 1);
+    ctx.restore();
+  }
+
+  /* 남은 목숨과 걸려 있는 아이템 — 막대 아래 빈 자리에 */
+  function drawStatus(){
+    for (let i = 0; i < g.lives; i++) {
+      ctx.beginPath(); ctx.arc(22 + i * 16, 597, 5, 0, 6.284);
+      fs(CREAM, 2.2);
+    }
+    const on = [];
+    for (const k of ['wide', 'narrow', 'slow', 'fast', 'pierce'])
+      if (g.fx[k] > 0) on.push(k);
+    on.forEach((k, i) => {
+      const x = W - 26 - (on.length - 1 - i) * 26, y = 595;
+      const good = k === 'wide' || k === 'slow' || k === 'pierce';
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.scale(.8, .8);
+      if (good) { rr(-10, -10, 20, 20, 6); fs(GOODCOL, 2.4); }
+      else {
+        ctx.beginPath();
+        ctx.moveTo(0, -10); ctx.lineTo(10, 0); ctx.lineTo(0, 10); ctx.lineTo(-10, 0);
+        ctx.closePath(); ctx.lineJoin = 'round';
+        fs(BADCOL, 2.4);
+      }
+      glyph(k, 1);
+      ctx.restore();
+      /* 남은 시간 막대 */
+      const t = Math.max(0, Math.min(1, g.fx[k] / SIM.DUR[k]));
+      ctx.fillStyle = 'rgba(255,247,234,.28)';
+      ctx.fillRect(x - 9, y + 10, 18, 3);
+      ctx.fillStyle = CREAM;
+      ctx.fillRect(x - 9, y + 10, 18 * t, 3);
+    });
+  }
+
+  function puff(x, y, n, c){
+    if (reduce) return;
+    for (let i = 0; i < n; i++)
+      parts.push({ x, y, vx: (Math.random() - .5) * 190, vy: (Math.random() - .5) * 190,
+                   r: 2.5 + Math.random() * 5, life: .3 + Math.random() * .35, max: .65, c });
+  }
+
+  function draw(){
+    ctx.fillStyle = '#3B2F3F';
+    ctx.fillRect(0, 0, W, H);
+
+    /* 벽 — 위쪽 테두리를 살짝 밝혀 판 안이라는 느낌을 준다 */
+    ctx.globalAlpha = .1; ctx.fillStyle = '#fff';
+    ctx.fillRect(0, 0, W, 4);
+    ctx.fillRect(0, 0, 4, H);
+    ctx.fillRect(W - 4, 0, 4, H);
+    ctx.globalAlpha = 1;
+
+    for (const b of g.bricks) drawBrick(b);
+    for (const d of g.drops) drawDrop(d);
+    drawPaddle();
+    for (const b of g.balls) drawBall(b);
+    drawStatus();
+
+    for (const p of parts) {
+      const a = Math.max(0, p.life / p.max);
+      ctx.globalAlpha = a;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r * a, 0, 6.284);
+      ctx.fillStyle = p.c; ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+  }
+
+  function eat(){
+    for (const e of g.events) {
+      if (e.t === 'break') puff(e.x, e.y, e.tough ? 9 : 6, e.tough ? TOUGH : '#FFF7EA');
+      else if (e.t === 'crack') puff(e.x, e.y, 4, TOUGH_HIT);
+      else if (e.t === 'take') puff(e.x, e.y, 8, e.good ? GOODCOL : BADCOL);
+      else if (e.t === 'lose') puff(g.padX, SIM.PADY, 10, '#FF9EA8');
+    }
+    g.events.length = 0;
+  }
+
+  /* ── 화면과 단추 ──────────────────────────────── */
+  const scReady = document.getElementById('scReady');
+  const scClear = document.getElementById('scClear');
+  const scOver = document.getElementById('scOver');
+  const scPause = document.getElementById('scPause');
+  const hScore = document.getElementById('hScore');
+  const hLevel = document.getElementById('hLevel');
+  const hBest = document.getElementById('hBest');
+  const clearTitle = document.getElementById('clearTitle');
+  const clearNote = document.getElementById('clearNote');
+  const cScore = document.getElementById('cScore');
+  const cLevel = document.getElementById('cLevel');
+  const rScore = document.getElementById('rScore');
+  const rLevel = document.getElementById('rLevel');
+  const btnNext = document.getElementById('btnNext');
+
+  let paused = false;
+
+  function show(id){
+    for (const s of [scReady, scClear, scOver, scPause]) s.classList.toggle('on', s.id === id);
+  }
+
+  function hud(){
+    hScore.textContent = g.score;
+    hLevel.textContent = g.level;
+  }
+
+  function start(){
+    SIM.begin(g);
+    parts = [];
+    paused = false;
+    hud();
+    show('none');
+  }
+
+  function nextLevel(){
+    SIM.next(g);
+    parts = [];
+    hud();
+    show('none');
+  }
+
+  function togglePause(){
+    if (g.state !== 'play' && g.state !== 'serve') return;
+    paused = !paused;
+    show(paused ? 'scPause' : 'none');
+  }
+
+  function onClear(){
+    hud();
+    cScore.textContent = g.score;
+    cLevel.textContent = g.state === 'allclear' ? SIM.LEVELS.length : g.level;
+    if (g.state === 'allclear') {
+      clearTitle.textContent = T.allTitle;
+      clearNote.hidden = false;
+      btnNext.textContent = T.resume;
+    } else {
+      clearTitle.textContent = T.clearTitle.replace('{n}', g.level);
+      clearNote.hidden = true;
+      btnNext.textContent = T.clearNext;
+    }
+    show('scClear');
+  }
+
+  function onOver(){
+    if (g.score > best) { best = g.score; hBest.textContent = best; saveBest(best); }
+    rScore.textContent = g.score;
+    rLevel.textContent = g.level;
+    show('scOver');
+  }
+
+  document.getElementById('btnStart').onclick = start;
+  document.getElementById('btnRetry').onclick = start;
+  btnNext.onclick = nextLevel;
+  document.getElementById('btnResume').onclick = togglePause;
+
+  /* ── 막대 움직이기 — 끌기 ──────────────────────── */
+  let drag = false;
+
+  function toX(clientX){
+    const b = cv.getBoundingClientRect();
+    return (clientX - b.left) / b.width * W;
+  }
+  cv.addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    if (g.state === 'ready') { start(); return; }
+    if (g.state === 'over') { start(); return; }
+    if (g.state === 'clear' || g.state === 'allclear') { nextLevel(); return; }
+    drag = true;
+    if (cv.setPointerCapture) { try { cv.setPointerCapture(e.pointerId); } catch (err) {} }
+    g.padX = toX(e.clientX);
+    SIM.launch(g);
+  });
+  cv.addEventListener('pointermove', (e) => {
+    if (!drag) return;
+    g.padX = toX(e.clientX);
+  });
+  for (const ev of ['pointerup', 'pointercancel', 'pointerleave'])
+    cv.addEventListener(ev, () => { drag = false; });
+
+  const keys = {};
+  addEventListener('keydown', (e) => {
+    const k = e.key.toLowerCase();
+    if (['arrowleft', 'arrowright', ' '].includes(k)) e.preventDefault();
+    keys[k] = true;
+    if (k === 'p') togglePause();
+    if (k === ' ' || k === 'enter') {
+      if (g.state === 'ready' || g.state === 'over') start();
+      else if (g.state === 'clear' || g.state === 'allclear') nextLevel();
+      else SIM.launch(g);
+    }
+  });
+  addEventListener('keyup', (e) => { keys[e.key.toLowerCase()] = false; });
+
+  /* ── 한 판 돌리기 ──────────────────────────────── */
+  let last = 0;
+  function frame(t){
+    const dt = Math.min((t - last) / 1000, .04);
+    last = t;
+
+    if (keys['arrowleft'] || keys['a']) g.padX -= 420 * dt;
+    if (keys['arrowright'] || keys['d']) g.padX += 420 * dt;
+
+    if (!paused) {
+      const was = g.state;
+      SIM.step(g, dt);
+      eat();
+      if (was !== g.state) {
+        if (g.state === 'clear' || g.state === 'allclear') onClear();
+        else if (g.state === 'over') onOver();
+      }
+      hud();
+    }
+
+    for (let i = parts.length - 1; i >= 0; i--) {
+      const p = parts[i];
+      p.life -= dt; p.x += p.vx * dt; p.y += p.vy * dt; p.vx *= .92; p.vy *= .92;
+      if (p.life <= 0) parts.splice(i, 1);
+    }
+
+    draw();
+    requestAnimationFrame(frame);
+  }
+
+  /* ── 최고 기록 ─────────────────────────────────── */
+  // 기기에만 남는다. 서버로 보내지 않는다.
+  const KEY = 'brickBest';
+  async function saveBest(v){
+    try { await window.storage.set(KEY, String(v)); return; } catch (e) {}
+    try { localStorage.setItem(KEY, String(v)); } catch (e) {}
+  }
+  (async () => {
+    let raw = null;
+    try { const r = await window.storage.get(KEY); raw = r && r.value; } catch (e) {}
+    if (raw == null) { try { raw = localStorage.getItem(KEY); } catch (e) {} }
+    if (raw) { best = parseInt(raw, 10) || 0; hBest.textContent = best; }
+  })();
+
+  SIM.load(g, 1);
+  SIM.serve(g);
+  g.state = 'ready';
+  requestAnimationFrame(frame);
+})();
+  </script>
+</GameLayout>

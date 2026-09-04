@@ -326,6 +326,38 @@ export const GAMES: Game[] = [
       <path d="M12 43h10M38 40h8M38 46h8" stroke="#2A3145" stroke-width="2.6" stroke-linecap="round"/>
       <path d="M42 37v12" stroke="#2A3145" stroke-width="2.6" stroke-linecap="round"/></svg>`,
   },
+  {
+    slug: 'brick-breaker',
+    kind: 'quick',
+    name: {
+      en: ['Brick', 'Breaker'],
+      ko: ['벽돌', '깨기'],
+      ja: ['ブロック', '崩し'],
+      es: ['Rompe', 'Ladrillos'],
+      fr: ['Casse', 'Briques'],
+      zh: ['打', '砖块'],
+    },
+    desc: {
+      en: 'Bounce the ball to clear every brick. Catch the good drops and dodge the bad ones.',
+      ko: '공을 튕겨 벽돌을 다 깨세요. 좋은 아이템은 받고 나쁜 아이템은 피하면 됩니다.',
+      ja: 'ボールを弾ませてブロックを全部壊そう。良いアイテムは取り、悪いアイテムは避けよう。',
+      es: 'Rebota la bola y rompe todos los ladrillos. Atrapa los objetos buenos y esquiva los malos.',
+      fr: 'Fais rebondir la balle pour casser toutes les briques. Attrape les bons bonus, évite les mauvais.',
+      zh: '弹起小球打碎所有砖块。接住好道具，躲开坏道具。',
+    },
+    art: `<svg viewBox="0 0 60 60" aria-hidden="true">
+    <rect width="60" height="60" fill="#3B2F3F"/>
+    <rect x="7"  y="9"  width="14" height="7" rx="2" fill="#FF385C"/>
+    <rect x="23" y="9"  width="14" height="7" rx="2" fill="#FFC93C"/>
+    <rect x="39" y="9"  width="14" height="7" rx="2" fill="#7FD8C8"/>
+    <rect x="7"  y="19" width="14" height="7" rx="2" fill="#FFC93C"/>
+    <rect x="23" y="19" width="14" height="7" rx="2" fill="#7FD8C8"/>
+    <rect x="39" y="19" width="14" height="7" rx="2" fill="#FF385C"/>
+    <rect x="12" y="32" width="10" height="10" rx="4" fill="#7FD8C8"/>
+    <circle cx="41" cy="37" r="4" fill="#FFF7EA"/>
+    <rect x="18" y="48" width="24" height="6" rx="3" fill="#BFE8FF"/>
+  </svg>`,
+  },
 ];
 
 /** 주소 조각으로 게임을 찾는다. 없으면 undefined. */
