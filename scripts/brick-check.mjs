@@ -298,7 +298,75 @@ function t7(){
   return ok;
 }
 
-const ALL = { 1: t1, 2: t2, 3: t3, 4: t4, 5: t5, 6: t6, 7: t7 };
+/* ── 8. 공이 막대를 뚫는지 ──────────────────────────
+   막대 두께는 12 뿐이다. 「막판 속도 x1.5」와 「공 빨라짐 x1.3」이 겹치면
+   한 프레임에 6.6 x 1.3 x 1.5 = 12.87 을 간다.
+
+   막대를 늘 공 바로 밑에 두고 500번 받아낸다. 막대가 늘 밑에 있으니
+   공이 빠졌다면 그건 **뚫고 지나간 것**이다.
+
+   세 가지로 잰다 —
+     · 60프레임 (한 프레임 1/60초)
+     · 느린 기기 (한 프레임 0.04초 — 그리기 층이 여기서 자른다)
+     · 걸음 쪼개기를 끈 대조군 — 쪼개기가 정말 일하는지 보려고 */
+function tunnel(S, dt, N){
+  const g = S.create(20260824);
+  S.begin(g);
+  g.cleared = 30;                        // 기본 속도를 최대(6.6)로
+  for (const b of g.bricks) b.alive = false;
+  S.serve(g); S.launch(g);
+  let pads = 0, thru = 0, f = 0;
+  while (pads < N && f < 60 * 60 * 60) {
+    g.alive = S.LAST_N;                  // 벽돌 3개 남은 것으로 친다 → 막판 속도 켜짐
+    g.lastNext = Infinity;               // 줄 내림은 이 검사에 안 쓴다
+    g.fx.fast = S.DUR.fast;
+    g.fx.slow = 0;
+    const b = g.balls[0];
+    if (!b) { S.serve(g); S.launch(g); f++; continue; }
+    g.padX = b.x;                        // 막대를 늘 공 바로 밑에
+    const before = g.balls.length;
+    S.step(g, dt);
+    for (const e of g.events) if (e.t === 'pad') pads++;
+    g.events.length = 0;
+    if (g.balls.length < before) thru += before - g.balls.length;
+    f++;
+  }
+  return { pads, thru };
+}
+
+function t8(){
+  console.log('\n[8] 공이 막대를 뚫는가 — 「막판 속도 + 공 빨라짐」이 겹친 채 500번 받아내기\n');
+  const N = 500;
+  const spd = SIM.SPD_MAX * SIM.FAST_MUL * SIM.LAST_MUL;
+  const mixes = Math.abs(SIM.speed({ fx:{fast:1,slow:0}, cleared:30, boost:true }) - spd) < 1e-9;
+  const band = SIM.PADH + 2 * SIM.BALLR;
+
+  console.log(`    막판 x${SIM.LAST_MUL} 와 공 빨라짐 x${SIM.FAST_MUL} 가 곱해지는가 → ${mixes ? 'O — 곱해진다' : 'X — 하나만 걸린다'}`);
+  console.log(`    제일 빠를 때 한 프레임에 가는 거리   ${num(spd, 2)}`);
+  console.log(`    막대 두께                            ${SIM.PADH}`);
+  console.log(`    막대에 닿았다고 보는 띠의 높이       ${band}   (두께 ${SIM.PADH} + 공 지름 ${2 * SIM.BALLR})`);
+  console.log(`    한 걸음의 최대 길이                  ${SIM.STEP_MAX}\n`);
+
+  const a = tunnel(SIM, 1 / 60, N);
+  const b = tunnel(SIM, 0.04, N);        // 그리기 층이 자르는 최악의 프레임
+  console.log('    잰 것                        한 프레임 거리   받아냄   뚫림');
+  console.log(`    60프레임 (1/60초)          ${num(spd, 2).padStart(12)}${pad(a.pads, 9)}${pad(a.thru, 7)}`);
+  console.log(`    느린 기기 (0.04초)         ${num(spd * 0.04 * 60, 2).padStart(12)}${pad(b.pads, 9)}${pad(b.thru, 7)}`);
+
+  /* 대조군 — 걸음 쪼개기를 끄면 어떻게 되는지. 파일은 안 건드리고 떼어 낸 토막만 고친다. */
+  const rawSrc = src.slice(src.indexOf(A) + A.length, src.indexOf(B));
+  const off = new Function(rawSrc.replace('const STEP_MAX = 2;', 'const STEP_MAX = Infinity;') + '\nreturn SIM;')();
+  const c = tunnel(off, 1 / 60, N);
+  const d = tunnel(off, 0.04, N);
+  console.log(`    (대조) 쪼개기 끈 60프레임  ${num(spd, 2).padStart(12)}${pad(c.pads, 9)}${pad(c.thru, 7)}`);
+  console.log(`    (대조) 쪼개기 끈 느린 기기 ${num(spd * 0.04 * 60, 2).padStart(12)}${pad(d.pads, 9)}${pad(d.thru, 7)}`);
+
+  const ok = a.thru === 0 && b.thru === 0;
+  console.log(`\n    뚫림 0 회 → ${ok ? 'O' : 'X'}`);
+  return ok;
+}
+
+const ALL = { 1: t1, 2: t2, 3: t3, 4: t4, 5: t5, 6: t6, 7: t7, 8: t8 };
 const want = process.argv.slice(2).filter((a) => ALL[a]);
 const run = want.length ? want : Object.keys(ALL);
 

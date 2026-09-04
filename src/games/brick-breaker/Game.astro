@@ -186,13 +186,30 @@ const FRAME_BAD  = '<path d="M10 1.1 18.9 10 10 18.9 1.1 10Z" fill="#FF385C" str
 
     const SERVE_WAIT = 1;   // 이만큼 지나면 저절로 나간다
 
+    /* 한 걸음의 최대 길이. 이보다 멀리 가야 하면 여러 걸음으로 쪼갠다.
+       안 그러면 빠른 공이 막대나 벽돌을 건너뛴다.
+
+       닿았다고 보는 띠의 높이는 두께가 아니라 **두께 + 공 지름** 이다 —
+         막대  12 + 12 = 24
+         벽돌  18 + 12 = 30
+       제일 빠를 때 한 프레임에 가는 거리는 6.6 x 1.3(공 빨라짐) x 1.5(막판) = 12.87 로
+       24 보다 작다. 그러니 60프레임이 지켜지면 이 쪼개기가 없어도 안 뚫린다.
+
+       하지만 느린 기기에서는 한 프레임이 0.04초까지 늘어나(아래 그리기 층에서 자른다)
+       한 번에 30.9 를 간다 — 막대 띠 24 를 넘는다. **그때 이 쪼개기가 막는다.**
+       `node scripts/brick-check.mjs 8` 이 둘 다 잰다. */
+    const STEP_MAX = 2;
+
     /* ── 판 열둘. 0 빈칸 · 1 보통 · 2 단단 ──
-       판 1~3 은 지시서에 그려진 그대로다. 4~12 는 여기서 지었다.
-       벽돌 24~40개 · 좌우 대칭 · 판이 올라갈수록 많아진다. */
+       벽돌 24~40개 · 좌우 대칭 · 판이 올라갈수록 많아진다
+       (28 · 29 · 30 · 31 · 33 · 34 · 35 · 36 · 37 · 38 · 39 · 40).
+       판 1 꽉 찬 네모 · 판 2 탑 · 판 3 마름모 — 앞 세 판이 다 다르게 보인다.
+       처음 지시서의 판 2·3 은 개수가 줄어서(31 → 29) 2026-08-24에 고쳤다.
+       `node scripts/brick-check.mjs 6` 이 개수와 대칭을 잰다. */
     const LEVELS = [
       ['1111111', '1111111', '1111111', '1111111'],
-      ['0111110', '1111111', '1111111', '0111110', '1111111'],
-      ['1111111', '1010101', '1111111', '1010101', '1111111'],
+      ['1111111', '1111111', '0111110', '0111110', '0111110'],
+      ['0011100', '0111110', '1111111', '1111111', '0111110', '0011100'],
       ['0111110', '1211121', '1112111', '1211121', '0111110'],
       ['1111111', '1021201', '1111111', '1211121', '1112111'],
       ['1111111', '1111111', '0121210', '1111111', '0212120', '0011100'],
@@ -487,9 +504,8 @@ const FRAME_BAD  = '<path d="M10 1.1 18.9 10 10 18.9 1.1 10Z" fill="#FF385C" str
       tick(g, dt);
       lastFew(g, dt);
 
-      /* 한 걸음이 2px 을 넘지 않게 쪼갠다. 안 그러면 빠른 공이 벽돌을 뚫고 지나간다. */
       const dist = speed(g) * dt * 60;
-      const n = Math.max(1, Math.ceil(dist / 2));
+      const n = Math.max(1, Math.ceil(dist / STEP_MAX));
       for (let i = 0; i < n; i++) {
         moveBalls(g, dist / n);
         if (g.state !== 'play') break;
@@ -503,7 +519,7 @@ const FRAME_BAD  = '<path d="M10 1.1 18.9 10 10 18.9 1.1 10Z" fill="#FF385C" str
       SPD0, SPD_UP, SPD_MAX, LIVES, ANG_MAX, ANG_MIN,
       DROP_RATE, DROP_SPD, DROP_SZ, GOOD, BAD, GOOD_RATE, DUR, OPP,
       SLOW_MUL, FAST_MUL, MULTI_ANG, MAX_BALLS,
-      LAST_N, LAST_MUL, LAST_WAIT, LAST_EVERY, LAST_ROWS, LAST_KEEP, SERVE_WAIT,
+      LAST_N, LAST_MUL, LAST_WAIT, LAST_EVERY, LAST_ROWS, LAST_KEEP, SERVE_WAIT, STEP_MAX,
       LEVELS, brickX, brickY, rng,
       create, begin, load, recount, serve, launch, next, step,
       bounceAngle, padW, speed, baseSpeed, applyItem,
